@@ -1,10 +1,18 @@
 import { styled } from "@mui/system";
 
+export const Container = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100vh",
+});
+
 export const Logo = styled("img")({
   width: "250px",
   height: "80px",
   marginBottom: "10px",
-  marginTop: "20px", // Adjust as needed
+  marginTop: "20px",
 });
 
 export const UsernameInputContainer = styled("div")({
@@ -35,16 +43,11 @@ export const WhiteRec = styled("div")({
   background: "#BD302B",
 });
 
-export const Container = styled("div")({
-  position: "relative",
-  width: "100%",
-  minHeight: "100vh",
-  background: "#FFFFFF",
+export const ContainerContent = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "flex-start",
-  padding: "15px",
+  justifyContent: "center",
 });
 
 export const Heading = styled("h2")({

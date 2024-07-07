@@ -8,7 +8,7 @@ import {
   Container,
   Heading,
   Button,
-} from "./SubmitPageStyles";
+} from "./submitpagestyles";
 
 const Submitpage = ({ setPageValue }) => {
   const handleSubmit = (event) => {

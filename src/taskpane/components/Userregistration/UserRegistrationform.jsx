@@ -14,7 +14,7 @@ import {
   Textarea,
   ButtonContainer,
   Button,
-} from "./UserRegistrationFormStyles";
+} from "./UserRegistrationformstyles";
 
 const UserRegistrationForm = ({ setPageValue }) => {
   const handleSubmit = (event) => {
