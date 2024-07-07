@@ -1,7 +1,6 @@
-/* eslint-disable no-undef */
-
+const path = require('path');
 const devCerts = require("office-addin-dev-certs");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin"); // Ensure this is imported
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 
@@ -24,6 +23,8 @@ module.exports = async (env, options) => {
       commands: "./src/commands/commands.js",
     },
     output: {
+      path: path.resolve(__dirname, 'dist'), // Ensure output directory is 'dist'
+      filename: '[name].bundle.js',
       clean: true,
     },
     resolve: {
@@ -33,16 +34,6 @@ module.exports = async (env, options) => {
       rules: [
         {
           test: /\.jsx?$/,
-          use: {
-            loader: "babel-loader",
-            options: {
-              presets: ["@babel/preset-env"],
-            },
-          },
-          exclude: /node_modules/,
-        },
-        {
-          test: /\.js$/,
           use: {
             loader: "babel-loader",
             options: {
@@ -88,6 +79,11 @@ module.exports = async (env, options) => {
             },
           },
         ],
+      }),
+      new HtmlWebpackPlugin({
+        filename: "index.html", // Output file name
+        template: "./src/index.html", // Template file location
+        chunks: ["taskpane", "vendor", "polyfill"], // Adjust chunks as necessary
       }),
       new HtmlWebpackPlugin({
         filename: "taskpane.html",
