@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useStyles4 } from "./Loadpagestyles";
+import {
+  Container,
+  Logo,
+  Heading,
+  BackButton,
+  BackIcon,
+  DropdownContainer,
+  Dropdown,
+  DropdownHeading,
+  DropdownHeader,
+  Arrow,
+  DropdownList,
+  DropdownItem,
+  ImportButton,
+} from "./Loadpagestyles";
 import { DataFrame } from "dataframe-js";
 
 const LoadPage = ({ setPageValue }) => {
-  const styles = useStyles4();
-
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedItems, setSelectedItems] = useState({
     "Email ID": "",
@@ -103,34 +115,32 @@ const LoadPage = ({ setPageValue }) => {
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>Load Scenario</h2>
-      <div className={styles.dropdownContainer}>
-        {["Email ID", "Team Name", "Geography", "Indication", "Sub Indication", "Asset", "Model Name"].map(
+    <Container>
+      <Heading>Load Scenario</Heading>
+      <DropdownContainer>
+        {["Email ID", "Team ID", "Geography", "Indication", "Sub Indication", "Asset", "Model Name"].map(
           (label, index) => (
-            <div key={index} className={styles.dropdown}>
-              <div className={styles.dropdownHeading}>{label}</div>
-              <div className={styles.dropdownHeader} onClick={() => handleDropdownClick(label)}>
+            <Dropdown key={index}>
+              <DropdownHeading>{label}</DropdownHeading>
+              <DropdownHeader onClick={() => handleDropdownClick(label)}>
                 {selectedItems[label] || label}
-                <span className={styles.arrow}>{openDropdown === label ? "▲" : "▼"}</span>
-              </div>
+                <Arrow>{openDropdown === label ? "▲" : "▼"}</Arrow>
+              </DropdownHeader>
               {openDropdown === label && (
-                <div className={styles.dropdownList}>
+                <DropdownList>
                   {dropdownItems[label].map((item, idx) => (
-                    <div key={idx} className={styles.dropdownItem} onClick={() => handleItemClick(label, item)}>
+                    <DropdownItem key={idx} onClick={() => handleItemClick(label, item)}>
                       {item}
-                    </div>
+                    </DropdownItem>
                   ))}
-                </div>
+                </DropdownList>
               )}
-            </div>
+            </Dropdown>
           )
         )}
-      </div>
-      <button className={styles.importButton} onClick={() => fetchDataFromLambda()}>
-        Import →
-      </button>
-    </div>
+      </DropdownContainer>
+      <ImportButton onClick={() => fetchDataFromLambda()}>Import →</ImportButton>
+    </Container>
   );
 };
 

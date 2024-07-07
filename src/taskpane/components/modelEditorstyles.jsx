@@ -20,8 +20,11 @@ export const ModelManagementButton = styled("button")({
 });
 
 export const ButtonsContainer = styled("div")({
-  display: "flex",
-  gap: "15px",
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)", // 2 columns
+  gap: "25px", // Adjust the gap as needed
+  justifyItems: "center",
+  alignItems: "center",
 });
 
 export const Button = styled("div")({
@@ -49,18 +52,8 @@ export const Icon = styled("img")({
 });
 
 export const Label = styled("span")({
-  fontSize: "12px",
+  fontSize: "10px",
   fontWeight: "bold",
   color: "#333",
   marginBottom: "5px",
-});
-
-export const FreshLabel = styled(Label)({
-  color: "#bd302b",
-  textAlign: "center",
-});
-
-export const LoadLabel = styled(Label)({
-  color: "#007bff",
-  textAlign: "center",
 });

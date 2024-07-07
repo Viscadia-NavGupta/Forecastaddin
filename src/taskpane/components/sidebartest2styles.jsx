@@ -1,87 +1,96 @@
-import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/system";
 
-export const useStyles17 = makeStyles({
-  container: {
-    display: "flex",
-    height: "auto",
-    width:"15%",
+export const Container = styled("div")({
+  display: "flex",
+  height: "auto",
+  width: "15%",
+});
+
+export const Sidebar = styled("div")({
+  width: "100%",
+  background: "#BD302B",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+});
+
+export const TopSection = styled("div")({
+  textAlign: "center",
+  paddingLeft: "5px",
+  paddingRight: "5px",
+  paddingTop: "10px",
+});
+
+export const ProfileImage = styled("img")({
+  width: "80%",
+  height: "80%",
+  borderRadius: "0",
+});
+
+export const MenuSection = styled("div")({
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+});
+
+export const MenuItem = styled("button")({
+  background: "none",
+  border: "none",
+  color: "#fff",
+  margin: "10px 0",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  position: "relative",
+  "&:hover $tooltip": {
+    display: "block",
   },
-  sidebar: {
-    width: "100%",
-    background: "#BD302B",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
+  "& i": {
+    fontSize: "24px",
   },
-  topSection: {
-    textAlign: "center",
-    paddingLeft: "5px",
-    paddingRight: "5px",
-    paddingTop: "10px",
-  },
-  profileImage: {
-    width: "80%",
-    height: "80%",
-    borderRadius: "0",
-  },
-  menuSection: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  menuItem: {
-    background: "none",
-    border: "none",
-    color: "#fff",
-    margin: "10px 0",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    position: "relative",
-    "&:hover $tooltip": {
-      display: "block",
-    },
-    "& i": {
-      fontSize: "24px",
-    },
-  },
-  tooltip: {
-    display: "none",
-    position: "absolute",
-    left: "100%",
-    marginLeft: "10px",
-    background: "#898A8D",
-    color: "#000",
-    padding: "5px",
-    borderRadius: "5px",
-    whiteSpace: "nowrap",
-    zIndex: 1,
-  },
-  bottomSection: {
-    paddingBottom: "5px",
-    paddingRight: "15px",
-    paddingLeft: "5px",
-  },
-  contentArea: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    width: "85%",
-  },
-  topRightSection: {
-    height: "8%",
-    background: "#898A8D",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  topRightText: {
-    fontSize: "20px",
-    fontWeight: "bold",
-  },
-  mainContent: {
-    flex: 1,
-    background: "#fff",
-  },
+});
+
+export const Tooltip = styled("span")({
+  display: "none",
+  position: "absolute",
+  left: "100%",
+  marginLeft: "10px",
+  background: "#898A8D",
+  color: "#000",
+  padding: "5px",
+  borderRadius: "5px",
+  whiteSpace: "nowrap",
+  zIndex: 1,
+});
+
+export const BottomSection = styled("div")({
+  paddingBottom: "5px",
+  paddingRight: "15px",
+  paddingLeft: "5px",
+});
+
+export const ContentArea = styled("div")({
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  width: "85%",
+});
+
+export const TopRightSection = styled("div")({
+  height: "8%",
+  background: "#898A8D",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+export const TopRightText = styled("span")({
+  fontSize: "20px",
+  fontWeight: "bold",
+});
+
+export const MainContent = styled("div")({
+  flex: 1,
+  background: "#fff",
 });

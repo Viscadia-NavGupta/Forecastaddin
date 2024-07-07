@@ -1,11 +1,29 @@
 import React, { useState } from "react";
-import { useStyles } from "./UserLoginStyles";
+import {
+  Container,
+  Logo,
+  UsernameInputContainer,
+  ThemeBorder,
+  RedRec,
+  WhiteRec,
+  Rec,
+  ErrorMessage,
+  Heading,
+  UserProfileButton,
+  UserProfileButtonInner,
+  InputContainer,
+  InputContainerInput,
+  HelperTextContainer,
+  InputHelperText,
+  ContactUsButton,
+  ButtonfButton,
+  Footer,
+} from "./UserLoginStyles";
 import * as AWSConnections from "../AWS Midleware/AWSConnections";
 
-function UserLogin({ handleLogin, setPageValue }) {
+const UserLogin = ({ handleLogin, setPageValue }) => {
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const styles = useStyles();
 
   const handleProceedClick = async () => {
     if (!username.includes("@")) {
@@ -25,40 +43,39 @@ function UserLogin({ handleLogin, setPageValue }) {
   };
 
   return (
-    <div className={styles.usernameInputContainer}>
-      <img src="/../assets/viscadialogo.png" alt="Viscadia Logo" className={styles.logo} />
-      <div className={styles.themeBorder}>
-        <div className={styles.whiterec}></div>
-        <div className={styles.redrec}></div>
-      </div>
-      <h2 className={styles.heading}>Viscadia Forecasting Platform</h2>
-      <div className={styles.userProfileButton}>
-        <button className={styles.userProfileButtonInner}>User Profile Information</button>
-      </div>
-      <div className={styles.rec}>
-        <div className={styles.inputContainer}>
-          <input
+    <Container>
+      <UsernameInputContainer>
+        <Logo src="/../assets/viscadialogo.png" alt="Viscadia Logo" />
+        <ThemeBorder>
+          <WhiteRec />
+          <RedRec />
+        </ThemeBorder>
+      </UsernameInputContainer>
+      <Heading>Viscadia Forecasting Platform</Heading>
+      <UserProfileButton>
+        <UserProfileButtonInner>User Profile Information</UserProfileButtonInner>
+      </UserProfileButton>
+      <Rec>
+        <InputContainer>
+          <InputContainerInput
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your Username"
-            className={styles.inputContainerInput}
           />
-          <div className={styles.helperTextContainer}>
-            <span className={styles.inputHelperText}>Display username in Excel*</span>
-            <button className={styles.contactUsButton} onClick={() => setPageValue("ContactUs")}>Contact Us</button>
-          </div>
-          {errorMessage && <span className={styles.errorMessage}>{errorMessage}</span>}
-        </div>
+          <HelperTextContainer>
+            <InputHelperText>Display username in Excel*</InputHelperText>
+            <ContactUsButton onClick={() => setPageValue("ContactUs")}>Contact Us</ContactUsButton>
+          </HelperTextContainer>
+          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        </InputContainer>
         <div>
-          <button className={styles.buttonfButton} onClick={handleProceedClick}>
-            Proceed →
-          </button>
+          <ButtonfButton onClick={handleProceedClick}>Proceed →</ButtonfButton>
         </div>
-      </div>
-      <footer className={styles.footer}>© 2024 Viscadia. All rights reserved.</footer>
-    </div>
+      </Rec>
+      <Footer>© 2024 Viscadia. All rights reserved.</Footer>
+    </Container>
   );
-}
+};
 
 export default UserLogin;

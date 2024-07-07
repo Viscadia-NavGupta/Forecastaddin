@@ -1,23 +1,32 @@
 import React from "react";
-import { useStyles20 } from "./mainLayoutNew";
+import {
+  Layout,
+  TopRightSection,
+  TopRightText,
+  MainContent,
+  Sidebar,
+  ContentContainer,
+  TopSection,
+  ProfileImage,
+} from "./mainLayoutNew";
 import Sidebartest2 from "./sidebartest2";
 
 const MainLayout = ({ children, onMenuItemClick }) => {
-  const classes = useStyles20();
-
   return (
-    <div className={classes.layout}>
-      <div className={classes.topRightSection}>
-        <div className={classes.topSection}>
-          <img src="/../assets/Viscadia_V_Logo.png" className={classes.profileImage} alt="Profile" />
-        </div>
-        <span className={classes.topRightText}>Viscadia Forecast Platform</span>
-      </div>
-      <div className={classes.mainContent}>
-        <Sidebartest2 onMenuItemClick={onMenuItemClick} />
-        <div className={classes.contentContainer}>{children}</div>
-      </div>
-    </div>
+    <Layout>
+      <TopRightSection>
+        <TopSection>
+          <ProfileImage src="/../assets/Viscadia_V_Logo.png" alt="Profile" />
+        </TopSection>
+        <TopRightText>Viscadia Forecast Platform</TopRightText>
+      </TopRightSection>
+      <MainContent>
+        <Sidebar>
+          <Sidebartest2 onMenuItemClick={onMenuItemClick} />
+        </Sidebar>
+        <ContentContainer>{children}</ContentContainer>
+      </MainContent>
+    </Layout>
   );
 };
 

@@ -1,10 +1,16 @@
-// UserRegistrationForm.jsx
 import React from "react";
-import { useStyles10 } from "./submitpagestyles";
+import {
+  Logo,
+  UsernameInputContainer,
+  ThemeBorder,
+  RedRec,
+  WhiteRec,
+  Container,
+  Heading,
+  Button,
+} from "./SubmitPageStyles";
 
 const Submitpage = ({ setPageValue }) => {
-  const styles = useStyles10();
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -21,25 +27,24 @@ const Submitpage = ({ setPageValue }) => {
 
   return (
     <div>
-      <div className={styles.usernameInputContainer}>
-        <img src="/../assets/viscadialogo.png" alt="Viscadia Logo" className={styles.logo} />
-        <div className={styles.themeBorder}>
-          <div className={styles.whiterec}></div>
-          <div className={styles.redrec}></div>
-        </div>
-      </div>
+      <UsernameInputContainer>
+        <Logo src="/../assets/viscadialogo.png" alt="Viscadia Logo" />
+        <ThemeBorder>
+          <WhiteRec />
+          <RedRec />
+        </ThemeBorder>
+      </UsernameInputContainer>
 
-      <div className={styles.container}>
-        <h2 className={styles.heading}>
-          Thank you for submitting your request! Our team is reviewing it and will get back to you shortly. We
-          appreciate your patience.
-        </h2>
+      <Container>
+        <Heading>
+          Thank you for submitting your request! Our team is reviewing it and will get back to you shortly. We appreciate your patience.
+        </Heading>
         <div>
-          <button className={styles.button} type="button" onClick={() => setPageValue("UserLogin")}>
+          <Button type="button" onClick={() => setPageValue("UserLogin")}>
             Login Page
-          </button>
+          </Button>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

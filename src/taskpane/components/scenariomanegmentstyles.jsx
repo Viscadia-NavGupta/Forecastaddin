@@ -15,13 +15,16 @@ export const ModelManagementButton = styled("button")({
   padding: "10px 20px",
   fontSize: "12px",
   fontWeight: "bold",
-  marginBottom: "30px",
+  marginBottom: "0px",
   cursor: "pointer",
 });
 
 export const ButtonsContainer = styled("div")({
-  display: "flex",
-  gap: "15px",
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)", // 2 columns
+  gap: "20px", // Adjust the gap as needed
+  justifyItems: "center",
+  alignItems: "center",
 });
 
 export const Button = styled("div")({
@@ -49,18 +52,21 @@ export const Icon = styled("img")({
 });
 
 export const Label = styled("span")({
-  fontSize: "12px",
+  fontSize: "10px",
   fontWeight: "bold",
   color: "#333",
   marginBottom: "5px",
 });
 
-export const FreshLabel = styled(Label)({
-  color: "#bd302b",
+export const MessageBox = styled("div")({
+  marginTop: "10px",
+  marginBottom: "10px",
+  padding: "10px",
+  borderRadius: "5px",
+  backgroundColor: "#f0f0f0",
+  color: "#333",
+  fontSize: "14px",
   textAlign: "center",
-});
-
-export const LoadLabel = styled(Label)({
-  color: "#007bff",
-  textAlign: "center",
+  width: "80%",
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
 });

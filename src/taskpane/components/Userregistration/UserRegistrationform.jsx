@@ -1,9 +1,22 @@
 import React, { useState } from "react";
-import { useStyles9 } from "./UserRegistrationformstyles";
+import {
+  Logo,
+  UsernameInputContainer,
+  ThemeBorder,
+  RedRec,
+  WhiteRec,
+  Container,
+  Heading,
+  Form,
+  InputContainer,
+  Label,
+  Input,
+  Textarea,
+  ButtonContainer,
+  Button,
+} from "./UserRegistrationFormStyles";
 
 const UserRegistrationForm = ({ setPageValue }) => {
-  const styles = useStyles9();
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -21,69 +34,47 @@ const UserRegistrationForm = ({ setPageValue }) => {
 
   return (
     <div>
-      <div className={styles.usernameInputContainer}>
-        <img src="/../assets/viscadialogo.png" alt="Viscadia Logo" className={styles.logo} />
-        <div className={styles.themeBorder}>
-          <div className={styles.whiterec}></div>
-          <div className={styles.redrec}></div>
-        </div>
-      </div>
+      <UsernameInputContainer>
+        <Logo src="/../assets/viscadialogo.png" alt="Viscadia Logo" />
+        <ThemeBorder>
+          <WhiteRec />
+          <RedRec />
+        </ThemeBorder>
+      </UsernameInputContainer>
 
-      <div className={styles.container}>
-        <h2 className={styles.heading}>Inquiry Form</h2>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="firstName">
-              First name
-            </label>
-            <input className={styles.input} type="text" name="firstName" placeholder="First name" required />
-          </div>
-          <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="lastName">
-              Last name
-            </label>
-            <input className={styles.input} type="text" name="lastName" placeholder="Last name" required />
-          </div>
-          <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="email">
-              Email id
-            </label>
-            <input className={styles.input} type="email" name="email" placeholder="Email id" required />
-          </div>
-          <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="company">
-              Company associated with
-            </label>
-            <input className={styles.input} type="text" name="company" placeholder="Company associated with" required />
-          </div>
-          <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="majorAreaOfWork">
-              Major area of work
-            </label>
-            <input
-              className={styles.input}
-              type="text"
-              name="majorAreaOfWork"
-              placeholder="Major area of work"
-              required
-            />
-          </div>
-          <div className={styles.inputContainer}>
-            <label className={styles.label} htmlFor="message">
-              Leave a message
-            </label>
-            <textarea className={styles.textarea} name="message" placeholder="Leave a message" required />
-          </div>
-          <div className={styles.buttonContainer}>
-            <button className={styles.button} type="submit">
-              Submit
-            </button>
-            <button className={styles.button} type="button" onClick={() => setPageValue("UserLogin")}>
-              Login
-            </button>
-          </div>
-        </form>
-      </div>
+      <Container>
+        <Heading>Inquiry Form</Heading>
+        <Form onSubmit={handleSubmit}>
+          <InputContainer>
+            <Label htmlFor="firstName">First name</Label>
+            <Input type="text" name="firstName" placeholder="First name" required />
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor="lastName">Last name</Label>
+            <Input type="text" name="lastName" placeholder="Last name" required />
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor="email">Email id</Label>
+            <Input type="email" name="email" placeholder="Email id" required />
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor="company">Company associated with</Label>
+            <Input type="text" name="company" placeholder="Company associated with" required />
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor="majorAreaOfWork">Major area of work</Label>
+            <Input type="text" name="majorAreaOfWork" placeholder="Major area of work" required />
+          </InputContainer>
+          <InputContainer>
+            <Label htmlFor="message">Leave a message</Label>
+            <Textarea name="message" placeholder="Leave a message" required />
+          </InputContainer>
+          <ButtonContainer>
+            <Button type="submit">Submit</Button>
+            <Button type="button" onClick={() => setPageValue("UserLogin")}>Login</Button>
+          </ButtonContainer>
+        </Form>
+      </Container>
     </div>
   );
 };

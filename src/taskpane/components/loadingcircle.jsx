@@ -1,18 +1,20 @@
-// LoadingCircle.jsx
 import React from "react";
-import { useStylesloading } from "./LoadingCirclestyles";
+import {
+  Overlay,
+  LoadingContainer,
+  LoadingCircle,
+  LoadingMessage,
+} from "./LoadingCirclestyles";
 
-const LoadingCircle = () => {
-  const styles = useStylesloading();
-
+const LoadingCircleComponent = () => {
   return (
-    <div className={styles.overlay}>
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingCircle}></div>
-        <p className={styles.loadingMessage}>Running calculations...</p>
-      </div>
-    </div>
+    <Overlay>
+      <LoadingContainer>
+        <LoadingCircle></LoadingCircle>
+        <LoadingMessage>Running calculations...</LoadingMessage>
+      </LoadingContainer>
+    </Overlay>
   );
 };
 
-export default LoadingCircle;
+export default LoadingCircleComponent;
