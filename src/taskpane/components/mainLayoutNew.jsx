@@ -35,7 +35,7 @@ export const MainContent = styled("div")({
 });
 
 export const SidebarContainer = styled("div")({
-  width: "40px", // Adjust the width to be consistent with the sidebar component
+  width: "50px", // Adjust the width to be consistent with the sidebar component
   background: "#BD302B",
   display: "flex",
   flexDirection: "column",

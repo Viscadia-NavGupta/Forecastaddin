@@ -63,10 +63,10 @@ export const MessageBox = styled("div")({
   marginBottom: "10px",
   padding: "10px",
   borderRadius: "5px",
-  backgroundColor: "#f0f0f0",
+  backgroundColor: "#ffffff",
   color: "#333",
   fontSize: "14px",
   textAlign: "center",
   width: "80%",
-  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
 });

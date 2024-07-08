@@ -12,20 +12,31 @@ import * as AWSConnections from "./AWS Midleware/AWSConnections";
 import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
 
 const ScenarioManagement = ({ setPageValue }) => {
-  const [message, setMessage] = useState("Message: Please select any button");
+  const [message, setMessage] = useState(true);
 
   const RunScenario = async () => {
+    // State variable to track if it's the first run
+    const [isFirstRun, setIsFirstRun] = useState(true);
+
     let servicename = await Excelfunctions.getActiveSheetName();
 
     if (servicename !== "Model Management" && servicename !== "outputs") {
       setPageValue("LoadingCircle");
       const result = await AWSConnections.orchestrationfucntion("RUN COMPUTATION");
       console.log("Outputs fetched");
-      await setMessage("Scenario run successfully.");
       setPageValue("Scenario management");
+
+      if (isFirstRun) {
+        await setMessage("Please select any button");
+        setIsFirstRun(false); // Mark that the first run has occurred
+      } else {
+        await setMessage("Scenario run successfully.");
+        setIsFirstRun(true);
+      }
     } else {
       console.log("Active ACE sheet");
       await setMessage("Active ACE sheet not detected.");
+      setIsFirstRun(true);
     }
   };
 

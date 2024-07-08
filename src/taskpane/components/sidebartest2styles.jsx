@@ -8,7 +8,7 @@ export const Container = styled("div")({
 });
 
 export const Sidebar = styled("div")({
-  width: "40px",
+  width: "50px",
   background: "#BD302B",
   display: "flex",
   flexDirection: "column",
