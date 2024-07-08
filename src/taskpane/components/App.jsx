@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from "react";
 import UserLogin from "./userlogin/UserLogin";
-import Header from "./Old Components/Header";
-import ModelManagementPage from "./Old Components/ModelManagment";
+import ModelManagementPage1 from "./ModelManagementPage";
 import LoadPage from "./LoadPage";
-import Sidebar from "./Old Components/sidebar";
 import UserRegistrationForm from "./Userregistration/UserRegistrationform";
 import Submitpage from "./Submitpage/SubmitPage";
 import MainLayout from "./MainLayout";
-import Sidebartest2 from "./sidebartest2";
-import ModelManagementPage1 from "./ModelManagementPage";
 import MMSheetManagment from "./ModelEditor";
 import ScenarioManagement from "./ScenarioManagment";
 import * as AWSConnections from "./AWS Midleware/AWSConnections"; // import AWSConnections to use in App.js
 import LoadingCircle from "./loadingcircle";
 
 function App() {
-  const [page, setPage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [page, setPage] = useState("UserLogin");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -28,7 +24,12 @@ function App() {
           setPage("ModelManagementPage1");
         } else {
           sessionStorage.removeItem("username");
+          setIsLoggedIn(false);
+          setPage("UserLogin");
         }
+      } else {
+        setIsLoggedIn(false);
+        setPage("UserLogin");
       }
     };
 
@@ -40,8 +41,14 @@ function App() {
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(true); // Update login status to true
-    setPage("ModelManagementPage1"); // Navigate to the desired page
+    setIsLoggedIn(true);
+    setPage("ModelManagementPage1");
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("username");
+    setIsLoggedIn(false);
+    setPage("UserLogin");
   };
 
   const routesPages = (page) => {
@@ -49,7 +56,7 @@ function App() {
       case "ModelManagementPage1":
         return <ModelManagementPage1 setPageValue={setPageValue} />;
       case "UserLogin":
-        return <UserLogin setPageValue={setPageValue} />;
+        return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
       case "Model Editor":
         return <MMSheetManagment setPageValue={setPageValue} />;
       case "Scenario management":
@@ -63,14 +70,16 @@ function App() {
       case "LoadingCircle":
         return <LoadingCircle />;
       default:
-        return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />; // Default to UserLogin
+        return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
     }
   };
 
   return (
     <>
       {isLoggedIn ? (
-        <MainLayout onMenuItemClick={setPageValue}>{routesPages(page)}</MainLayout>
+        <MainLayout onMenuItemClick={setPageValue} handleLogout={handleLogout}>
+          {routesPages(page)}
+        </MainLayout>
       ) : (
         routesPages(page)
       )}

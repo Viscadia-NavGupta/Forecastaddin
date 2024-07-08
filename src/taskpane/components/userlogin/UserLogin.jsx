@@ -58,10 +58,11 @@ const UserLogin = ({ handleLogin, setPageValue }) => {
       <Rec>
         <InputContainer>
           <InputContainerInput
-            type="text"
+            type="email"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your Username"
+            autocomplete="email"
           />
           <HelperTextContainer>
             <InputHelperText>Display username in Excel*</InputHelperText>

@@ -2,29 +2,21 @@ import { styled } from "@mui/system";
 
 export const Container = styled("div")({
   display: "flex",
-  height: "auto",
-  width: "15%",
+  height: "100vh",
+  width: "100%",
+  overflow: "hidden",
 });
 
 export const Sidebar = styled("div")({
-  width: "100%",
+  width: "40px",
   background: "#BD302B",
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-});
-
-export const TopSection = styled("div")({
-  textAlign: "center",
-  paddingLeft: "5px",
-  paddingRight: "5px",
-  paddingTop: "10px",
-});
-
-export const ProfileImage = styled("img")({
-  width: "80%",
-  height: "80%",
-  borderRadius: "0",
+  overflowY: "auto",
+  overflowX: "hidden",
+  position: "relative",
+  zIndex: 2,
 });
 
 export const MenuSection = styled("div")({
@@ -43,54 +35,14 @@ export const MenuItem = styled("button")({
   display: "flex",
   alignItems: "center",
   position: "relative",
-  "&:hover $tooltip": {
-    display: "block",
-  },
+  whiteSpace: "nowrap",
   "& i": {
     fontSize: "24px",
   },
 });
 
-export const Tooltip = styled("span")({
-  display: "none",
-  position: "absolute",
-  left: "100%",
-  marginLeft: "10px",
-  background: "#898A8D",
-  color: "#000",
-  padding: "5px",
-  borderRadius: "5px",
-  whiteSpace: "nowrap",
-  zIndex: 1,
-});
-
 export const BottomSection = styled("div")({
   paddingBottom: "5px",
   paddingRight: "15px",
-  paddingLeft: "5px",
-});
-
-export const ContentArea = styled("div")({
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  width: "85%",
-});
-
-export const TopRightSection = styled("div")({
-  height: "8%",
-  background: "#898A8D",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
-
-export const TopRightText = styled("span")({
-  fontSize: "20px",
-  fontWeight: "bold",
-});
-
-export const MainContent = styled("div")({
-  flex: 1,
-  background: "#fff",
+  // paddingLeft: "5px",
 });

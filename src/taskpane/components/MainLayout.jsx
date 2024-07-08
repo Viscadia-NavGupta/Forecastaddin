@@ -4,14 +4,14 @@ import {
   TopRightSection,
   TopRightText,
   MainContent,
-  Sidebar,
+  SidebarContainer,
   ContentContainer,
   TopSection,
   ProfileImage,
 } from "./mainLayoutNew";
 import Sidebartest2 from "./sidebartest2";
 
-const MainLayout = ({ children, onMenuItemClick }) => {
+const MainLayout = ({ children, onMenuItemClick, handleLogout }) => {
   return (
     <Layout>
       <TopRightSection>
@@ -21,9 +21,9 @@ const MainLayout = ({ children, onMenuItemClick }) => {
         <TopRightText>Viscadia Forecast Platform</TopRightText>
       </TopRightSection>
       <MainContent>
-        <Sidebar>
-          <Sidebartest2 onMenuItemClick={onMenuItemClick} />
-        </Sidebar>
+        <SidebarContainer>
+          <Sidebartest2 onMenuItemClick={onMenuItemClick} handleLogout={handleLogout} />
+        </SidebarContainer>
         <ContentContainer>{children}</ContentContainer>
       </MainContent>
     </Layout>

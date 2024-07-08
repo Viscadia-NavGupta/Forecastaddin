@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 
 const urlDev = "https://localhost:3000/";
-const urlProd = "https://main.d2rlvo7y93ozcy.amplifyapp.com/";
+const urlProd = "https://main.d37wh7ni5es93f.amplifyapp.com";
 
 async function getHttpsOptions() {
   try {

@@ -5,6 +5,7 @@ export const Layout = styled("div")({
   flexDirection: "column",
   height: "100vh",
   width: "100%",
+  overflow: "hidden", // Prevents scrolling on the main layout
 });
 
 export const TopRightSection = styled("div")({
@@ -28,12 +29,13 @@ export const TopRightText = styled("span")({
 export const MainContent = styled("div")({
   display: "flex",
   flexDirection: "row",
-  height: "92vh", // Remaining height after the top section
-  marginTop: "8vh", // To ensure content starts after the fixed header
+  height: "92vh", // Adjust height to account for the fixed header
+  marginTop: "8vh", // Ensure content starts after the fixed header
+  overflowY: "auto", // Enables scrolling only for the main content area
 });
 
-export const Sidebar = styled("div")({
-  width: "15%",
+export const SidebarContainer = styled("div")({
+  width: "40px", // Adjust the width to be consistent with the sidebar component
   background: "#BD302B",
   display: "flex",
   flexDirection: "column",
@@ -42,13 +44,15 @@ export const Sidebar = styled("div")({
   top: "8vh", // Aligns the sidebar below the top right section
   bottom: 0,
   zIndex: 999,
-  borderRadius: "0 20px 20px 0", 
+  borderRadius: "0 20px 20px 0",
+  overflowX: "visible", // Allow horizontal overflow for tooltips
 });
 
 export const ContentContainer = styled("div")({
   flex: 1,
   padding: "20px",
-  overflowY: "auto",
+  marginLeft: "60px", // Offset the content by the width of the sidebar
+  overflowY: "auto", // Enables scrolling for the content container
 });
 
 export const TopSection = styled("div")({
