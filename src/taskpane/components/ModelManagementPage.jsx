@@ -31,7 +31,7 @@ const ModelManagementPage1 = () => {
       await AWSConnections.downloadAndInsertDataFromExcel(
         "8ab0233d-5c3d-473a-885f-e9fe82990f22",
         "https://download-docket.s3.amazonaws.com/",
-        "ACE"
+        "RUN COMPUTATION"
       );
     } catch (error) {
       console.error("Error loading existing model:", error);
