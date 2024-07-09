@@ -12,11 +12,11 @@ import * as AWSConnections from "./AWS Midleware/AWSConnections";
 import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
 
 const ScenarioManagement = ({ setPageValue }) => {
-  const [message, setMessage] = useState(true);
+  const [message, setMessage] = useState("Please select any button");
+  const [isFirstRun, setIsFirstRun] = useState(true);
 
   const RunScenario = async () => {
-    // State variable to track if it's the first run
-    const [isFirstRun, setIsFirstRun] = useState(true);
+    console.log("RunScenario function called");
 
     let servicename = await Excelfunctions.getActiveSheetName();
 
@@ -27,21 +27,21 @@ const ScenarioManagement = ({ setPageValue }) => {
       setPageValue("Scenario management");
 
       if (isFirstRun) {
-        await setMessage("Please select any button");
+        setMessage("Please select any button");
         setIsFirstRun(false); // Mark that the first run has occurred
       } else {
-        await setMessage("Scenario run successfully.");
+        setMessage("Scenario run successfully.");
         setIsFirstRun(true);
       }
     } else {
       console.log("Active ACE sheet");
-      await setMessage("Active ACE sheet not detected.");
+      setMessage("Active ACE sheet not detected.");
       setIsFirstRun(true);
     }
   };
 
   const menuItems = [
-    { icon: "/../assets/create_flow.svg", text: "Run Scenario", action: () => RunScenario() },
+    { icon: "/../assets/create_flow.svg", text: "Run Scenario", action: RunScenario },
     { icon: "/../assets/create_flow.svg", text: "Save Scenario", action: () => console.log("Button 1 clicked") },
     { icon: "/../assets/create_flow.svg", text: "Lock Scenario", action: () => console.log("Button 2 clicked") },
     { icon: "/../assets/create_flow.svg", text: "Load Assumptions", action: () => console.log("Button 3 clicked") },
