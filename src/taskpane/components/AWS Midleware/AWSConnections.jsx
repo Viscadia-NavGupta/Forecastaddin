@@ -887,3 +887,129 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     return { success: false, newSheetName: null };
   }
 }
+export async function uploadFileToS3test(uuid, uploadURL, buttonName) {
+  try {
+    return await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const range = sheet.getUsedRange();
+
+      // Load additional properties
+      range.load(["values", "numberFormat", "format/fill", "format/font", "format/borders"]);
+      await context.sync();
+
+      // Convert the sheet data to a workbook binary using XLSX
+      const worksheetData = range.values;
+      const numberFormats = range.numberFormat;
+      const fills = range.format.fill; 
+      const fonts = range.format.font;
+      const borders = range.format.borders;
+
+      // Check and log worksheet data
+      console.log("Worksheet Data:", worksheetData);
+
+      // Handle empty cells by replacing undefined values with an empty string
+      for (let R = 0; R < worksheetData.length; R++) {
+        for (let C = 0; C < worksheetData[R].length; C++) {
+          if (worksheetData[R][C] === undefined) {
+            worksheetData[R][C] = "";
+          }
+        }
+      }
+
+      // Create worksheet and apply values
+      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+      // Apply number formats, fills, fonts, and borders
+      for (let R = 0; R < worksheetData.length; R++) {
+        for (let C = 0; C < worksheetData[R].length; C++) {
+          const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+          if (worksheet[cellRef]) {
+            worksheet[cellRef].z = numberFormats[R][C]; // Number format
+
+            // Ensure fills, fonts, and borders exist before applying
+            worksheet[cellRef].s = {
+              fill: fills[R] && fills[R][C] ? mapFills(fills[R][C]) : undefined,
+              font: fonts[R] && fonts[R][C] ? mapFonts(fonts[R][C]) : undefined,
+              border: borders[R] && borders[R][C] ? mapBorders(borders[R][C]) : undefined,
+            };
+          }
+        }
+      }
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, buttonName === "GENERATE ACE SHEET" ? "Model Management" : "ACE");
+
+      // Generate the binary output for the workbook
+      const workbookBinary = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([workbookBinary], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      // Ensure that the uploadURL ends with a slash
+      if (!uploadURL.endsWith("/")) {
+        uploadURL += "/";
+      }
+
+      const strURL = `${uploadURL}${uuid}.xlsx`;
+
+      const startTime = performance.now();
+      const response = await fetch(strURL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
+        body: blob,
+      });
+      const endTime = performance.now();
+      const uploadTime = (endTime - startTime) / 1000; // Convert to seconds
+
+      if (response.ok) {
+        console.log(`File uploaded successfully. Time taken: ${uploadTime} seconds.`);
+        return true; // Indicating success
+      } else {
+        console.error(`Error uploading file. Status code: ${response.status}`, await response.text());
+        return false; // Indicating failure
+      }
+    });
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return false; // Indicating failure
+  }
+}
+
+// Helper Functions
+
+function mapBorders(borders) {
+  const borderStyles = {};
+
+  if (borders) {
+    const sides = ['top', 'bottom', 'left', 'right'];
+    sides.forEach((side) => {
+      if (borders[side]) {
+        borderStyles[side] = {
+          style: borders[side].style,
+          color: { rgb: borders[side].color }
+        };
+      }
+    });
+  }
+
+  return borderStyles;
+}
+
+function mapFonts(font) {
+  return {
+    name: font.name,
+    color: { rgb: font.color },
+    bold: font.bold,
+    italic: font.italic,
+    underline: font.underline ? true : undefined,
+    size: font.size
+  };
+}
+
+function mapFills(fill) {
+  return {
+    fgColor: { rgb: fill.color }
+  };
+}

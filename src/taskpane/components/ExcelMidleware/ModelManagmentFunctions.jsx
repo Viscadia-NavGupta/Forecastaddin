@@ -338,9 +338,8 @@ export async function addFlow() {
       const usedRange = sheet.getUsedRange();
       usedRange.load("rowCount");
       await context.sync();
-      const lastRowRange = sheet.getRange(
-        `${String.fromCharCode(64 + helperColumn2)}1:${String.fromCharCode(64 + helperColumn2)}${usedRange.rowCount}`
-      );
+      const lastRowRange = usedRange.getCell(5, helperColumn2).getAbsoluteResizedRange(usedRange.rowCount, 1);
+
       lastRowRange.load("values");
       await context.sync();
       console.log("Last row values loaded:", lastRowRange.values);
@@ -349,15 +348,19 @@ export async function addFlow() {
       const uniqueValues = new Set();
       const helperArray = [];
       for (let i = 0; i < lastRowRange.values.length; i++) {
-        const value = lastRowRange.values[i][0];
-        helperArray.push(value);
-        uniqueValues.add(value);
+        let value = lastRowRange.values[i][0];
+        if (value != "" || lastRowRange.values[i - 1][0] != "") {
+          helperArray.push(value);
+        }
+        if (typeof value === "string" && value.includes("Flow")) {
+          uniqueValues.add(value);
+        }
       }
 
       console.log("Helper array populated and unique values identified:", uniqueValues);
 
       // Calculate starting row for pasting predefined array
-      const pasteStartRow = 4 + helperArray.length;
+      const pasteStartRow = 7 + helperArray.length;
       const pasteStartCol = helperColumn2 + 1; // Paste column is dynamically one more than Helpercolumn2
 
       console.log("Paste start row:", pasteStartRow, "Paste start column:", pasteStartCol);
@@ -375,8 +378,8 @@ export async function addFlow() {
       console.log("Predefined array data pasted successfully");
 
       // Write "Model Assumptions" in column Helpercolumn1
-      const modelAssumptionStartRow = 5 + helperArray.length;
-      const modelAssumptionEndRow = 14 + helperArray.length;
+      const modelAssumptionStartRow = 6 + helperArray.length;
+      const modelAssumptionEndRow = modelAssumptionStartRow + 11;
       const modelAssumptionRange = sheet.getRangeByIndexes(
         modelAssumptionStartRow - 1,
         helperColumn1 - 1,
@@ -392,8 +395,8 @@ export async function addFlow() {
       console.log("Model Assumptions text added");
 
       // Write "Flow X" where X is the number of unique elements in HelperArray
-      const flowText = `Flow ${uniqueValues.size}`;
-      const flowTextStartRow = helperArray.length + 3;
+      const flowText = `Flow ${":"} ${uniqueValues.size + 1}`;
+      const flowTextStartRow = pasteStartRow - 1;
       const flowTextRange = sheet.getRangeByIndexes(flowTextStartRow - 1, helperColumn2 - 1, 1, 1);
       const flowTextRangeNext = sheet.getRangeByIndexes(flowTextStartRow - 1, helperColumn2, 1, 1);
       flowTextRange.values = [[flowText]];
@@ -409,7 +412,160 @@ export async function addFlow() {
       flowTextFillRange.values = flowTextFillValues;
       await context.sync();
 
+
+
+      for (let col = 0; col < predefinedArray[0].length; col++) {
+        let formatrange = pasteRange.getColumn(col);
+        formatrange.load("address");
+        await context.sync();
+        context.trackedObjects.add(formatrange);
+        if (col === 0) {
+          await formatBluePattern(context, formatrange, "#000000", "#FFFFFF", "#BFBFBF", "General");
+        } else {
+          await formatBluePattern(context, formatrange, "#000000", "#F0D995", "#BFBFBF", "General");
+        }
+        if (col === 3) {
+          // await DataValidation(context, formatrange, "=abs");
+          await datavalidationcol3(formatrange.address);
+        } else if (col === 4) {
+          await datavalidationcol4(formatrange.address);
+        }else if (col === 5) {
+          await datavalidationcol5(formatrange.address);
+        }else if (col === 6) {
+          await datavalidationcol6(formatrange.address);
+        }else if (col === 7) {
+          await datavalidationcol7(formatrange.address);
+        }else if (col >= 8) {
+          await datavalidationcol8(formatrange.address);
+        }
+        context.trackedObjects.remove(formatrange);
+      }
+      const flownamerange = sheet.getRangeByIndexes(flowTextStartRow - 1, helperColumn2 + 1, 1, 1);
+      context.trackedObjects.add(flownamerange);
+      await formatBluePattern(context, flownamerange, "#000000", "#F0D995", "#BFBFBF", "General");
+
+      context.trackedObjects.remove(flownamerange);
+      let formatrange = pasteRange.getRow(0);
+      formatrange.load("address");
+      await context.sync();
+      context.trackedObjects.add(formatrange);
+      await formatBluePattern(context, formatrange, "#FFFFFF", "#0E2841", "#BFBFBF", "General");
+
+      context.trackedObjects.remove(formatrange);
+
       console.log("Flow text added successfully");
+    } catch (error) {
+      console.error("Error in addFlow function:", error);
+    }
+  });
+}
+
+export async function deleteflow() {
+  await Excel.run(async (context) => {
+    try {
+      console.log("Start addFlow function");
+
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      sheet.load("name");
+      await context.sync();
+      console.log("Active sheet retrieved:", sheet.name);
+
+      // Define helper variables
+      let helperColumn1, helperColumn2;
+
+      // Define the predefined data array
+      const predefinedArray = [
+        [
+          "S.No",
+          "Assumption Name",
+          "Outputs Names",
+          "Assumption Application",
+          "Override",
+          "Relation",
+          "Granularity",
+          "Data Type",
+          "Line of Therapy",
+          "Patient Segment",
+          "Patient Sub-Segment",
+          "Product",
+          "SKU",
+        ],
+        ["1", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["2", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["3", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["4", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["5", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["6", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["7", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["8", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["9", "", "", "", "", "", "", "", "", "", "", "", ""],
+        ["10", "", "", "", "", "", "", "", "", "", "", "", ""],
+      ];
+
+      // Scan row 7 to find 'Model Assumptions' and 'Flow 1'
+      const checkRow = 7;
+      const checkRowRange = sheet.getRange(`A${checkRow}:ZZ${checkRow}`);
+      checkRowRange.load("values");
+      await context.sync();
+      console.log("Row values loaded: ", checkRowRange.values);
+
+      const rowValues = checkRowRange.values[0];
+      for (let i = 0; i < rowValues.length; i++) {
+        if (rowValues[i] === "Model Assumptions") {
+          helperColumn1 = i + 1;
+        } else if (rowValues[i] === "Flow 1") {
+          helperColumn2 = i + 1;
+        }
+      }
+
+      if (!helperColumn1 || !helperColumn2) {
+        console.error("Model Assumptions or Flow 1 not found in row 7.");
+        return;
+      }
+
+      console.log("Helper columns identified: Model Assumptions at", helperColumn1, "Flow 1 at", helperColumn2);
+
+      // Find the last row with data in the dynamically found column Helpercolumn2
+      const usedRange = sheet.getUsedRange();
+      usedRange.load("rowCount");
+      await context.sync();
+      const lastRowRange = usedRange.getCell(5, helperColumn2).getAbsoluteResizedRange(usedRange.rowCount, 1);
+
+      lastRowRange.load("values");
+      await context.sync();
+      console.log("Last row values loaded:", lastRowRange.values);
+
+      // Create a dictionary to ensure uniqueness
+      const uniqueValues = new Set();
+      const helperArray = [];
+      for (let i = 0; i < lastRowRange.values.length; i++) {
+        let value = lastRowRange.values[i][0];
+        if (value != "" || lastRowRange.values[i - 1][0] != "") {
+          helperArray.push(value);
+        }
+        if (typeof value === "string" && value.includes("Flow")) {
+          uniqueValues.add(value);
+        }
+      }
+      console.log(helperArray);
+      console.log("Helper array populated and unique values identified:", uniqueValues);
+      const lengtharr = Array.from(uniqueValues);
+      const deleterowstart = 6 + helperArray.indexOf(lengtharr[lengtharr.length - 1]);
+      const deletelastrow = 6 + helperArray.length;
+      const deletestartcol = helperColumn2 - 2; // Paste column is dynamically one more than Helpercolumn2
+      // Paste predefined array data starting from the calculated row in column right next to Helpercolumn2
+      const deleterange = sheet.getRangeByIndexes(
+        deleterowstart - 1,
+        deletestartcol - 1,
+        deletelastrow,
+        predefinedArray[0].length + 3
+      );
+      if (lengtharr[lengtharr.length - 1] != "Flow 1: ") {
+        deleterange.clear(Excel.ClearApplyTo.all);
+      } else {
+        return;
+      }
+      await context.sync();
     } catch (error) {
       console.error("Error in addFlow function:", error);
     }
@@ -1242,4 +1398,295 @@ export async function deleteProduct(context) {
   }).catch((error) => {
     console.error("Error in SKU Characterization:", error);
   });
+}
+
+// add flow
+export async function addflow1() {
+  try {
+    const sheetName = "Model Management";
+    const rowNumbers = [3, 7]; // Specify the rows you want to process
+    await Excel.run(async (context) => {
+      // Get the worksheet by name
+      const sheet = context.workbook.worksheets.getItem(sheetName);
+
+      // Get the used range
+      const usedRange = sheet.getUsedRange();
+
+      // Load values, row count, and column count of the used range
+      usedRange.load(["values", "rowCount", "columnCount"]);
+
+      // Sync to apply the load operation
+      await context.sync();
+
+      const rowRange3 = usedRange.getRow(2);
+      const rowRange7 = usedRange.getRow(6);
+
+      rowRange3.load("values");
+      rowRange7.load("values");
+
+      // Sync to apply the load operation
+      await context.sync();
+
+      // Find the index of the value "dimensions"
+      const Step1 = rowRange3.values[0].indexOf("Step 1");
+      const Step2 = rowRange3.values[0].indexOf("Step 2");
+      const Step3 = rowRange3.values[0].indexOf("Step 3");
+      const Step4 = rowRange3.values[0].indexOf("Step 4");
+      let first2rows = usedRange.getCell(2, 0).getAbsoluteResizedRange(2, usedRange.columnCount);
+      await context.sync();
+      // formatBluePattern(context, first2rows, "#143D66", "#FFFFFF", "#FFFFFF", "text")
+      const columnRange = usedRange.getColumn(14);
+      columnRange.load("values");
+      await context.sync();
+      let columnValues = columnRange.values.map((row, index) => [row[0], index]);
+      let filteredColumnValues = columnValues.filter((item) => item[0] !== "");
+      let rangetoformat = usedRange
+        .getCell(filteredColumnValues[3][1], Step1)
+        .getAbsoluteResizedRange(filteredColumnValues.length - 3, 1);
+      rangetoformat.load("Address");
+      await context.sync();
+      await borderbottom(context, rangetoformat);
+      await context.sync();
+      // Log the filtered column values
+      console.log("Filtered Column Values:", filteredColumnValues);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function formatBluePattern(context, range, fontColor, fillColor, borderColor, numberFormat) {
+  try {
+    range.load([
+      "address",
+      "format/font",
+      "format/fill",
+      "numberFormat",
+      "format/verticalAlignment",
+      "format/horizontalAlignment",
+      "format/borders",
+    ]);
+    context.trackedObjects.add(range);
+    await context.sync();
+    console.log(`Process 2: Loaded range properties: ${range.address}`);
+
+    // Set the font color, name, and size
+    range.format.font.color = fontColor;
+    range.format.font.name = "Arial";
+    range.format.font.size = 10;
+
+    // Set the fill color
+    range.format.fill.color = fillColor;
+
+    // Set number format
+    range.numberFormat = numberFormat;
+
+    // Set vertical and horizontal alignment
+    range.format.verticalAlignment = "center";
+    range.format.horizontalAlignment = "center";
+
+    // Ensure the borders are set
+    await borderall(context, range);
+
+    console.log("Borders applied.");
+    context.trackedObjects.remove(range);
+    await context.sync();
+  } catch (error) {
+    console.error(`Error formatting range ${range.address}:`, error);
+  }
+}
+
+async function borderbottom(context, range) {
+  range.format.borders.getItem("EdgeBottom").style = "Continuous";
+  range.format.borders.getItem("EdgeRight").style = "Continuous";
+  range.format.borders.getItem("InsideHorizontal").style = "Continuous";
+  range.format.borders.getItem("EdgeBottom").color = "#BFBFBF";
+  range.format.borders.getItem("EdgeRight").color = "#BFBFBF";
+  range.format.borders.getItem("InsideHorizontal").color = "#BFBFBF";
+}
+async function borderall(context, range) {
+  range.format.borders.getItem("InsideHorizontal").style = "Continuous";
+  range.format.borders.getItem("InsideVertical").style = "Continuous";
+  range.format.borders.getItem("EdgeBottom").style = "Continuous";
+  range.format.borders.getItem("EdgeLeft").style = "Continuous";
+  range.format.borders.getItem("EdgeRight").style = "Continuous";
+  range.format.borders.getItem("EdgeTop").style = "Continuous";
+  range.format.borders.getItem("InsideHorizontal").color = "#BFBFBF";
+  range.format.borders.getItem("InsideVertical").color = "#BFBFBF";
+  range.format.borders.getItem("EdgeBottom").color = "#BFBFBF";
+  range.format.borders.getItem("EdgeLeft").color = "#BFBFBF";
+  range.format.borders.getItem("EdgeRight").color = "#BFBFBF";
+  range.format.borders.getItem("EdgeTop").color = "#BFBFBF";
+}
+
+async function DataValidation(context, range, Datarule) {
+  try {
+    console.log("Starting DataValidation function");
+    console.log("Datarule: ", Datarule);
+
+    // Ensure the range is properly defined
+    if (!range) {
+      throw new Error("Range is not defined or null");
+    }
+    console.log("Range before loading address: ", range);
+
+    // Load the address property of the range to ensure it is properly tracked
+    range.load("address");
+    await context.sync();
+    console.log("Range address loaded successfully");
+    console.log("Range address: ", range.address);
+
+    // Apply data validation rule
+    range.dataValidation.rule = {
+      list: {
+        inCellDropDown: true,
+        source: Datarule,
+      },
+    };
+
+    await context.sync();
+    console.log("Data validation rule applied");
+  } catch (error) {
+    console.error("Error in DataValidation function:", error);
+  }
+}
+
+async function datavalidationcol3(rangeAddress) {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const range = sheet.getRange(rangeAddress);
+      range.dataValidation.rule = {
+        list: {
+          inCellDropDown: true,
+          source:
+            "Epidemiology,Epidemiology Cut,Tx Mapping,Events & Market Share,Persistency Assumption,Commercial Factor,Progression Rate,Patient Split,Actuals",
+        },
+      };
+
+      // Load properties to ensure changes are made
+      range.load(["dataValidation"]);
+
+      await context.sync();
+
+      console.log("Data validation rule applied successfully.");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function datavalidationcol4(rangeAddress) {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const range = sheet.getRange(rangeAddress);
+      range.dataValidation.rule = {
+        list: {
+          inCellDropDown: true,
+          source:"Assumption Input Override,Assumption Output Override",
+        },
+      };
+
+      // Load properties to ensure changes are made
+      range.load(["dataValidation"]);
+
+      await context.sync();
+
+      console.log("Data validation rule applied successfully.");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function datavalidationcol5(rangeAddress) {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const range = sheet.getRange(rangeAddress);
+      range.dataValidation.rule = {
+        list: {
+          inCellDropDown: true,
+          source:"Multiplication,Division,Addition,Subtraction,Reverse Array Multiplication",
+        },
+      };
+
+      // Load properties to ensure changes are made
+      range.load(["dataValidation"]);
+
+      await context.sync();
+
+      console.log("Data validation rule applied successfully.");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function datavalidationcol6(rangeAddress) {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const range = sheet.getRange(rangeAddress);
+      range.dataValidation.rule = {
+        list: {
+          inCellDropDown: true,
+          source:"Single Value,Annual - Single Value,Annual - Time Series,Monthly - Time Series",
+        },
+      };
+
+      // Load properties to ensure changes are made
+      range.load(["dataValidation"]);
+
+      await context.sync();
+
+      console.log("Data validation rule applied successfully.");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function datavalidationcol7(rangeAddress) {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const range = sheet.getRange(rangeAddress);
+      range.dataValidation.rule = {
+        list: {
+          inCellDropDown: true,
+          source:"Percentage,Number,Currency - US Dollars,Currency - Euros,Mapping Matrix,Event Palette Input",
+        },
+      };
+
+      // Load properties to ensure changes are made
+      range.load(["dataValidation"]);
+
+      await context.sync();
+
+      console.log("Data validation rule applied successfully.");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function datavalidationcol8(rangeAddress) {
+  try {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getActiveWorksheet();
+      const range = sheet.getRange(rangeAddress);
+      range.dataValidation.rule = {
+        list: {
+          inCellDropDown: true,
+          source:"Yes,No",
+        },
+      };
+
+      // Load properties to ensure changes are made
+      range.load(["dataValidation"]);
+
+      await context.sync();
+
+      console.log("Data validation rule applied successfully.");
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }

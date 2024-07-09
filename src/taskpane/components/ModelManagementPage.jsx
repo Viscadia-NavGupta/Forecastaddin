@@ -10,6 +10,7 @@ import {
 } from "./ModelManagmentStyles";
 import * as AWSConnections from "./AWS Midleware/AWSConnections";
 import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
+import * as MMfunctions from "./ExcelMidleware/ModelManagmentFunctions";
 
 const ModelManagementPage1 = () => {
   const username = sessionStorage.getItem("username");
@@ -28,11 +29,12 @@ const ModelManagementPage1 = () => {
 
   const handleLoadExistingModel = async () => {
     try {
-      await AWSConnections.downloadAndInsertDataFromExcel(
-        "8ab0233d-5c3d-473a-885f-e9fe82990f22",
-        "https://download-docket.s3.amazonaws.com/",
-        "RUN COMPUTATION"
-      );
+      // await AWSConnections.uploadFileToS3test(
+      //   "13460925-5481-0A4C-8F81-B7495E7E3C41",
+      //   "https://upload-docket.s3.amazonaws.com/",
+      //   "GENERATE ACE SHEET"
+      // );
+      await MMfunctions.addflow1();
     } catch (error) {
       console.error("Error loading existing model:", error);
     }

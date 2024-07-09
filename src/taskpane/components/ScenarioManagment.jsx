@@ -41,7 +41,7 @@ const ScenarioManagement = ({ setPageValue }) => {
   };
 
   const menuItems = [
-    { icon: "/../assets/create_flow.svg", text: "Run Scenario", action: () => RunScenario() },
+    { icon: "/../assets/create_flow.svg", text: "Run ", action: () => RunScenario() },
     { icon: "/../assets/create_flow.svg", text: "Save Scenario", action: () => console.log("Button 1 clicked") },
     { icon: "/../assets/create_flow.svg", text: "Lock Scenario", action: () => console.log("Button 2 clicked") },
     { icon: "/../assets/create_flow.svg", text: "Load Assumptions", action: () => console.log("Button 3 clicked") },

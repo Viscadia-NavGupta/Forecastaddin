@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  Container,
-  ModelManagementButton,
-  ButtonsContainer,
-  Button,
-  Icon,
-  Label,
-} from "./modelEditorstyles";
+import { Container, ModelManagementButton, ButtonsContainer, Button, Icon, Label } from "./modelEditorstyles";
 import * as AWSConnections from "./AWS Midleware/AWSConnections";
 import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
+import * as MMfunctions from "./ExcelMidleware/ModelManagmentFunctions"
 
 const MMSheetManagment = ({ setPageValue }) => {
   const handleCreateNewModel = async () => {
@@ -32,10 +26,14 @@ const MMSheetManagment = ({ setPageValue }) => {
       text: "Delete Assumption",
       action: () => MMfunctions.deleteAssumption(),
     },
-    { icon: "/../assets/addflow.svg", text: "Add Flow", action: () => console.log("Button 3 clicked") },
-    { icon: "/../assets/deleteflow.svg", text: "Delete Flow", action: () => console.log("Button 4 clicked") },
+    { icon: "/../assets/addflow.svg", text: "Add Flow", action: () => MMfunctions.addFlow() },
+    { icon: "/../assets/deleteflow.svg", text: "Delete Flow", action: () => MMfunctions.deleteflow() },
     { icon: "/../assets/adddimension.svg", text: "Add Dimension", action: () => MMfunctions.addDimension1() },
-    { icon: "/../assets/deletedimension.svg", text: "Delete Dimension", action: () => MMfunctions.deletediemnsions() },
+    {
+      icon: "/../assets/deletedimension.svg",
+      text: "Delete Dimension",
+      action: () => MMfunctions.deletediemnsions(),
+    },
     { icon: "/../assets/create_flow.svg", text: "Add SKU", action: () => MMfunctions.addSku() },
     { icon: "/../assets/create_flow.svg", text: "Delete SKU", action: () => MMfunctions.DeleteSku() },
     { icon: "/../assets/create_flow.svg", text: "Add Product", action: () => MMfunctions.addProduct() },
