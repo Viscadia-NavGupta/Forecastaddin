@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import {
+  PageContainer,
+  LogoContainer,
+  ContentContainer,
   Logo,
-  UsernameInputContainer,
   ThemeBorder,
   RedRec,
   WhiteRec,
-  Container,
   Heading,
   Form,
   InputContainer,
@@ -33,16 +34,16 @@ const UserRegistrationForm = ({ setPageValue }) => {
   };
 
   return (
-    <div>
-      <UsernameInputContainer>
+    <PageContainer>
+      <LogoContainer>
         <Logo src="/../assets/viscadialogo.png" alt="Viscadia Logo" />
         <ThemeBorder>
           <WhiteRec />
           <RedRec />
         </ThemeBorder>
-      </UsernameInputContainer>
+      </LogoContainer>
 
-      <Container>
+      <ContentContainer>
         <Heading>Inquiry Form</Heading>
         <Form onSubmit={handleSubmit}>
           <InputContainer>
@@ -74,8 +75,8 @@ const UserRegistrationForm = ({ setPageValue }) => {
             <Button type="button" onClick={() => setPageValue("UserLogin")}>Login</Button>
           </ButtonContainer>
         </Form>
-      </Container>
-    </div>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 

@@ -9,16 +9,11 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
   const tooltipRef = useRef(null);
 
   const menuItems = [
-    { icon: "bx bx-grid-alt", text: "Model Management", onClick: () => onMenuItemClick("ModelManagementPage1") },
-    { icon: "bx bx-collection", text: "Model Editor", onClick: () => onMenuItemClick("Model Editor") },
-    { icon: "bx bx-cog", text: "Scenario management", onClick: () => onMenuItemClick("Scenario management") },
-    { icon: "bx bx-user", text: "Risk Analytics", onClick: () => onMenuItemClick("Risk Analytics") },
-    { icon: "bx bx-calendar", text: "Load Scenario", onClick: () => onMenuItemClick("LoadPage") },
-    { icon: "bx bx-message", text: "TBD", onClick: () => onMenuItemClick("ModelManagementPage") },
-    { icon: "bx bx-bell", text: "TBD", onClick: () => onMenuItemClick("ModelManagementPage") },
-    { icon: "bx bx-book", text: "TBD", onClick: () => onMenuItemClick("ModelManagementPage") },
-    { icon: "bx bx-photo-album", text: "TBD", onClick: () => onMenuItemClick("ModelManagementPage") },
-    { icon: "bx bx-help-circle", text: "Help", onClick: () => onMenuItemClick("ModelManagementPage") },
+    { icon: "bx bx-home", text: "Home", onClick: () => onMenuItemClick("Home") },
+    { icon: "bx bxs-component", text: "Model Manager", onClick: () => onMenuItemClick("ModelManagementPage1") },
+    { icon: "bx bx-cog", text: "Scenario Manager", onClick: () => onMenuItemClick("ScenarioManager") },
+    { icon: "bx bx-user", text: "Outputs", onClick: () => onMenuItemClick("OutputManager") },
+    { icon: "bx bx-calendar", text: "Risk & Analytics", onClick: () => onMenuItemClick("RiskManager") },
   ];
 
   const handleMouseEnter = (text, ref) => {

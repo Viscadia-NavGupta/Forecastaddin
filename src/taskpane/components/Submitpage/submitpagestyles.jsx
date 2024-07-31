@@ -1,26 +1,29 @@
 import { styled } from "@mui/system";
 
-export const Container = styled("div")({
+export const PageContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   height: "100vh",
+  // padding: "20px",
+  boxSizing: "border-box",
+});
+
+export const LogoContainer = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: "20px",
+  flex: "0 1 auto", // Allow the logo container to grow and shrink
 });
 
 export const Logo = styled("img")({
   width: "250px",
   height: "80px",
   marginBottom: "10px",
-  marginTop: "20px",
-});
-
-export const UsernameInputContainer = styled("div")({
-  background: "#FFFFFF",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
+  // marginTop: "10px", // Reduced the top margin
 });
 
 export const ThemeBorder = styled("div")({
@@ -43,21 +46,25 @@ export const WhiteRec = styled("div")({
   background: "#BD302B",
 });
 
-export const ContainerContent = styled("div")({
+export const ContentContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center",
+  // justifyContent: "center",
+  width: "100%",
+  textAlign: "center", // Center-align the text
+  flex: "1 1 auto", // Allow the content container to grow and shrink
 });
 
 export const Heading = styled("h2")({
   fontFamily: "Roboto",
   fontStyle: "normal",
   fontWeight: 500,
-  fontSize: "22px",
-  lineHeight: "160%",
+  fontSize: "20px", // Adjusted font size
+  lineHeight: "1.5", // Adjusted line height
   color: "#000000",
-  marginBottom: "40px",
+  marginBottom: "20px",
+  padding: "0 20px", // Added padding for better text layout
 });
 
 export const Button = styled("button")({
@@ -65,21 +72,19 @@ export const Button = styled("button")({
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
-  width: "113px",
-  height: "31px",
+  width: "150px", // Adjusted button width
+  height: "40px", // Adjusted button height
   background: "#0081C5",
-  borderRadius: "32px",
+  borderRadius: "20px", // Adjusted border radius
   color: "white",
   fontFamily: "'Roboto', sans-serif",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "16px",
-  lineHeight: "160%",
+  lineHeight: "1.5",
   border: "none",
   cursor: "pointer",
   "&:hover": {
     backgroundColor: "#0f2c4b",
   },
-  marginRight: "25px", // Added space between buttons
-  marginLeft: "15px",
 });

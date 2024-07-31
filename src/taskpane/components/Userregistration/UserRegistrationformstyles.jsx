@@ -1,26 +1,26 @@
 import { styled } from "@mui/system";
 
-export const Container = styled("div")({
+export const PageContainer = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  // justifyContent: "center",
+  height: "100vh",
+  marginTop: "0px",
+});
+
+export const LogoContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  height: "100vh",
+  // marginBottom: "20px",
 });
 
 export const Logo = styled("img")({
   width: "250px",
   height: "80px",
   marginBottom: "10px",
-  marginTop: "20px",
-});
-
-export const UsernameInputContainer = styled("div")({
-  background: "#FFFFFF",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
 });
 
 export const ThemeBorder = styled("div")({
@@ -43,11 +43,12 @@ export const WhiteRec = styled("div")({
   background: "#BD302B",
 });
 
-export const ContainerContent = styled("div")({
+export const ContentContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
+  width: "100%",
 });
 
 export const Heading = styled("h2")({
@@ -57,7 +58,7 @@ export const Heading = styled("h2")({
   fontSize: "22px",
   lineHeight: "160%",
   color: "#000000",
-  marginBottom: "40px",
+  marginBottom: "0px",
 });
 
 export const Form = styled("form")({
@@ -69,6 +70,7 @@ export const Form = styled("form")({
 
 export const InputContainer = styled("div")({
   marginBottom: "15px",
+  paddingLeft: "20px",
 });
 
 export const Label = styled("label")({

@@ -7,11 +7,16 @@ export const Container = styled("div")({
   justifyContent: "center",
 });
 
-export const ModelManagementTitle = styled("h1")({
-  color: "#595959",
-  fontSize: "20px",
-  textDecoration: "underline",
+export const ModelManagementButton = styled("button")({
+  backgroundColor: "#00a19B",
+  color: "#fff",
+  border: "none",
+  borderRadius: "20px",
+  padding: "10px 20px",
+  fontSize: "12px",
+  fontWeight: "bold",
   marginBottom: "30px",
+  cursor: "pointer",
 });
 
 export const ButtonsContainer = styled("div")({
@@ -51,11 +56,11 @@ export const Label = styled("span")({
 });
 
 export const FreshLabel = styled(Label)({
-  color: "#595959",
+  color: "#bd302b",
   textAlign: "center",
 });
 
 export const LoadLabel = styled(Label)({
-  color: "#595959",
+  color: "#007bff",
   textAlign: "center",
 });

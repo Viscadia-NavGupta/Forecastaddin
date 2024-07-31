@@ -7,13 +7,13 @@ import {
   Icon,
   FreshLabel,
   LoadLabel,
-} from "./ModelManagmentStyles";
+} from "./ScenarioManagerStyles";
 import * as AWSConnections from "./AWS Midleware/AWSConnections";
 import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
 import * as MMfunctions from "./ExcelMidleware/ModelManagmentFunctions";
 import * as testfucntions from "./ExcelMidleware/testfile";
 
-const ModelManagementPage1 = () => {
+const ScenarioManeger = () => {
   const username = sessionStorage.getItem("username");
   console.log(username);
 
@@ -43,19 +43,19 @@ const ModelManagementPage1 = () => {
 
   return (
     <Container>
-      <ModelManagementTitle>Model Manager</ModelManagementTitle>
+      <ModelManagementTitle>Scenario Manager</ModelManagementTitle>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
-          <Icon src="/../assets/model.svg" alt="Fresh Icon" />
-          <FreshLabel>Design a new model</FreshLabel>
+          <Icon src="/../assets/computation.svg" alt="Fresh Icon" />
+          <FreshLabel>Create new forecast</FreshLabel>
         </Button>
         <Button onClick={handleLoadExistingModel}>
           <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
-          <LoadLabel>Load an existing model</LoadLabel>
+          <LoadLabel>Load an existing forecast</LoadLabel>
         </Button>
       </ButtonsContainer>
     </Container>
   );
 };
 
-export default ModelManagementPage1;
+export default ScenarioManeger;

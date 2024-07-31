@@ -2,7 +2,7 @@ import React from "react";
 import { Container, ModelManagementButton, ButtonsContainer, Button, Icon, Label } from "./modelEditorstyles";
 import * as AWSConnections from "./AWS Midleware/AWSConnections";
 import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
-import * as MMfunctions from "./ExcelMidleware/ModelManagmentFunctions"
+import * as MMfunctions from "./ExcelMidleware/ModelManagmentFunctions";
 
 const MMSheetManagment = ({ setPageValue }) => {
   const handleCreateNewModel = async () => {
@@ -10,9 +10,12 @@ const MMSheetManagment = ({ setPageValue }) => {
 
     if (servicename === "Model Management") {
       setPageValue("LoadingCircle");
-      await AWSConnections.orchestrationfucntion("GENERATE ACE SHEET");
-      console.log("ACE Generated");
-      setPageValue("Model Editor");
+      let Service_flag = await AWSConnections.orchestrationfucntion("GENERATE ACE SHEET", "True");
+      if (Service_flag.result === "Override") {
+        setPageValue("Overirdeconfirmation", Service_flag.uuid); // Pass the UUID when navigating to the override confirmation page
+      } else {
+        setPageValue("Model Editor");
+      }
     } else {
       console.log("Activate MM Sheet");
     }

@@ -10,7 +10,7 @@ import {
   DropdownList,
   DropdownItem,
   ImportButton,
-} from "./Loadpagestyles";
+} from "./LockScenariostyles";
 import { DataFrame } from "dataframe-js";
 import * as AWSConnections from "./AWS Midleware/AWSConnections";
 
@@ -35,7 +35,7 @@ const initialDropdownItems = Object.keys(dropdownToColumnMap).reduce((acc, key) 
   return acc;
 }, {});
 
-const LoadPage = ({ setPageValue }) => {
+const Lockscenario = ({ setPageValue }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedItems, setSelectedItems] = useState(initialSelectedItems);
   const storedUsername = useMemo(() => sessionStorage.getItem("username"), []);
@@ -166,7 +166,7 @@ const LoadPage = ({ setPageValue }) => {
 
   return (
     <Container>
-      <Heading>Load Scenario</Heading>
+      <Heading>Lock Scenario</Heading>
       <DropdownContainer>
         {Object.keys(dropdownToColumnMap).map((label, index) => (
           <Dropdown key={index}>
@@ -188,11 +188,11 @@ const LoadPage = ({ setPageValue }) => {
         ))}
       </DropdownContainer>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', width: '100%' }}>
-        <ImportButton onClick={handleImportACESheetClick}>Import ACE Sheet →</ImportButton>
-        <ImportButton onClick={handleImportOutputsClick}>Import Outputs →</ImportButton>
+        <ImportButton onClick={handleImportACESheetClick}>Lock Scenario →</ImportButton>
+        <ImportButton onClick={handleImportOutputsClick}>Un-Lock Scenario →</ImportButton>
       </div>
     </Container>
   );
 };
 
-export default LoadPage;
+export default Lockscenario;

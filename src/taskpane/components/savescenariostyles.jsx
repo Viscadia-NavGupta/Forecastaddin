@@ -11,12 +11,6 @@ export const Container = styled("div")({
   justifyContent: "flex-start",
 });
 
-export const Logo = styled("img")({
-  width: "200px",
-  height: "auto",
-  marginBottom: "20px",
-});
-
 export const Heading = styled("h2")({
   fontFamily: "Roboto",
   fontStyle: "normal",
@@ -25,81 +19,68 @@ export const Heading = styled("h2")({
   border: "none",
   borderRadius: "20px",
   padding: "10px 40px",
-  fontSize: "12px",
+  fontSize: "16px",
   fontWeight: "bold",
   cursor: "pointer",
 });
 
-export const BackButton = styled("button")({
-  position: "absolute",
-  top: "20px",
-  left: "20px",
-  padding: "10px",
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-});
-
-export const BackIcon = styled("img")({
-  width: "24px",
-  height: "24px",
+export const MessageBox = styled("div")({
+  fontFamily: "Roboto",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "14px",
+  color: "#FF0000",
+  padding: "20px",
+  borderRadius: "8px",
+  backgroundColor: "#FFE0E0",
+  textAlign: "center",
+  marginTop: "20px",
 });
 
 export const DropdownContainer = styled("div")({
   width: "100%",
   background: "#FFFFFF",
   borderRadius: "16px",
+  padding: "20px",
 });
 
-export const Dropdown = styled("div")({
-  marginBottom: "10px",
+export const ComboBoxContainer = styled("div")({
+  position: "relative",
   width: "100%",
 });
 
-export const DropdownHeading = styled("div")({
-  fontFamily: "Roboto",
-  fontStyle: "normal",
-  fontWeight: 500,
-  fontSize: "10px",
-  lineHeight: "160%",
-  color: "#000000",
-  marginBottom: "4px",
-});
-
-export const DropdownHeader = styled("div")({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "5px",
-  border: "1px solid #E0E0E0",
-  borderRadius: "8px",
-  cursor: "pointer",
+export const ComboBoxInput = styled("input")({
+  width: "100%",
+  padding: "10px",
   fontFamily: "Roboto",
   fontStyle: "normal",
   fontWeight: 400,
-  fontSize: "10px",
+  fontSize: "12px",
   lineHeight: "160%",
   color: "#000000",
+  border: "1px solid #E0E0E0",
+  borderRadius: "8px",
+  boxSizing: "border-box",
 });
 
-export const Arrow = styled("span")({
-  fontSize: "12px",
-});
-
-export const DropdownList = styled("div")({
-  padding: "10px",
+export const ComboBoxList = styled("div")({
+  position: "absolute",
+  width: "100%",
+  maxHeight: "150px",
+  overflowY: "auto",
   background: "#FFF",
   boxShadow: "0px 1px 4.6px rgba(0, 0, 0, 0.15)",
   borderRadius: "8px",
   marginTop: "5px",
+  zIndex: 1,
 });
 
-export const DropdownItem = styled("div")({
-  padding: "5px 10px",
+export const ComboBoxItem = styled("div")({
+  padding: "10px",
   fontFamily: "Roboto",
   fontStyle: "normal",
   fontWeight: 400,
-  fontSize: "10px",
+  fontSize: "12px",
   lineHeight: "160%",
   color: "#63666A",
   cursor: "pointer",
@@ -108,13 +89,28 @@ export const DropdownItem = styled("div")({
   },
 });
 
-export const ImportButton = styled("button")({
-  padding: "8px 11px",
-  marginLeft: "6px",
+export const Input = styled("input")({
+  width: "100%",
+  padding: "10px",
+  marginTop: "10px",
   fontFamily: "Roboto",
   fontStyle: "normal",
   fontWeight: 400,
-  fontSize: "9px",
+  fontSize: "12px",
+  lineHeight: "160%",
+  color: "#000000",
+  border: "1px solid #E0E0E0",
+  borderRadius: "8px",
+  boxSizing: "border-box",
+});
+
+export const SaveButton = styled("button")({
+  padding: "10px 20px",
+  marginTop: "20px",
+  fontFamily: "Roboto",
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "12px",
   color: "#FFFFFF",
   backgroundColor: "#0081C5",
   borderRadius: "8px",

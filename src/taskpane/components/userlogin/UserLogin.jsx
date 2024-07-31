@@ -18,11 +18,17 @@ import {
   ContactUsButton,
   ButtonfButton,
   Footer,
+  LoginContainer,
+  RememberForgotContainer,
+  RememberMeLabel,
+  ForgotPasswordLink,
+  ContactUsLink
 } from "./UserLoginStyles";
 import * as AWSConnections from "../AWS Midleware/AWSConnections";
 
 const UserLogin = ({ handleLogin, setPageValue }) => {
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleProceedClick = async () => {
@@ -52,28 +58,34 @@ const UserLogin = ({ handleLogin, setPageValue }) => {
         </ThemeBorder>
       </UsernameInputContainer>
       <Heading>Viscadia Forecasting Platform</Heading>
-      <UserProfileButton>
-        <UserProfileButtonInner>User Profile Information</UserProfileButtonInner>
-      </UserProfileButton>
-      <Rec>
+      <LoginContainer>
         <InputContainer>
           <InputContainerInput
             type="email"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your Username"
-            autocomplete="email"
+            placeholder="Username"
+            autoComplete="email"
           />
-          <HelperTextContainer>
-            <InputHelperText>Display username in Excel*</InputHelperText>
-            <ContactUsButton onClick={() => setPageValue("ContactUs")}>Contact Us</ContactUsButton>
-          </HelperTextContainer>
+          <InputContainerInput
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            autoComplete="current-password"
+          />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </InputContainer>
-        <div>
-          <ButtonfButton onClick={handleProceedClick}>Proceed →</ButtonfButton>
-        </div>
-      </Rec>
+        <ButtonfButton onClick={handleProceedClick}>Log In</ButtonfButton>
+        <RememberForgotContainer>
+          <label>
+            <input type="checkbox" />
+            <RememberMeLabel>Remember me</RememberMeLabel>
+          </label>
+          <ForgotPasswordLink href="#">Forgot Your Password?</ForgotPasswordLink>
+        </RememberForgotContainer>
+        <ContactUsLink onClick={() => setPageValue("ContactUs")}>Contact Us</ContactUsLink>
+      </LoginContainer>
       <Footer>© 2024 Viscadia. All rights reserved.</Footer>
     </Container>
   );

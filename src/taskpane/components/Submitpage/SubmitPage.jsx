@@ -1,11 +1,12 @@
 import React from "react";
 import {
+  PageContainer,
+  LogoContainer,
+  ContentContainer,
   Logo,
-  UsernameInputContainer,
   ThemeBorder,
   RedRec,
   WhiteRec,
-  Container,
   Heading,
   Button,
 } from "./submitpagestyles";
@@ -26,16 +27,16 @@ const Submitpage = ({ setPageValue }) => {
   };
 
   return (
-    <div>
-      <UsernameInputContainer>
+    <PageContainer>
+      <LogoContainer>
         <Logo src="/../assets/viscadialogo.png" alt="Viscadia Logo" />
         <ThemeBorder>
           <WhiteRec />
           <RedRec />
         </ThemeBorder>
-      </UsernameInputContainer>
+      </LogoContainer>
 
-      <Container>
+      <ContentContainer>
         <Heading>
           Thank you for submitting your request! Our team is reviewing it and will get back to you shortly. We appreciate your patience.
         </Heading>
@@ -44,8 +45,8 @@ const Submitpage = ({ setPageValue }) => {
             Login Page
           </Button>
         </div>
-      </Container>
-    </div>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 

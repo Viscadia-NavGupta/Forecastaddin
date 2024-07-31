@@ -9,10 +9,19 @@ import MMSheetManagment from "./ModelEditor";
 import ScenarioManagement from "./ScenarioManagment";
 import * as AWSConnections from "./AWS Midleware/AWSConnections"; // import AWSConnections to use in App.js
 import LoadingCircle from "./loadingcircle";
+import DynamicButtonComponent from "./ACENavigation";
+import Overirdeconfirmation from "./OverideConfirmationpage";
+import Savesscenario from "./savescenario";
+import Lockscenario from "./LockSceanrio";
+import Home from "./HomePage/Home";
+import ScenarioManeger from "./ScenarioManager";
+import Outputsmaneger from "./OutputsManager";
+import Riskmanager from "./RiskManager";
 
 function App() {
   const [page, setPage] = useState("UserLogin");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [uuid, setUuid] = useState(""); // New state to hold the UUID
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -21,7 +30,7 @@ function App() {
         const result = await AWSConnections.getCognitoAccessToken(storedUsername, "overarching");
         if (result.success) {
           setIsLoggedIn(true);
-          setPage("ModelManagementPage1");
+          setPage("Home");
         } else {
           sessionStorage.removeItem("username");
           setIsLoggedIn(false);
@@ -36,13 +45,14 @@ function App() {
     checkUserSession();
   }, []);
 
-  const setPageValue = (value) => {
+  const setPageValue = (value, uuid = "") => {
     setPage(value);
+    setUuid(uuid); // Set the UUID when the page is changed
   };
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    setPage("ModelManagementPage1");
+    setPage("Home");
   };
 
   const handleLogout = () => {
@@ -55,6 +65,8 @@ function App() {
     switch (page) {
       case "ModelManagementPage1":
         return <ModelManagementPage1 setPageValue={setPageValue} />;
+      case "Home":
+        return <Home setPageValue={setPageValue} />;
       case "UserLogin":
         return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
       case "Model Editor":
@@ -67,8 +79,22 @@ function App() {
         return <Submitpage setPageValue={setPageValue} />;
       case "ContactUs":
         return <UserRegistrationForm setPageValue={setPageValue} />;
+      case "DynamicButtonComponent":
+        return <DynamicButtonComponent setPageValue={setPageValue} />;
       case "LoadingCircle":
         return <LoadingCircle />;
+      case "Overirdeconfirmation":
+        return <Overirdeconfirmation setPageValue={setPageValue} UUID={uuid} />; // Pass the UUID prop
+      case "savescenario":
+        return <Savesscenario setPageValue={setPageValue} />; // Pass the UUID prop
+      case "LockScenario":
+        return <Lockscenario setPageValue={setPageValue} />; // Pass the UUID prop
+      case "ScenarioManager":
+        return <ScenarioManeger setPageValue={setPageValue} />; // Pass the UUID prop
+      case "OutputManager":
+        return <Outputsmaneger setPageValue={setPageValue} />; // Pass the UUID prop
+      case "RiskManager":
+        return <Riskmanager setPageValue={setPageValue} />; // Pass the UUID prop
       default:
         return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
     }

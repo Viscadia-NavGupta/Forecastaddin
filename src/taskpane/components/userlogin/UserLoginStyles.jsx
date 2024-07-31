@@ -10,7 +10,7 @@ export const Container = styled("div")({
 
 export const Logo = styled("img")({
   width: "250px",
-  height: "80px",
+  height: "65px",
   marginBottom: "10px",
   marginTop: "20px",
 });
@@ -107,12 +107,11 @@ export const InputContainer = styled("div")({
 
 export const InputContainerInput = styled("input")({
   width: "100%",
-  border: "none",
-  borderBottom: "0.87px solid #C1C5C8",
-  borderRadius: 0,
+  border: "1px solid #C1C5C8",
+  borderRadius: "4px",
   fontSize: "16px",
   outline: "none",
-  padding: "5px 0",
+  padding: "10px",
   marginBottom: "10px",
   boxSizing: "border-box",
 });
@@ -149,10 +148,10 @@ export const ButtonfButton = styled("button")({
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
-  width: "113px",
-  height: "31px",
+  width: "100%",
+  height: "40px",
   background: "#0081C5",
-  borderRadius: "32px",
+  borderRadius: "4px",
   color: "white",
   fontFamily: "'Roboto', sans-serif",
   fontStyle: "normal",
@@ -161,10 +160,56 @@ export const ButtonfButton = styled("button")({
   lineHeight: "160%",
   border: "none",
   cursor: "pointer",
+  marginBottom: "10px",
 });
 
 export const Footer = styled("footer")({
   marginTop: "auto",
   fontSize: "12px",
   color: "#63666A",
+});
+
+export const LoginContainer = styled("div")({
+  width: "250px",
+  padding: "20px",
+  background: "#FFFFFF",
+  boxShadow: "0px 1px 4.6px rgba(0, 0, 0, 0.15)",
+  borderRadius: "8px",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  marginTop: "20px",
+});
+
+export const RememberForgotContainer = styled("div")({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  marginTop: "10px",
+});
+
+export const RememberMeLabel = styled("span")({
+  fontFamily: "Roboto",
+  fontStyle: "normal",
+  fontWeight: 300,
+  fontSize: "14px",
+  color: "#63666A",
+  marginLeft: "5px",
+});
+
+export const ForgotPasswordLink = styled("a")({
+  fontFamily: "Roboto",
+  fontStyle: "normal",
+  fontWeight: 300,
+  fontSize: "12px",
+  color: "#0081C5",
+  textDecoration: "underline",
+  cursor: "pointer",
+});
+
+export const ContactUsLink = styled(ForgotPasswordLink)({
+  marginTop: "5px", // Ensure the Contact Us link is on the next line
+  display: "block",
+  textAlign: "center",
 });
