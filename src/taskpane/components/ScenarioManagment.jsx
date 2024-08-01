@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Container,
-  ModelManagementButton,
+  ModelManagementTitle,
   ButtonsContainer,
   Button,
   Icon,
@@ -49,7 +49,7 @@ const ScenarioManagement = ({ setPageValue }) => {
 
   return (
     <Container>
-      <ModelManagementButton>Scenario Management</ModelManagementButton>
+      <ModelManagementTitle>Create New Forecast</ModelManagementTitle>
       {message && <MessageBox>{message}</MessageBox>}
       <ButtonsContainer>
         {menuItems.map((item, index) => (

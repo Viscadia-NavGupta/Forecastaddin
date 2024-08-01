@@ -7,16 +7,11 @@ export const Container = styled("div")({
   justifyContent: "center",
 });
 
-export const ModelManagementButton = styled("button")({
-  backgroundColor: "#00a19B",
-  color: "#fff",
-  border: "none",
-  borderRadius: "20px",
-  padding: "10px 20px",
-  fontSize: "12px",
-  fontWeight: "bold",
-  marginBottom: "0px",
-  cursor: "pointer",
+export const ModelManagementTitle = styled("h1")({
+  color: "#6D6E71",
+  textDecoration: "underline",
+  fontSize: "20px",
+  // marginBottom: "30px",
 });
 
 export const ButtonsContainer = styled("div")({
