@@ -41,12 +41,10 @@ const ScenarioManagement = ({ setPageValue }) => {
   };
 
   const menuItems = [
-    { icon: "/../assets/create_flow.svg", text: "Run Scenario", action: RunScenario },
-    { icon: "/../assets/create_flow.svg", text: "Save Scenario", action: () => console.log("Button 1 clicked") },
-    { icon: "/../assets/create_flow.svg", text: "Lock Scenario", action: () => console.log("Button 2 clicked") },
-    { icon: "/../assets/create_flow.svg", text: "Load Assumptions", action: () => console.log("Button 3 clicked") },
-    { icon: "/../assets/create_flow.svg", text: "Load Scenario", action: () => console.log("Button 4 clicked") },
-    { icon: "/../assets/create_flow.svg", text: "View Outputs", action: () => console.log("Button 5 clicked") },
+    { icon: "/../assets/create_flow.svg", text: "Run Computation", action: RunScenario },
+    { icon: "/../assets/create_flow.svg", text: "Save Forecast", action: () => console.log("Button 1 clicked") },
+    { icon: "/../assets/create_flow.svg", text: "Lock Forecast", action: () => console.log("Button 2 clicked") },
+    // { icon: "/../assets/create_flow.svg", text: "Load Assumptions", action: () => console.log("Button 3 clicked") },
   ];
 
   return (

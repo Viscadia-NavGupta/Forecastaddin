@@ -13,19 +13,12 @@ import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
 import * as MMfunctions from "./ExcelMidleware/ModelManagmentFunctions";
 import * as testfucntions from "./ExcelMidleware/testfile";
 
-const ModelManagementPage1 = () => {
+const ModelManagementPage1 = ({ setPageValue }) => {
   const username = sessionStorage.getItem("username");
   console.log(username);
 
   const handleCreateNewModel = async () => {
-    let servicename = await Excelfunctions.getActiveSheetName();
-
-    if (servicename === "EU_CC_PDL_TV_TEST_AA_2") {
-      await AWSConnections.orchestrationfucntion();
-      console.log("ACE Generated");
-    } else {
-      console.log("Activate MM Sheet");
-    }
+    setPageValue("Scenario management");
   };
 
   const handleLoadExistingModel = async () => {
@@ -39,11 +32,12 @@ const ModelManagementPage1 = () => {
     } catch (error) {
       console.error("Error loading existing model:", error);
     }
+    setPageValue("LoadExistingModelPage");
   };
 
   return (
     <Container>
-      <ModelManagementTitle>Model Manager</ModelManagementTitle>
+      <ModelManagementTitle>Model Desinger</ModelManagementTitle>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/model.svg" alt="Fresh Icon" />

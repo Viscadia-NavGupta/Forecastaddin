@@ -7,16 +7,18 @@ export const Container = styled("div")({
   justifyContent: "center",
 });
 
-export const ModelManagementTitle = styled("h1")({
-  color: "#595959",
-  fontSize: "20px",
+export const Title = styled("h1")({
+  color: "#6D6E71",
   textDecoration: "underline",
   marginBottom: "30px",
+  fontSize: "15px",
 });
 
 export const ButtonsContainer = styled("div")({
   display: "flex",
   gap: "15px",
+  flexWrap: "wrap",
+  justifyContent: "center", // Center the buttons
 });
 
 export const Button = styled("div")({
@@ -48,14 +50,21 @@ export const Label = styled("span")({
   fontWeight: "bold",
   color: "#333",
   marginBottom: "5px",
+  textAlign: "center",
 });
 
 export const FreshLabel = styled(Label)({
   color: "#595959",
-  textAlign: "center",
 });
 
 export const LoadLabel = styled(Label)({
   color: "#595959",
-  textAlign: "center",
+});
+
+export const OutputsLabel = styled(Label)({
+  color: "#595959",
+});
+
+export const SettingsLabel = styled(Label)({
+  color: "#595959",
 });

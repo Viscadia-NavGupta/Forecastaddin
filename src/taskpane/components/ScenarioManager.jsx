@@ -1,31 +1,26 @@
 import React from "react";
 import {
   Container,
-  ModelManagementTitle,
+  Title,
   ButtonsContainer,
   Button,
   Icon,
   FreshLabel,
   LoadLabel,
+  OutputsLabel,
+  SettingsLabel,
 } from "./ScenarioManagerStyles";
 import * as AWSConnections from "./AWS Midleware/AWSConnections";
 import * as Excelfunctions from "./ExcelMidleware/excelFucntions";
 import * as MMfunctions from "./ExcelMidleware/ModelManagmentFunctions";
 import * as testfucntions from "./ExcelMidleware/testfile";
 
-const ScenarioManeger = () => {
+const ScenarioManager = ({ setPageValue }) => {
   const username = sessionStorage.getItem("username");
   console.log(username);
 
   const handleCreateNewModel = async () => {
-    let servicename = await Excelfunctions.getActiveSheetName();
-
-    if (servicename === "EU_CC_PDL_TV_TEST_AA_2") {
-      await AWSConnections.orchestrationfucntion();
-      console.log("ACE Generated");
-    } else {
-      console.log("Activate MM Sheet");
-    }
+    setPageValue("Scenario management");
   };
 
   const handleLoadExistingModel = async () => {
@@ -39,11 +34,20 @@ const ScenarioManeger = () => {
     } catch (error) {
       console.error("Error loading existing model:", error);
     }
+    setPageValue("LoadExistingModelPage");
+  };
+
+  const handleViewOutputs = () => {
+    setPageValue("ViewOutputsPage");
+  };
+
+  const handleForecastSettings = () => {
+    setPageValue("ForecastSettingsPage");
   };
 
   return (
     <Container>
-      <ModelManagementTitle>Scenario Manager</ModelManagementTitle>
+      <Title>Forecast Management</Title>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/computation.svg" alt="Fresh Icon" />
@@ -53,9 +57,17 @@ const ScenarioManeger = () => {
           <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
           <LoadLabel>Load an existing forecast</LoadLabel>
         </Button>
+        <Button onClick={handleViewOutputs}>
+          <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
+          <OutputsLabel>View Outputs</OutputsLabel>
+        </Button>
+        <Button onClick={handleForecastSettings}>
+          <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
+          <SettingsLabel>Forecast Settings</SettingsLabel>
+        </Button>
       </ButtonsContainer>
     </Container>
   );
 };
 
-export default ScenarioManeger;
+export default ScenarioManager;

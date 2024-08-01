@@ -18,6 +18,7 @@ export const ButtonsContainer = styled("div")({
   display: "flex",
   gap: "15px",
   flexWrap: "wrap",
+  justifyContent: "center", // Center the buttons
 });
 
 export const Button = styled("div")({
@@ -65,5 +66,9 @@ export const AnotherLabel1 = styled(Label)({
 });
 
 export const AnotherLabel2 = styled(Label)({
+  color: "#595959",
+});
+
+export const AssumptionsLabel = styled(Label)({
   color: "#595959",
 });

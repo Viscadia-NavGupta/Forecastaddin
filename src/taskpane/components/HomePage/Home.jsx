@@ -9,6 +9,7 @@ import {
   LoadLabel,
   AnotherLabel1,
   AnotherLabel2,
+  AssumptionsLabel,
 } from "./HomeStyles";
 
 const Home = ({ setPageValue }) => {
@@ -31,21 +32,25 @@ const Home = ({ setPageValue }) => {
     setPageValue("RiskManager");
   };
 
+  const handleAssumptionsCatalogue = async () => {
+    setPageValue("AssumptionsCatalogue");
+  };
+
   return (
     <Container>
-      <Title>Welcome, Aditya</Title>
+      <Title>Welcome, Craig</Title>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/ModelManaegment.svg" alt="Fresh Icon" />
-          <FreshLabel>Model Management</FreshLabel>
+          <FreshLabel>Model Designer</FreshLabel>
         </Button>
         <Button onClick={handleLoadExistingModel}>
           <Icon src="/../assets/scenariomanagement.svg" alt="Load Icon" />
-          <LoadLabel>Scenario Management</LoadLabel>
+          <LoadLabel>Forecast Management</LoadLabel>
         </Button>
-        <Button onClick={handleAnotherAction1}>
-          <Icon src="/../assets/dashboard.svg" alt="Another Icon 1" />
-          <AnotherLabel1>Outputs</AnotherLabel1>
+        <Button onClick={handleAssumptionsCatalogue}>
+          <Icon src="/../assets/simulations.svg" alt="Another Icon 2" />
+          <AssumptionsLabel>Assumptions Catalogue</AssumptionsLabel>
         </Button>
         <Button onClick={handleAnotherAction2}>
           <Icon src="/../assets/simulations.svg" alt="Another Icon 2" />
