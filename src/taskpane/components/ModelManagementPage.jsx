@@ -18,7 +18,7 @@ const ModelManagementPage1 = ({ setPageValue }) => {
   console.log(username);
 
   const handleCreateNewModel = async () => {
-    setPageValue("Scenario management");
+    setPageValue("Model Editor");
   };
 
   const handleLoadExistingModel = async () => {

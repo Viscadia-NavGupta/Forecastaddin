@@ -383,7 +383,7 @@ export async function runService(
     } else if (responseBody.status === "Override" && buttonName === "GENERATE ACE SHEET") {
       return { uuid: uuid, result: "Override" };
     } else {
-      alert("Model Generation cancelled by user.");
+      // alert("Model Generation cancelled by user.");
       return false;
     }
   } catch (error) {
