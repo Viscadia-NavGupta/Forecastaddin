@@ -38,7 +38,7 @@ const Home = ({ setPageValue }) => {
 
   return (
     <Container>
-      <Title>Welcome, Craig</Title>
+      <Title>Welcome, Craig Leonardi</Title>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/ModelManaegment.svg" alt="Fresh Icon" />
