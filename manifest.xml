@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>6b9a0e72-7a9f-4daf-ba82-1d998207a414</Id>
-  <Version>1.0.0.0</Version>
-  <ProviderName>Contoso</ProviderName>
+  <Version>1.0.0.1</Version>
+  <ProviderName>Viscadia</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Viscadia Forecast Addin"/>
+  <DisplayName DefaultValue="Forecasting Confidence"/>
   <Description DefaultValue="Forecasting Confidence"/>
   <IconUrl DefaultValue="https://main.d37wh7ni5es93f.amplifyapp.com/assets/Viscadia_V_Logo.png"/>
   <HighResolutionIconUrl DefaultValue="https://main.d37wh7ni5es93f.amplifyapp.com/assets/Viscadia_V_Logo.png"/>
-  <SupportUrl DefaultValue="https://www.contoso.com/help"/>
+  <SupportUrl DefaultValue="https://viscadia.com/contact-us/"/>
   <AppDomains>
     <AppDomain>https://www.contoso.com</AppDomain>
   </AppDomains>
@@ -73,7 +73,7 @@
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Commands Group"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Forecast Platform"/>
         <bt:String id="TaskpaneButton.Label" DefaultValue="Forcast Confidence"/>
       </bt:ShortStrings>
       <bt:LongStrings>
