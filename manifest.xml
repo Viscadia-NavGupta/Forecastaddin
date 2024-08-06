@@ -73,8 +73,8 @@
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Forecast Platform"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Forcast Confidence"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Forecast Solutions"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Forecast Confidence"/>
       </bt:ShortStrings>
       <bt:LongStrings>
         <bt:String id="GetStarted.Description" DefaultValue="Your sample add-in loaded successfully. Go to the HOME tab and click the 'Show Taskpane' button to get started."/>
