@@ -18,7 +18,7 @@ const MainLayout = ({ children, onMenuItemClick, handleLogout }) => {
         <TopSection>
           <ProfileImage src="/../assets/Viscadia_V_Logo.png" alt="Profile" />
         </TopSection>
-        <TopRightText>Viscadia Forecast Platform</TopRightText>
+        <TopRightText>Viscadia Forecast Solution</TopRightText>
       </TopRightSection>
       <MainContent>
         <SidebarContainer>

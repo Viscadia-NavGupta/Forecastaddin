@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>6b9a0e72-7a9f-4daf-ba82-1d998207a414</Id>
-  <Version>1.0.0.1</Version>
+  <Version>1.0.2.1</Version>
   <ProviderName>Viscadia</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Forecasting Confidence"/>
-  <Description DefaultValue="Forecasting Confidence"/>
+  <DisplayName DefaultValue="Forecast Solution"/>
+  <Description DefaultValue="Forecast Solution"/>
   <IconUrl DefaultValue="https://main.d37wh7ni5es93f.amplifyapp.com/assets/Viscadia_V_Logo.png"/>
   <HighResolutionIconUrl DefaultValue="https://main.d37wh7ni5es93f.amplifyapp.com/assets/Viscadia_V_Logo.png"/>
   <SupportUrl DefaultValue="https://viscadia.com/contact-us/"/>
@@ -73,8 +73,8 @@
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Forecast Platform"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Forcast Confidence"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Forecast Confidence"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Forecast Solution"/>
       </bt:ShortStrings>
       <bt:LongStrings>
         <bt:String id="GetStarted.Description" DefaultValue="Your sample add-in loaded successfully. Go to the HOME tab and click the 'Show Taskpane' button to get started."/>
