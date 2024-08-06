@@ -7,7 +7,14 @@ import ReactDOM from "react-dom";
 import { DialogProvider, useDialog } from "../dialogcontext";
 import Overirdeconfirmation from "../OverideConfirmationpage";
 
-export async function orchestrationfucntion(buttonname, override_flag = "", UUID = "") {
+export async function orchestrationfucntion(
+  buttonname,
+  override_flag = "",
+  UUID = "",
+  forecast_uuid = "",
+  scenarioname = "",
+  cycleName = ""
+) {
   try {
     const verified = await verifyRoleAndFetchSecrets(sessionStorage.getItem("username"), buttonname);
     console.log(verified);
@@ -38,7 +45,10 @@ export async function orchestrationfucntion(buttonname, override_flag = "", UUID
         verified.secret_name,
         verified.urls.ServiceOrchestrationLambda,
         verified.urls.PollingLambda,
-        override_flag
+        override_flag,
+        cycleName,
+        scenarioname,
+        forecast_uuid
       );
       // Additional logic if needed
     } else {

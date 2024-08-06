@@ -37,7 +37,7 @@ const RiskManager = ({ setPageValue }) => {
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/ModelManaegment.svg" alt="Fresh Icon" />
-          <FreshLabel>Senario Comparison</FreshLabel>
+          <FreshLabel>Scenario Comparison</FreshLabel>
         </Button>
         <Button onClick={handleLoadExistingModel}>
           <Icon src="/../assets/scenariomanagement.svg" alt="Load Icon" />

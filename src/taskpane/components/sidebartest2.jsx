@@ -14,6 +14,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
     { icon: "bx bx-cog", text: "Scenario Manager", onClick: () => onMenuItemClick("ScenarioManager") },
     { icon: "bx bx-user", text: "Outputs", onClick: () => onMenuItemClick("OutputManager") },
     { icon: "bx bx-calendar", text: "Risk & Analytics", onClick: () => onMenuItemClick("RiskManager") },
+    { icon: "bx bx-calendar", text: "Assumptions Catelouge", onClick: () => onMenuItemClick("LoadPage") },
   ];
 
   const handleMouseEnter = (text, ref) => {

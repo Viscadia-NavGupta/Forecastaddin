@@ -39,10 +39,22 @@ const ScenarioManagement = ({ setPageValue }) => {
       setIsFirstRun(true);
     }
   };
+  const SaveScenario = async () => {
+    console.log("Save Scenario function called");
 
+    let servicename = await Excelfunctions.getActiveSheetName();
+
+    if (servicename == "outputs") {
+      setPageValue("savescenario");
+    } else {
+      console.log("Activate Outputs sheet");
+      setMessage("Activate Outputs sheet");
+      setIsFirstRun(true);
+    }
+  };
   const menuItems = [
     { icon: "/../assets/create_flow.svg", text: "Run Computation", action: RunScenario },
-    { icon: "/../assets/create_flow.svg", text: "Save Forecast", action: () => console.log("Button 1 clicked") },
+    { icon: "/../assets/create_flow.svg", text: "Save Forecast", action: SaveScenario },
     { icon: "/../assets/create_flow.svg", text: "Lock Forecast", action: () => console.log("Button 2 clicked") },
     // { icon: "/../assets/create_flow.svg", text: "Load Assumptions", action: () => console.log("Button 3 clicked") },
   ];

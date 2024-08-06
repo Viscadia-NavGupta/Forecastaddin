@@ -14,7 +14,6 @@ import {
 import { DataFrame } from "dataframe-js";
 import * as awsconnection from "./AWS Midleware/AWSConnections";
 
-
 const Savesscenario = ({ setPageValue }) => {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [selectedCycle, setSelectedCycle] = useState("");
@@ -53,7 +52,10 @@ const Savesscenario = ({ setPageValue }) => {
       const df = new DataFrame(results);
       setDataFrame(df);
 
-      const items = df.distinct("cycle_name").toArray().map((row) => row[0]);
+      const items = df
+        .distinct("cycle_name")
+        .toArray()
+        .map((row) => row[0]);
       setCycleItems(items);
 
       alert("Data fetched and dropdown populated successfully!");
@@ -81,7 +83,7 @@ const Savesscenario = ({ setPageValue }) => {
           setCellA2Value(cellA2Value);
           setCellB2Value(cellB2Value);
 
-          setHeading(`Save Scenario for: ${cellB2Value}`);
+          setHeading(`Save Scenario for: ${cellA2Value}`);
           setIsOutputSheet(true);
         } else {
           setHeading(sheet.name);
@@ -111,13 +113,19 @@ const Savesscenario = ({ setPageValue }) => {
     setScenarioName(e.target.value);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     const result = { cycle_name: selectedCycle, scenario_name: scenarioName };
     console.log(result);
     console.log(cellA2Value);
     console.log(cellB2Value);
-
-
+    let saveflag = await awsconnection.orchestrationfucntion(
+      "SAVE FORECAST",
+      "",
+      cellA2Value,
+      cellB2Value,
+      result.scenario_name,
+      result.cycle_name
+    );
   };
 
   return (
