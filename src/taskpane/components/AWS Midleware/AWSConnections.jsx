@@ -7,6 +7,14 @@ import ReactDOM from "react-dom";
 import { DialogProvider, useDialog } from "../dialogcontext";
 import Overirdeconfirmation from "../OverideConfirmationpage";
 
+function logCurrentTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  console.log(`Current Time: ${hours}:${minutes}:${seconds}`);
+}
+
 export async function orchestrationfucntion(
   buttonname,
   override_flag = "",
@@ -62,7 +70,9 @@ export async function orchestrationfucntion(
       let outputflag = await downloadAndInsertDataFromExcel(UUIDGenrated, verified.urls.DownloadS3, buttonname);
       console.log(outputflag);
       if (outputflag.success && buttonname === "GENERATE ACE SHEET") {
+        logCurrentTime();
         await excelfunctions.aceSheetformat(outputflag.newSheetName);
+        logCurrentTime();
         return { uuid: UUIDGenrated, result: true };
       }
     } else if (serviceranflag.result === "Override") {
