@@ -109,7 +109,7 @@ export async function aceSheetformat(sheetName) {
         await formatBluePattern(context, sourceRange, "#FFFFFF", "#143D66", "#BFBFBF", "Text");
         context.trackedObjects.remove(sourceRange);
       } else if (
-        columnAValues[i] === "Single Value" ||
+        columnAValues[i] === "Monthly - Single Value" ||
         columnBValues[i] === "Events & Market Share - Head" ||
         columnAValues[i] === "-" ||
         columnBValues[i] === "Events & Market Share" ||
@@ -288,7 +288,7 @@ export async function aceSheetformat(sheetName) {
       i++;
     }
     sheet.showGridlines = false;
-    usedRange.getCell(1, 0).getAbsoluteResizedRange(totalRowcount, 5).clear(Excel.ClearApplyTo.contents);
+    // usedRange.getCell(1, 0).getAbsoluteResizedRange(totalRowcount, 5).clear(Excel.ClearApplyTo.contents);
     usedRange.getCell(1, 0).getAbsoluteResizedRange(1, 6).format.columnWidth = 0;
     usedRange.getCell(hidestart, 1).getAbsoluteResizedRange(hideend - hidestart - 2, 1).format.rowHeight = 0;
     usedRange.getCell(0, 0).getAbsoluteResizedRange(1, 1).format.rowHeight = 0;
@@ -300,7 +300,7 @@ export async function aceSheetformat(sheetName) {
     await setRowHeightAndColumnWidth(sheet.getRange("A1"));
     await addImageToSheet(sheetName);
     await formatBluePattern(context, sheet.getRange("A1:Z1"), "#143D66", "#BFBFBF", "#BFBFBF", "General", 14, true);
-    let ACEvalue = sheet.getRange("G1");
+    let ACEvalue = sheet.getRange("H1");
     ACEvalue.values = "ACE";
     sheet.getRange("A1").select;
     await context.sync();
@@ -524,7 +524,7 @@ async function formatLHSStructre(
 
       await formatBluePattern(context, LHSRangeBottom, "#6D6E71", "#F2F2F2", "#BFBFBF", "Text");
       await formatBluePattern(context, RHSRangeBottom, "#6D6E71", "#EBCB71", "#BFBFBF", numberformat);
-    } else if (ColumnAvalue === "Single Value") {
+    } else if (ColumnAvalue === "Monthly - Single Value") {
       if (columnAValues[Roucounter - 1] === "Drop1") {
         await formatBluePattern(context, LHSRangeTop, "#FFFFFF", "#143D66", "#BFBFBF", "Text");
         await formatBluePattern(context, RHSRangeTop, "#FFFFFF", "#143D66", "#BFBFBF", "YYYY");

@@ -57,7 +57,7 @@ const UserLogin = ({ handleLogin, setPageValue }) => {
           <RedRec />
         </ThemeBorder>
       </UsernameInputContainer>
-      <Heading>Viscadia Forecasting Solution</Heading>
+      <Heading>Forecast Solution</Heading>
       <LoginContainer>
         <InputContainer>
           <InputContainerInput

@@ -386,12 +386,12 @@ export async function addFlow() {
         modelAssumptionEndRow - modelAssumptionStartRow + 1,
         1
       );
-      const modelAssumptionValues = Array(modelAssumptionEndRow - modelAssumptionStartRow + 1).fill([
+      let modelAssumptionValues = Array(modelAssumptionEndRow - modelAssumptionStartRow + 1).fill([
         "Model Assumptions",
       ]);
+      modelAssumptionValues[1] = [""];
       modelAssumptionRange.values = modelAssumptionValues;
       await context.sync();
-
       console.log("Model Assumptions text added");
 
       // Write "Flow X" where X is the number of unique elements in HelperArray
@@ -409,10 +409,9 @@ export async function addFlow() {
         1
       );
       const flowTextFillValues = Array(modelAssumptionEndRow - modelAssumptionStartRow + 1).fill([flowText]);
+      flowTextFillValues[1] = [""];
       flowTextFillRange.values = flowTextFillValues;
       await context.sync();
-
-
 
       for (let col = 0; col < predefinedArray[0].length; col++) {
         let formatrange = pasteRange.getColumn(col);
@@ -429,13 +428,13 @@ export async function addFlow() {
           await datavalidationcol3(formatrange.address);
         } else if (col === 4) {
           await datavalidationcol4(formatrange.address);
-        }else if (col === 5) {
+        } else if (col === 5) {
           await datavalidationcol5(formatrange.address);
-        }else if (col === 6) {
+        } else if (col === 6) {
           await datavalidationcol6(formatrange.address);
-        }else if (col === 7) {
+        } else if (col === 7) {
           await datavalidationcol7(formatrange.address);
-        }else if (col >= 8) {
+        } else if (col >= 8) {
           await datavalidationcol8(formatrange.address);
         }
         context.trackedObjects.remove(formatrange);
@@ -1583,7 +1582,7 @@ async function datavalidationcol4(rangeAddress) {
       range.dataValidation.rule = {
         list: {
           inCellDropDown: true,
-          source:"Assumption Input Override,Assumption Output Override",
+          source: "Assumption Input Override,Assumption Output Override",
         },
       };
 
@@ -1606,7 +1605,7 @@ async function datavalidationcol5(rangeAddress) {
       range.dataValidation.rule = {
         list: {
           inCellDropDown: true,
-          source:"Multiplication,Division,Addition,Subtraction,Reverse Array Multiplication",
+          source: "Multiplication,Division,Addition,Subtraction,Reverse Array Multiplication",
         },
       };
 
@@ -1629,7 +1628,7 @@ async function datavalidationcol6(rangeAddress) {
       range.dataValidation.rule = {
         list: {
           inCellDropDown: true,
-          source:"Single Value,Annual - Single Value,Annual - Time Series,Monthly - Time Series",
+          source: "Monthly - Single Value,Annual - Single Value,Annual - Time Series,Monthly - Time Series",
         },
       };
 
@@ -1652,7 +1651,7 @@ async function datavalidationcol7(rangeAddress) {
       range.dataValidation.rule = {
         list: {
           inCellDropDown: true,
-          source:"Percentage,Number,Currency - US Dollars,Currency - Euros,Mapping Matrix,Event Palette Input",
+          source: "Percentage,Number,Currency - US Dollars,Currency - Euros,Mapping Matrix,Event Palette Input",
         },
       };
 
@@ -1675,7 +1674,7 @@ async function datavalidationcol8(rangeAddress) {
       range.dataValidation.rule = {
         list: {
           inCellDropDown: true,
-          source:"Yes,No",
+          source: "Yes,No",
         },
       };
 

@@ -21,7 +21,8 @@ export async function orchestrationfucntion(
   UUID = "",
   forecast_uuid = "",
   scenarioname = "",
-  cycleName = ""
+  cycleName = "",
+  model_uuid = ""
 ) {
   try {
     const verified = await verifyRoleAndFetchSecrets(sessionStorage.getItem("username"), buttonname);
@@ -56,7 +57,8 @@ export async function orchestrationfucntion(
         override_flag,
         cycleName,
         scenarioname,
-        forecast_uuid
+        forecast_uuid,
+        model_uuid
       );
       // Additional logic if needed
     } else {
@@ -66,9 +68,17 @@ export async function orchestrationfucntion(
     if (serviceranflag.result === true) {
       if (buttonname === "GENERATE ACE SHEET") {
         UUIDGenrated = UUIDGenrated + ".csv";
+      } else if (buttonname === "RUN COMPUTATION") {
+        verified.urls.DownloadS3 = verified.urls.DownloadS3 + "RUN COMPUTATION/Power_BI_data_dump/";
+        //"RUN COMPUTATION/horizontal_data_dump/"
+        //s3://download-docket/RUN COMPUTATION/Power_BI_data_dump/
+      } else if (buttonname === "SAVE FORECAST" || buttonname === "UNLOCK FORECAST" || buttonname === "LOCK FORECAST") {
+        return serviceranflag;
       }
-      let outputflag = await downloadAndInsertDataFromExcel(UUIDGenrated, verified.urls.DownloadS3, buttonname);
-      console.log(outputflag);
+      if (buttonname === "GENERATE ACE SHEET" || buttonname === "RUN COMPUTATION") {
+        var outputflag = await downloadAndInsertDataFromExcel(UUIDGenrated, verified.urls.DownloadS3, buttonname);
+      }
+      console.log("Outputflag:", outputflag);
       if (outputflag.success && buttonname === "GENERATE ACE SHEET") {
         logCurrentTime();
         await excelfunctions.aceSheetformat(outputflag.newSheetName);
@@ -196,13 +206,18 @@ export async function uploadFileToS3(uuid, uploadURL, buttonName) {
   try {
     return await Excel.run(async (context) => {
       const sheet = context.workbook.worksheets.getActiveWorksheet();
-      const range = sheet.getUsedRange();
+      let range = sheet.getUsedRange();
       range.load(["values", "numberFormat"]);
       await context.sync();
 
-      // Convert the sheet data to a workbook binary using XLSX
-      const worksheetData = range.values;
-      const numberFormats = range.numberFormat;
+      // Remove the first column (Column A) if buttonName is "RUN COMPUTATION"
+      let worksheetData = range.values;
+      let numberFormats = range.numberFormat;
+
+      if (buttonName === "RUN COMPUTATION") {
+        worksheetData = worksheetData.map((row) => row.slice(1)); // Remove the first column (Column A) from each row
+        numberFormats = numberFormats.map((format) => format.slice(1)); // Remove the first column's format
+      }
 
       // Create worksheet and apply values
       const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
@@ -339,7 +354,8 @@ export async function runService(
   override_flag = "",
   cycleName = "",
   scenarioname = "",
-  forecastuuid = ""
+  forecastuuid = "",
+  model_uuid = ""
 ) {
   // Validate input parameters
   if (!uuid || !buttonName || !secret_name || !serviceUrl) {
@@ -363,7 +379,8 @@ export async function runService(
     case "UNLOCK FORECAST":
     case "SAVE FORECAST":
       jsonPayload = {
-        model_uuid: uuid,
+        uuid: uuid,
+        model_uuid: model_uuid,
         forecast_uuid: forecastuuid,
         buttonName: buttonName,
         secret_name: secret_name,
@@ -396,7 +413,7 @@ export async function runService(
     // Check the response status
     if (responseBody.status === "Success" || responseBody.statusCode) {
       return { uuid: uuid, result: true };
-    } else if (responseBody.message === "Endpoint request timed out") {
+    } else if (responseBody.message === "Endpoint request timed out" || responseBody.status === "Poll") {
       // Poll for completion -> make an API call to polling lambda
       console.log("Polling for completion");
       return await poll(uuid, secret_name, pollingUrl);
@@ -413,9 +430,8 @@ export async function runService(
 }
 
 // NEW CODE
-export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceName) {
-  const filenamedownload = fileName;
-  const downloadURL = s3Url + filenamedownload;
+export async function downloadAndInsertDataFromExcelxlsx(fileName, s3Url, serviceName) {
+  const downloadURL = s3Url + fileName;
   const BATCH_SIZE = 20000; // Number of rows per batch
   const NORMALIZE_BATCH_SIZE = 1000; // Number of rows to normalize at once
   const TEMP_SHEET_NAME = "tempAWSdata";
@@ -427,100 +443,73 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     if (!response.ok) {
       throw new Error(`Failed to fetch the file: ${response.statusText}`);
     }
-    console.log("File fetched successfully. Streaming data in chunks...");
-    return response.body;
+    console.log("File fetched successfully. Processing data...");
+    return response.arrayBuffer();
   }
 
-  // Process the streamed data
-  async function processStream(stream) {
-    console.log("Starting to process stream...");
-    const reader = stream.getReader();
-    let rows = [];
-    let rowIndex = 1; // Initialize row index for insertion
-    let buffer = ""; // Buffer for incomplete lines
-
-    return new Promise((resolve, reject) => {
-      const processChunk = async ({ done, value }) => {
-        if (done) {
-          if (buffer) {
-            processBuffer(buffer); // Process any remaining buffer
-          }
-          if (rows.length > 0) {
-            await normalizeRows(rows);
-            await insertParsedData(rows, rowIndex);
-            rowIndex += rows.length;
-          }
-          console.log("Stream processing completed.");
-          resolve();
-          return;
-        }
-
-        const text = new TextDecoder("utf-8").decode(value);
-        const lines = (buffer + text).split("\n");
-        buffer = lines.pop(); // Save last line in buffer in case it's incomplete
-
-        for (let line of lines) {
-          processBuffer(line);
-        }
-
-        if (rows.length >= BATCH_SIZE) {
-          await normalizeRows(rows);
-          await insertParsedData(rows.slice(0, BATCH_SIZE), rowIndex);
-          rowIndex += BATCH_SIZE;
-          rows = rows.slice(BATCH_SIZE);
-        }
-
-        reader.read().then(processChunk).catch(reject);
-      };
-
-      reader.read().then(processChunk).catch(reject);
-    });
-
-    // Parse each line and add to rows
-    function processBuffer(line) {
-      const parsedLine = Papa.parse(line, {
-        header: false,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        quoteChar: '"',
-        escapeChar: '"',
-        error: function (error) {
-          console.error(`Error parsing line: ${error.message}`);
-        },
-      });
-
-      if (parsedLine.errors.length > 0) {
-        parsedLine.errors.forEach((err) => console.error(`CSV Parsing Error: ${err.message}`));
-      } else {
-        rows.push(parsedLine.data[0]);
+  // Process the file based on the type (CSV or XLSX)
+  async function processFile(arrayBuffer) {
+    if (serviceName === "RUN COMPUTATION" || serviceName === "Import GENERATE ACE SHEET") {
+      if (serviceName === "RUN COMPUTATION") {
+        console.log("Processing CSV file...");
+        await processCSV(new TextDecoder("utf-8").decode(arrayBuffer));
+      } else if (serviceName === "Import GENERATE ACE SHEET") {
+        console.log("Processing XLSX file...");
+        await processXLSX(arrayBuffer);
       }
+    } else {
+      throw new Error("Unsupported service name for file processing.");
     }
+  }
+
+  // Process the CSV content
+  async function processCSV(csvContent) {
+    const rows = Papa.parse(csvContent, {
+      header: false,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      error: function (error) {
+        console.error(`Error parsing CSV: ${error.message}`);
+      },
+    }).data;
+
+    await normalizeRows(rows);
+    await insertParsedData(rows, 1);
+  }
+
+  // Process the XLSX content
+  async function processXLSX(arrayBuffer) {
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
+
+    await normalizeRows(rows);
+    await insertParsedData(rows, 1);
   }
 
   // Normalize the rows to ensure they all have the same number of columns
   async function normalizeRows(rows) {
-    return new Promise((resolve) => {
-      const maxCols = Math.max(...rows.map((row) => row.length));
-      console.log(`Normalizing rows to ${maxCols} columns.`);
-      let index = 0;
+    const maxCols = Math.max(...rows.map((row) => row.length));
+    console.log(`Normalizing rows to ${maxCols} columns.`);
+    let index = 0;
 
-      function normalizeBatch() {
-        const endIndex = Math.min(index + NORMALIZE_BATCH_SIZE, rows.length);
-        for (let i = index; i < endIndex; i++) {
-          while (rows[i].length < maxCols) {
-            rows[i].push("");
-          }
-        }
-        index = endIndex;
-        if (index < rows.length) {
-          requestAnimationFrame(normalizeBatch);
-        } else {
-          resolve();
+    function normalizeBatch() {
+      const endIndex = Math.min(index + NORMALIZE_BATCH_SIZE, rows.length);
+      for (let i = index; i < endIndex; i++) {
+        while (rows[i].length < maxCols) {
+          rows[i].push("");
         }
       }
+      index = endIndex;
+    }
 
+    while (index < rows.length) {
       normalizeBatch();
-    });
+      await new Promise(requestAnimationFrame); // Allows browser to render in between batches
+    }
   }
 
   // Get Excel column letter from index
@@ -541,9 +530,7 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
       const columnCount = rows[0].length;
       const rangeAddress = `A${startRow}:${getColumnLetter(columnCount - 1)}${endRow}`;
 
-      console.log(`Range Address: ${rangeAddress}`);
-      console.log(`Rows to insert:`, rows);
-
+      console.log(`Inserting range: ${rangeAddress}`);
       const range = sheet.getRange(rangeAddress);
       range.values = rows;
       await sheet.context.sync();
@@ -556,7 +543,6 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
   // Create a temp sheet
   async function createTempSheet(sheetName) {
     await Excel.run(async (context) => {
-      // Check if the sheet exists and delete it if it does
       try {
         const tempSheet = context.workbook.worksheets.getItem(sheetName);
         tempSheet.delete();
@@ -565,22 +551,20 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
         console.log(`${sheetName} sheet does not exist. Proceeding to create it.`);
       }
 
-      // Create a new sheet
-      const tempSheet = context.workbook.worksheets.add(sheetName);
+      context.workbook.worksheets.add(sheetName);
       await context.sync();
     }).catch((error) => {
-      console.error("Error: " + error);
+      console.error("Error creating temp sheet:", error);
     });
   }
 
   // Rename the sheet based on the service name
   async function renameSheet(serviceName) {
     return Excel.run(async (context) => {
-      const TEMP_SHEET_NAME = "tempAWSdata"; // Ensure this is correctly defined
       const tempSheet = context.workbook.worksheets.getItem(TEMP_SHEET_NAME);
       let newSheetName;
 
-      if (serviceName === "GENERATE ACE SHEET") {
+      if (serviceName === "GENERATE ACE SHEET" || serviceName === "Import GENERATE ACE SHEET") {
         const cellI5 = tempSheet.getRange("I5");
         cellI5.load("values");
         await context.sync();
@@ -612,45 +596,44 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
         sheetExists = false;
       }
 
-      // If the sheet with the name already exists, delete it
       if (sheetExists) {
         const sheetToDelete = context.workbook.worksheets.getItem(newSheetName);
         sheetToDelete.delete();
         await context.sync();
       }
 
-      // Rename the temporary sheet to the new name
       tempSheet.name = newSheetName;
       await context.sync();
 
       console.log(`Sheet renamed to ${newSheetName}`);
       return { success: true, newSheetName: newSheetName };
     }).catch((error) => {
-      console.error("Error: " + error);
+      console.error("Error renaming sheet:", error);
       return { success: false, newSheetName: null };
     });
   }
+
   // Main function logic
   try {
     console.log("Starting the download and insertion process...");
-    const stream = await fetchData();
+    const arrayBuffer = await fetchData();
 
     // Create the temp sheet
     await createTempSheet(TEMP_SHEET_NAME);
 
-    // Insert data into the temp sheet
-    await processStream(stream);
+    // Process the file based on its type
+    await processFile(arrayBuffer);
     console.log("Data has been successfully inserted into the temp sheet.");
 
     // Rename the temp sheet based on the service name
     const result = await renameSheet(serviceName);
     return result;
   } catch (error) {
-    console.error("Error:", error);
-    console.log("Failed to fetch data. Please try again.");
+    console.error("Error during download and insertion:", error);
     return { success: false, newSheetName: null };
   }
 }
+
 export async function uploadFileToS3test(uuid, uploadURL, buttonName) {
   try {
     return await Excel.run(async (context) => {
@@ -776,8 +759,335 @@ function mapFonts(font) {
   };
 }
 
-function mapFills(fill) {
-  return {
-    fgColor: { rgb: fill.color },
-  };
+export async function modifySheet(sheetName) {
+  try {
+    return await Excel.run(async (context) => {
+      // Attempt to get the specified worksheet by name
+      let sheet = context.workbook.worksheets.getItemOrNullObject(sheetName);
+      sheet.load("name"); // Load the 'name' property to ensure it is available
+      await context.sync();
+
+      // Check if the sheet exists
+      if (sheet.isNullObject) {
+        console.error(`Sheet "${sheetName}" does not exist.`);
+        return null; // Return null if the sheet does not exist
+      }
+
+      console.log(`Sheet "${sheet.name}" exists and is ready to be modified.`);
+
+      // Ensure the sheet has some content to work with
+      const usedRange = sheet.getUsedRangeOrNullObject();
+      usedRange.load("address");
+      await context.sync();
+
+      if (usedRange.isNullObject) {
+        console.error(`Sheet "${sheet.name}" has no used range, cannot proceed with modifications.`);
+        return sheet.name; // Return the current sheet name if there's no used range
+      }
+
+      console.log(`Sheet "${sheet.name}" used range: ${usedRange.address}`);
+
+      // Insert a new column at the first position (before column "A")
+      try {
+        const firstColumn = sheet.getRange("A:A");
+        console.log(`Attempting to insert a column before A in sheet "${sheetName}".`);
+        firstColumn.insert(Excel.InsertShiftDirection.right);
+        await context.sync();
+        console.log(`New column inserted before column A in sheet "${sheetName}".`);
+      } catch (error) {
+        console.error(`Error inserting column in sheet "${sheetName}":`, error);
+        return sheet.name; // Return the current sheet name if there's an issue inserting the column
+      }
+
+      // Delete the first two rows
+      try {
+        const firstTwoRows = sheet.getRange("1:2");
+        console.log(`Attempting to delete the first two rows in sheet "${sheetName}".`);
+        firstTwoRows.delete(Excel.DeleteShiftDirection.up);
+        await context.sync();
+        console.log(`First two rows deleted in sheet "${sheetName}".`);
+      } catch (error) {
+        console.error(`Error deleting rows in sheet "${sheetName}":`, error);
+        return sheet.name; // Return the current sheet name if there's an issue deleting the rows
+      }
+
+      // Rename the sheet based on the value in cell J5
+      try {
+        const cellJ5 = sheet.getRange("J5");
+        cellJ5.load("values");
+        await context.sync();
+
+        const newSheetName = cellJ5.values[0][0];
+
+        if (newSheetName) {
+          // Clean up the new sheet name: truncate to 31 chars and remove invalid characters
+          let cleanSheetName = newSheetName
+            .substring(0, 31)
+            .replace(/[:\/\\\?\*\[\]]/g, "")
+            .trim();
+
+          // Check if the cleaned sheet name is not empty
+          if (cleanSheetName) {
+            sheet.name = cleanSheetName;
+            await context.sync();
+            console.log(`Sheet renamed to "${cleanSheetName}".`);
+            return cleanSheetName; // Return the new sheet name
+          } else {
+            console.error("The value in J5 is either empty or invalid after cleanup.");
+            return sheet.name; // Return the current sheet name if J5 is invalid
+          }
+        } else {
+          console.error("Cell J5 is empty, cannot rename the sheet.");
+          return sheet.name; // Return the current sheet name if J5 is empty
+        }
+      } catch (error) {
+        console.error(`Error renaming sheet based on the value in cell J5:`, error);
+        return sheet.name; // Return the current sheet name if there's an issue renaming the sheet
+      }
+    });
+  } catch (error) {
+    console.error(`Error modifying the sheet "${sheetName}":`, error);
+    return null; // Return null if there was an error with the modification
+  }
+}
+
+
+export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceName) {
+  const filenamedownload = fileName;
+  const downloadURL = s3Url + filenamedownload;
+  const BATCH_SIZE = 90000; // Number of rows per batch
+  const NORMALIZE_BATCH_SIZE = 20000; // Number of rows to normalize at once
+  const TEMP_SHEET_NAME = "tempAWSdata";
+
+  // Fetch the data from S3
+  async function fetchData() {
+    console.log("Starting to fetch the file from S3...");
+    const response = await fetch(downloadURL);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch the file: ${response.statusText}`);
+    }
+    console.log("File fetched successfully. Streaming data in chunks...");
+    return response.body;
+  }
+
+  // Process the streamed data
+  async function processStream(stream) {
+    console.log("Starting to process stream...");
+    const reader = stream.getReader();
+    let rows = [];
+    let rowIndex = 1; // Initialize row index for insertion
+    let buffer = ""; // Buffer for incomplete lines
+
+    return new Promise((resolve, reject) => {
+      const processChunk = async ({ done, value }) => {
+        if (done) {
+          if (buffer) {
+            processBuffer(buffer); // Process any remaining buffer
+          }
+          if (rows.length > 0) {
+            await normalizeRows(rows);
+            await insertParsedData(rows, rowIndex);
+            rowIndex += rows.length;
+          }
+          console.log("Stream processing completed.");
+          resolve();
+          return;
+        }
+
+        const text = new TextDecoder("utf-8").decode(value);
+        const lines = (buffer + text).split("\n");
+        buffer = lines.pop(); // Save last line in buffer in case it's incomplete
+
+        for (let line of lines) {
+          processBuffer(line);
+        }
+
+        if (rows.length >= BATCH_SIZE) {
+          await normalizeRows(rows);
+          await insertParsedData(rows.slice(0, BATCH_SIZE), rowIndex);
+          rowIndex += BATCH_SIZE;
+          rows = rows.slice(BATCH_SIZE);
+        }
+
+        reader.read().then(processChunk).catch(reject);
+      };
+
+      reader.read().then(processChunk).catch(reject);
+    });
+
+    // Parse each line and add to rows
+    function processBuffer(line) {
+      const parsedLine = Papa.parse(line, {
+        header: false,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        quoteChar: '"',
+        escapeChar: '"',
+        error: function (error) {
+          console.error(`Error parsing line: ${error.message}`);
+        },
+      });
+
+      if (parsedLine.errors.length > 0) {
+        parsedLine.errors.forEach((err) => console.error(`CSV Parsing Error: ${err.message}`));
+      } else {
+        rows.push(parsedLine.data[0]);
+      }
+    }
+  }
+
+  // Normalize the rows to ensure they all have the same number of columns
+  async function normalizeRows(rows) {
+    return new Promise((resolve) => {
+      const maxCols = Math.max(...rows.map((row) => row.length));
+      console.log(`Normalizing rows to ${maxCols} columns.`);
+      let index = 0;
+
+      function normalizeBatch() {
+        const endIndex = Math.min(index + NORMALIZE_BATCH_SIZE, rows.length);
+        for (let i = index; i < endIndex; i++) {
+          while (rows[i].length < maxCols) {
+            rows[i].push("");
+          }
+        }
+        index = endIndex;
+        if (index < rows.length) {
+          requestAnimationFrame(normalizeBatch);
+        } else {
+          resolve();
+        }
+      }
+
+      normalizeBatch();
+    });
+  }
+
+  // Get Excel column letter from index
+  function getColumnLetter(index) {
+    let letter = "";
+    while (index >= 0) {
+      letter = String.fromCharCode((index % 26) + 65) + letter;
+      index = Math.floor(index / 26) - 1;
+    }
+    return letter;
+  }
+
+  // Insert parsed data into the temp sheet
+  async function insertParsedData(rows, startRow) {
+    await Excel.run(async (context) => {
+      const sheet = context.workbook.worksheets.getItem(TEMP_SHEET_NAME);
+      const endRow = startRow + rows.length - 1;
+      const columnCount = rows[0].length;
+      const rangeAddress = `A${startRow}:${getColumnLetter(columnCount - 1)}${endRow}`;
+
+      console.log(`Range Address: ${rangeAddress}`);
+      console.log("Rows to insert:", rows);
+
+      const range = sheet.getRange(rangeAddress);
+      range.values = rows;
+      await sheet.context.sync();
+      console.log(`Inserted rows ${startRow} to ${endRow}`);
+    }).catch((error) => {
+      console.error("Error during Excel run:", error);
+    });
+  }
+
+  // Create a temp sheet
+  async function createTempSheet(sheetName) {
+    await Excel.run(async (context) => {
+      // Check if the sheet exists and delete it if it does
+      try {
+        const tempSheet = context.workbook.worksheets.getItem(sheetName);
+        tempSheet.delete();
+        await context.sync();
+      } catch (error) {
+        console.log(`${sheetName} sheet does not exist. Proceeding to create it.`);
+      }
+
+      // Create a new sheet
+      const tempSheet = context.workbook.worksheets.add(sheetName);
+      await context.sync();
+    }).catch((error) => {
+      console.error("Error: " + error);
+    });
+  }
+
+  // Rename the sheet based on the service name
+  async function renameSheet(serviceName) {
+    return Excel.run(async (context) => {
+      const TEMP_SHEET_NAME = "tempAWSdata"; // Ensure this is correctly defined
+      const tempSheet = context.workbook.worksheets.getItem(TEMP_SHEET_NAME);
+      let newSheetName;
+
+      if (serviceName === "GENERATE ACE SHEET") {
+        const cellI5 = tempSheet.getRange("I5");
+        cellI5.load("values");
+        await context.sync();
+
+        newSheetName = cellI5.values[0][0];
+        if (newSheetName === "") {
+          console.error("Cell I5 is empty");
+          return { success: false, newSheetName: null };
+        }
+
+        // Truncate to 31 characters and remove invalid characters
+        newSheetName = newSheetName.substring(0, 31).replace(/[:\/\\\?\*\[\]]/g, "");
+        newSheetName = newSheetName.trim(); // Remove leading/trailing spaces
+      } else if (serviceName === "RUN COMPUTATION") {
+        newSheetName = "outputs";
+      } else {
+        console.error("Unknown service name.");
+        return { success: false, newSheetName: null };
+      }
+
+      // Check if a sheet with the new name already exists
+      let sheetExists = false;
+      try {
+        const existingSheet = context.workbook.worksheets.getItem(newSheetName);
+        existingSheet.load("name");
+        await context.sync();
+        sheetExists = true;
+      } catch (error) {
+        sheetExists = false;
+      }
+
+      // If the sheet with the name already exists, delete it
+      if (sheetExists) {
+        const sheetToDelete = context.workbook.worksheets.getItem(newSheetName);
+        sheetToDelete.delete();
+        await context.sync();
+      }
+
+      // Rename the temporary sheet to the new name
+      tempSheet.name = newSheetName;
+      await context.sync();
+
+      console.log(`Sheet renamed to ${newSheetName}`);
+      return { success: true, newSheetName: newSheetName };
+    }).catch((error) => {
+      console.error("Error: " + error);
+      return { success: false, newSheetName: null };
+    });
+  }
+
+  // Main function logic
+  try {
+    console.log("Starting the download and insertion process...");
+    const stream = await fetchData();
+
+    // Create the temp sheet
+    await createTempSheet(TEMP_SHEET_NAME);
+
+    // Insert data into the temp sheet
+    await processStream(stream);
+    console.log("Data has been successfully inserted into the temp sheet.");
+
+    // Rename the temp sheet based on the service name
+    const result = await renameSheet(serviceName);
+    return result;
+  } catch (error) {
+    console.error("Error:", error);
+    console.log("Failed to fetch data. Please try again.");
+    return { success: false, newSheetName: null };
+  }
 }

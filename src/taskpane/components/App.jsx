@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UserLogin from "./userlogin/UserLogin";
-import ModelManagementPage1 from "./ModelManagementPage";
-import LoadPage from "./LoadPage";
+import ModelManagementPage1 from "./Model Managment/Model Desinger";
+import LoadPage from "./Import Models/LoadPage";
 import UserRegistrationForm from "./Userregistration/UserRegistrationform";
 import Submitpage from "./Submitpage/SubmitPage";
 import MainLayout from "./MainLayout";
@@ -14,9 +14,12 @@ import Overirdeconfirmation from "./OverideConfirmationpage";
 import Savesscenario from "./savescenario";
 import Lockscenario from "./LockSceanrio";
 import Home from "./HomePage/Home";
-import ScenarioManeger from "./ScenarioManager";
+import ScenarioManeger from "./Forecast Managment/ScenarioManager";
 import Outputsmaneger from "./OutputsManager";
 import Riskmanager from "./RiskManager";
+import LoadAssumptions from "./Load Assumptions/LoadAssumptions";
+import ReportGinnie from "./ReportGinnie/ReportGinnie";
+import SaveForecastPage from "./MsgPage/SaveForcastPage";
 
 function App() {
   const [page, setPage] = useState("UserLogin");
@@ -95,6 +98,12 @@ function App() {
         return <Outputsmaneger setPageValue={setPageValue} />; // Pass the UUID prop
       case "RiskManager":
         return <Riskmanager setPageValue={setPageValue} />; // Pass the UUID prop
+      case "LoadAssumptions":
+        return <LoadAssumptions setPageValue={setPageValue} />; // Pass the UUID prop
+      case "ReportGinnie":
+        return <ReportGinnie setPageValue={setPageValue} />; // Pass the UUID prop
+      case "SaveForecastPage":
+        return <SaveForecastPage setPageValue={setPageValue} />; // Pass the UUID prop
       default:
         return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
     }

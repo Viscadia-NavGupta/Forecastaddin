@@ -72,3 +72,7 @@ export const AnotherLabel2 = styled(Label)({
 export const AssumptionsLabel = styled(Label)({
   color: "#595959",
 });
+
+export const NewFeatureLabel = styled(Label)({
+  color: "#595959",
+});

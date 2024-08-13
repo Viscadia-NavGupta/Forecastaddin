@@ -10,11 +10,12 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
 
   const menuItems = [
     { icon: "bx bx-home", text: "Home", onClick: () => onMenuItemClick("Home") },
-    { icon: "bx bxs-component", text: "Model Manager", onClick: () => onMenuItemClick("ModelManagementPage1") },
-    { icon: "bx bx-cog", text: "Scenario Manager", onClick: () => onMenuItemClick("ScenarioManager") },
-    { icon: "bx bx-user", text: "Outputs", onClick: () => onMenuItemClick("OutputManager") },
-    { icon: "bx bx-calendar", text: "Risk & Analytics", onClick: () => onMenuItemClick("RiskManager") },
-    { icon: "bx bx-calendar", text: "Assumptions Catelouge", onClick: () => onMenuItemClick("LoadPage") },
+    { icon: "bx bxs-component", text: "Model Desinger", onClick: () => onMenuItemClick("ModelManagementPage1") },
+    { icon: "bx bx-cog", text: "Forecast Management", onClick: () => onMenuItemClick("ScenarioManager") },
+    { icon: "bx bx-user", text: "Assumption Catalogue", onClick: () => onMenuItemClick("OutputManager") },
+    { icon: "bx bx-calendar", text: "Risk & Analytics", onClick: () => onMenuItemClick("LoadPage") },
+    { icon: "bx bx-calendar", text: "Miscellaneous", onClick: () => onMenuItemClick("LoadAssumptions") },
+    { icon: "bx bx-calendar", text: "Miscellaneous", onClick: () => onMenuItemClick("ReportGinnie") },
   ];
 
   const handleMouseEnter = (text, ref) => {

@@ -114,6 +114,7 @@ const Savesscenario = ({ setPageValue }) => {
   };
 
   const handleSaveClick = async () => {
+    setPageValue("LoadingCircle");
     const result = { cycle_name: selectedCycle, scenario_name: scenarioName };
     console.log(result);
     console.log(cellA2Value);
@@ -121,11 +122,16 @@ const Savesscenario = ({ setPageValue }) => {
     let saveflag = await awsconnection.orchestrationfucntion(
       "SAVE FORECAST",
       "",
-      cellA2Value,
+      "",
       cellB2Value,
       result.scenario_name,
-      result.cycle_name
+      result.cycle_name,
+      cellA2Value
     );
+    if (saveflag.result === true) {
+      console.log("Forcast Saved");
+      setPageValue("SaveForecastPage");
+    }
   };
 
   return (

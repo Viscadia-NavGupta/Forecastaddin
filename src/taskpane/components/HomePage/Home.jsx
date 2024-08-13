@@ -10,6 +10,7 @@ import {
   AnotherLabel1,
   AnotherLabel2,
   AssumptionsLabel,
+  NewFeatureLabel, // New label for the fifth button
 } from "./HomeStyles";
 
 const Home = ({ setPageValue }) => {
@@ -36,13 +37,17 @@ const Home = ({ setPageValue }) => {
     setPageValue("AssumptionsCatalogue");
   };
 
+  const handleNewFeature = async () => {
+    setPageValue("NewFeaturePage"); // Define the action for the fifth button
+  };
+
   return (
     <Container>
       <Title>Welcome, Craig Leonardi</Title>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/ModelManaegment.svg" alt="Fresh Icon" />
-          <FreshLabel>Model Designer</FreshLabel>
+          <FreshLabel>Model Management</FreshLabel>
         </Button>
         <Button onClick={handleLoadExistingModel}>
           <Icon src="/../assets/scenariomanagement.svg" alt="Load Icon" />
@@ -54,7 +59,11 @@ const Home = ({ setPageValue }) => {
         </Button>
         <Button onClick={handleAnotherAction2}>
           <Icon src="/../assets/simulations.svg" alt="Another Icon 2" />
-          <AnotherLabel2>Risk Analytics</AnotherLabel2>
+          <AnotherLabel2>Risk & Analytics</AnotherLabel2>
+        </Button>
+        <Button onClick={handleNewFeature}> {/* New button */}
+          <Icon src="/../assets/simulations.svg" alt="New Feature Icon" />
+          <NewFeatureLabel>Report Genie</NewFeatureLabel>
         </Button>
       </ButtonsContainer>
     </Container>

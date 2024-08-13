@@ -9,7 +9,7 @@ import {
   TopSection,
   ProfileImage,
 } from "./mainLayoutNew";
-import Sidebartest2 from "./sidebartest2";
+import Sidebartest2 from "./Side Bar/sidebartest2";
 
 const MainLayout = ({ children, onMenuItemClick, handleLogout }) => {
   return (
