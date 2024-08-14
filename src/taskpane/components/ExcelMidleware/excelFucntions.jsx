@@ -929,7 +929,7 @@ export async function highlightAndScrollToSubstring(sheetname, address) {
   });
 }
 
-export async function getColumnGtoM(sheetname) {
+export async function getColumnHtoK(sheetname) {
   return Excel.run(async (context) => {
     const sheet = context.workbook.worksheets.getItem(sheetname);
     const range = sheet.getUsedRange();
@@ -941,21 +941,21 @@ export async function getColumnGtoM(sheetname) {
       return [];
     }
 
-    const columns = { G: [], I: [], J: [] };
-    const addresses = { G: [], I: [], J: [] };
+    const columns = { H: [], J: [], K: [] };
+    const addresses = { H: [], J: [], K: [] };
 
     range.values.forEach((row, rowIndex) => {
-      columns.G.push(row[6]); // Column G
-      addresses.G.push(`${sheetname}!G${rowIndex + 1}`);
-      columns.I.push(row[8]); // Column I
-      addresses.I.push(`${sheetname}!I${rowIndex + 1}`);
-      columns.J.push(row[9]); // Column J
+      columns.H.push(row[7]); // Column H is index 7
+      addresses.H.push(`${sheetname}!H${rowIndex + 1}`);
+      columns.J.push(row[9]); // Column J is index 9
       addresses.J.push(`${sheetname}!J${rowIndex + 1}`);
+      columns.K.push(row[10]); // Column K is index 10
+      addresses.K.push(`${sheetname}!K${rowIndex + 1}`);
     });
 
-    let flowIndex = columns.G.findIndex((value) => typeof value === "string" && value.includes("Flow 1:"));
+    let flowIndex = columns.H.findIndex((value) => typeof value === "string" && value.includes("Flow 1:"));
     flowIndex = flowIndex - 1;
-    const sNoIndex = columns.G.findIndex((value) => typeof value === "string" && value.includes("S.No"));
+    const sNoIndex = columns.H.findIndex((value) => typeof value === "string" && value.includes("S.No"));
 
     if (flowIndex === -1 || sNoIndex === -1 || sNoIndex <= flowIndex) {
       console.error("Invalid indexes for 'Flow 1:' and 'S.No'");
@@ -965,37 +965,37 @@ export async function getColumnGtoM(sheetname) {
     const keptIndexes = Array.from({ length: sNoIndex - flowIndex - 1 }, (_, i) => i + flowIndex + 1);
 
     const dataFrame = keptIndexes.map((index) => ({
-      G: { value: columns.G[index], address: addresses.G[index] },
-      I: { value: columns.I[index], address: addresses.I[index] },
+      H: { value: columns.H[index], address: addresses.H[index] },
       J: { value: columns.J[index], address: addresses.J[index] },
+      K: { value: columns.K[index], address: addresses.K[index] },
     }));
 
-    const uniqueValuesG = [...new Set(keptIndexes.map((index) => columns.G[index]))];
-    const tableOfContents = uniqueValuesG.map((valueG) => {
-      const filteredI = dataFrame.filter((row) => row.G.value === valueG);
-      const uniqueValuesI = [...new Set(filteredI.map((row) => row.I.value))];
+    const uniqueValuesH = [...new Set(keptIndexes.map((index) => columns.H[index]))];
+    const tableOfContents = uniqueValuesH.map((valueH) => {
+      const filteredJ = dataFrame.filter((row) => row.H.value === valueH);
+      const uniqueValuesJ = [...new Set(filteredJ.map((row) => row.J.value))];
 
-      const childrenI = uniqueValuesI.map((valueI) => {
-        const filteredJ = filteredI.filter((row) => row.I.value === valueI);
-        const uniqueValuesJ = [...new Set(filteredJ.map((row) => row.J.value))];
+      const childrenJ = uniqueValuesJ.map((valueJ) => {
+        const filteredK = filteredJ.filter((row) => row.J.value === valueJ);
+        const uniqueValuesK = [...new Set(filteredK.map((row) => row.K.value))];
 
-        const childrenJ = uniqueValuesJ.map((valueJ) => ({
-          value: valueJ,
-          address: filteredJ.find((row) => row.J.value === valueJ).J.address,
+        const childrenK = uniqueValuesK.map((valueK) => ({
+          value: valueK,
+          address: filteredK.find((row) => row.K.value === valueK).K.address,
           children: [],
         }));
 
         return {
-          value: valueI,
-          address: filteredI.find((row) => row.I.value === valueI).I.address,
-          children: childrenJ,
+          value: valueJ,
+          address: filteredJ.find((row) => row.J.value === valueJ).J.address,
+          children: childrenK,
         };
       });
 
       return {
-        value: valueG,
-        address: dataFrame.find((row) => row.G.value === valueG).G.address,
-        children: childrenI,
+        value: valueH,
+        address: dataFrame.find((row) => row.H.value === valueH).H.address,
+        children: childrenJ,
       };
     });
 

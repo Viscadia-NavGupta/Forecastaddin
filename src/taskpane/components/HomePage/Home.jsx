@@ -34,11 +34,11 @@ const Home = ({ setPageValue }) => {
   };
 
   const handleAssumptionsCatalogue = async () => {
-    setPageValue("AssumptionsCatalogue");
+    setPageValue("LoadAssumptions");
   };
 
   const handleNewFeature = async () => {
-    setPageValue("NewFeaturePage"); // Define the action for the fifth button
+    setPageValue("ReportGinnie"); // Define the action for the fifth button
   };
 
   return (

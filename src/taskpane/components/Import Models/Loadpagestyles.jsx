@@ -21,14 +21,14 @@ export const Container = styled("div")({
 export const Heading = styled("h2")({
   fontFamily: "Roboto",
   fontStyle: "normal",
-  backgroundColor: "#00a19B",
-  color: "#fff",
-  border: "none",
-  borderRadius: "20px",
-  padding: "10px 40px",
-  fontSize: "12px",
-  fontWeight: "bold",
-  cursor: "pointer",
+  color: "#6D6E71",  // Grey color
+  fontSize: "16px",  // Font size set to 14px
+  fontWeight: "normal",  // Normal font weight
+  backgroundColor: "transparent",  // Remove the background color
+  border: "none",  // No border
+  padding: "0",  // Remove padding
+  cursor: "default",  // Remove pointer cursor
+  textDecoration: "underline",
 });
 
 export const DropdownContainer = styled("div")({

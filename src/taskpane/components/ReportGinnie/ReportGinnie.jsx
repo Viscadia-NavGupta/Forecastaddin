@@ -31,7 +31,7 @@ const ReportGinnie = () => {
   const fetchDropdownData = async () => {
     try {
       await Excel.run(async (context) => {
-        const sheet = context.workbook.worksheets.getItem("Outputs");
+        const sheet = context.workbook.worksheets.getItem("Report Genie");
         const usedRange = sheet.getUsedRange();
         usedRange.load("values");
         await context.sync();
@@ -112,7 +112,7 @@ const ReportGinnie = () => {
 
   return (
     <Container>
-      <Heading>Report Ginnie</Heading>
+      <Heading>Report Genie</Heading>
       <DropdownContainer>
         {dropdownLabels.map((label, index) => (
           <StyledFormControl key={index}>

@@ -69,7 +69,7 @@ export async function orchestrationfucntion(
       if (buttonname === "GENERATE ACE SHEET") {
         UUIDGenrated = UUIDGenrated + ".csv";
       } else if (buttonname === "RUN COMPUTATION") {
-        verified.urls.DownloadS3 = verified.urls.DownloadS3 + "RUN COMPUTATION/Power_BI_data_dump/";
+        verified.urls.DownloadS3 = verified.urls.DownloadS3 + "RUN COMPUTATION/horizontal_data_dump/";
         //"RUN COMPUTATION/horizontal_data_dump/"
         //s3://download-docket/RUN COMPUTATION/Power_BI_data_dump/
       } else if (buttonname === "SAVE FORECAST" || buttonname === "UNLOCK FORECAST" || buttonname === "LOCK FORECAST") {
@@ -817,28 +817,48 @@ export async function modifySheet(sheetName) {
         cellJ5.load("values");
         await context.sync();
 
-        const newSheetName = cellJ5.values[0][0];
+        if (Array.isArray(cellJ5.values) && cellJ5.values.length > 0 && cellJ5.values[0].length > 0) {
+          const newSheetName = cellJ5.values[0][0];
 
-        if (newSheetName) {
-          // Clean up the new sheet name: truncate to 31 chars and remove invalid characters
-          let cleanSheetName = newSheetName
-            .substring(0, 31)
-            .replace(/[:\/\\\?\*\[\]]/g, "")
-            .trim();
+          if (newSheetName) {
+            // Clean up the new sheet name: truncate to 31 chars and remove invalid characters
+            let cleanSheetName = newSheetName
+              .substring(0, 31)
+              .replace(/[:\/\\\?\*\[\]]/g, "")
+              .replace(/\s+/g, " ")  // Replace multiple spaces with a single space
+              .trim();
 
-          // Check if the cleaned sheet name is not empty
-          if (cleanSheetName) {
-            sheet.name = cleanSheetName;
-            await context.sync();
-            console.log(`Sheet renamed to "${cleanSheetName}".`);
-            return cleanSheetName; // Return the new sheet name
+            console.log(`New sheet name after cleanup: "${cleanSheetName}"`);
+
+            // Check if the cleaned sheet name is not empty
+            if (cleanSheetName) {
+              // Check if a sheet with this name already exists
+              const existingSheet = context.workbook.worksheets.getItemOrNullObject(cleanSheetName);
+              await context.sync();
+
+              if (!existingSheet.isNullObject) {
+                console.log(`A sheet with the name "${cleanSheetName}" already exists. Deleting it.`);
+                existingSheet.delete();
+                await context.sync();
+                console.log(`Sheet "${cleanSheetName}" deleted.`);
+              }
+
+              // Rename the current sheet
+              sheet.name = cleanSheetName;
+              await context.sync();
+              console.log(`Sheet renamed to "${cleanSheetName}".`);
+              return cleanSheetName; // Return the new sheet name
+            } else {
+              console.error("The value in J5 is either empty or invalid after cleanup.");
+              return sheet.name; // Return the current sheet name if J5 is invalid
+            }
           } else {
-            console.error("The value in J5 is either empty or invalid after cleanup.");
-            return sheet.name; // Return the current sheet name if J5 is invalid
+            console.error("Cell J5 is empty, cannot rename the sheet.");
+            return sheet.name; // Return the current sheet name if J5 is empty
           }
         } else {
-          console.error("Cell J5 is empty, cannot rename the sheet.");
-          return sheet.name; // Return the current sheet name if J5 is empty
+          console.error("Invalid value or structure in cell J5");
+          return sheet.name; // Return the current sheet name if J5 is invalid
         }
       } catch (error) {
         console.error(`Error renaming sheet based on the value in cell J5:`, error);
@@ -850,6 +870,8 @@ export async function modifySheet(sheetName) {
     return null; // Return null if there was an error with the modification
   }
 }
+
+
 
 
 export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceName) {
@@ -1020,7 +1042,7 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
       let newSheetName;
 
       if (serviceName === "GENERATE ACE SHEET") {
-        const cellI5 = tempSheet.getRange("I5");
+        const cellI5 = tempSheet.getRange("J5");
         cellI5.load("values");
         await context.sync();
 

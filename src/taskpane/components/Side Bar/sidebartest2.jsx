@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import "boxicons/css/boxicons.min.css";
 import { Container, Sidebar, MenuSection, MenuItem, BottomSection } from "./sidebartest2styles";
 import Tooltip from "./tooltip";
 
@@ -9,13 +8,26 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
   const tooltipRef = useRef(null);
 
   const menuItems = [
-    { icon: "bx bx-home", text: "Home", onClick: () => onMenuItemClick("Home") },
-    { icon: "bx bxs-component", text: "Model Desinger", onClick: () => onMenuItemClick("ModelManagementPage1") },
-    { icon: "bx bx-cog", text: "Forecast Management", onClick: () => onMenuItemClick("ScenarioManager") },
-    { icon: "bx bx-user", text: "Assumption Catalogue", onClick: () => onMenuItemClick("OutputManager") },
-    { icon: "bx bx-calendar", text: "Risk & Analytics", onClick: () => onMenuItemClick("LoadPage") },
-    { icon: "bx bx-calendar", text: "Miscellaneous", onClick: () => onMenuItemClick("LoadAssumptions") },
-    { icon: "bx bx-calendar", text: "Miscellaneous", onClick: () => onMenuItemClick("ReportGinnie") },
+    { icon: "/assets/home.svg", text: "Home", onClick: () => onMenuItemClick("Home") },
+    { icon: "/assets/Modeldesign.svg", text: "Model Desinger", onClick: () => onMenuItemClick("ModelManagementPage1") },
+    {
+      icon: "/assets/ForecastManagement.svg",
+      text: "Forecast Management",
+      onClick: () => onMenuItemClick("ScenarioManager"),
+    },
+    { icon: "/assets/catelouge.svg", text: "Assumption Catalogue", onClick: () => onMenuItemClick("LoadAssumptions") },
+    { icon: "/assets/analytics.svg", text: "Risk & Analytics", onClick: () => onMenuItemClick("RiskManager") },
+    {
+      icon: "/assets/loadassumptions.svg",
+      text: "Assumptions Catalogue",
+      onClick: () => onMenuItemClick("LoadAssumptions"),
+    },
+    { icon: "/assets/reportgenie.svg", text: "Report Genie", onClick: () => onMenuItemClick("ReportGinnie") },
+    {
+      icon: "/assets/acenavigation.svg",
+      text: "ACE Navigation",
+      onClick: () => onMenuItemClick("DynamicButtonComponent"),
+    },
   ];
 
   const handleMouseEnter = (text, ref) => {
@@ -40,7 +52,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
               onMouseEnter={(e) => handleMouseEnter(item.text, e.currentTarget)}
               onMouseLeave={handleMouseLeave}
             >
-              <i className={item.icon}></i>
+              <img src={item.icon} alt={item.text} style={{ width: "24px", height: "24px" }} />
             </MenuItem>
           ))}
         </MenuSection>
@@ -50,7 +62,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
             onMouseEnter={(e) => handleMouseEnter("Logout", e.currentTarget)}
             onMouseLeave={handleMouseLeave}
           >
-            <i className="bx bx-log-out"></i>
+            <img src="/assets/logout.svg" alt="Logout" style={{ width: "24px", height: "24px" }} />
           </MenuItem>
         </BottomSection>
       </Sidebar>

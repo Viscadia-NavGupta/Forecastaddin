@@ -13,7 +13,8 @@ const DynamicButtonComponent = () => {
       let sheetname = await excelfunctions.getActiveSheetName();
       if (sheetname !== "Model Management" && sheetname !== "outputs") {
         try {
-          const { tableOfContents, dataFrame } = await excelfunctions.getColumnGtoM(sheetname);
+          // Fetching from columns H to M now
+          const { tableOfContents, dataFrame } = await excelfunctions.getColumnHtoK(sheetname);
           setTableOfContents(tableOfContents);
           setDataFrame(dataFrame);
           setMessage("");

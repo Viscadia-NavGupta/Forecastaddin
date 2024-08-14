@@ -11,13 +11,11 @@ import * as AWSConnections from "../AWS Midleware/AWSConnections";
 
 const LoadAssumptions = ({ setPageValue }) => {
   const [cycleOptions, setCycleOptions] = useState([]);
-  const [assetOptions, setAssetOptions] = useState([]);
-  const [scenarioOptions, setScenarioOptions] = useState([]);
+  const [combinedOptions, setCombinedOptions] = useState([]);
   const [selectedCycles, setSelectedCycles] = useState([]);
-  const [selectedAssets, setSelectedAssets] = useState([]);
-  const [selectedScenarios, setSelectedScenarios] = useState([]);
+  const [selectedCombined, setSelectedCombined] = useState([]);
   const storedUsername = useMemo(() => sessionStorage.getItem("username"), []);
-  const [dataFrame, setDataFrame] = useState(null); // Declare dataFrame state
+  const [dataFrame, setDataFrame] = useState(null);
 
   useEffect(() => {
     fetchDataFromLambda();
@@ -62,17 +60,17 @@ const LoadAssumptions = ({ setPageValue }) => {
       filteredDF = filteredDF.filter(row => selectedCycles.includes(row.get('cycle_name')));
     }
 
-    const assetOptions = filteredDF.distinct('asset').toArray().map(row => ({ value: row[0], label: row[0] }));
-    const scenarioOptions = filteredDF.distinct('scenario_name').toArray().map(row => ({ value: row[0], label: row[0] }));
+    const combinedOptions = filteredDF.toArray().map(row => ({
+      value: `${row.asset} | ${row.indication} | ${row.scenario_name}`,
+      label: `${row.asset} | ${row.indication} | ${row.scenario_name}`
+    }));
 
-    setAssetOptions(assetOptions);
-    setScenarioOptions(scenarioOptions);
+    setCombinedOptions(combinedOptions);
   };
 
   const handleImportClick = () => {
     console.log("Selected Cycles:", selectedCycles);
-    console.log("Selected Assets:", selectedAssets);
-    console.log("Selected Scenarios:", selectedScenarios);
+    console.log("Selected Combined Options:", selectedCombined);
   };
 
   return (
@@ -86,16 +84,10 @@ const LoadAssumptions = ({ setPageValue }) => {
           onChange={handleCycleChange}
         />
         <Select
-          options={assetOptions}
+          options={combinedOptions}
           isMulti
-          placeholder="Select Asset"
-          onChange={setSelectedAssets}
-        />
-        <Select
-          options={scenarioOptions}
-          isMulti
-          placeholder="Select Scenario"
-          onChange={setSelectedScenarios}
+          placeholder="Select Asset | Indication | Scenario"
+          onChange={setSelectedCombined}
         />
       </DropdownContainer>
       <ImportButton onClick={handleImportClick}>Import Data →</ImportButton>

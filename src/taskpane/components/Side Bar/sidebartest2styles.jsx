@@ -36,13 +36,15 @@ export const MenuItem = styled("button")({
   alignItems: "center",
   position: "relative",
   whiteSpace: "nowrap",
-  "& i": {
-    fontSize: "24px",
+  padding: "0",  // Remove padding for better alignment with image
+  "& img": {
+    width: "24px",  // Set the width of the icon image
+    height: "24px",  // Set the height of the icon image
   },
 });
 
 export const BottomSection = styled("div")({
   paddingBottom: "5px",
-  paddingRight: "15px",
-  // paddingLeft: "5px",
+  paddingRight: "0px",
+  paddingLeft:"8px",
 });
