@@ -39,7 +39,7 @@ const ScenarioManager = ({ setPageValue }) => {
   };
 
   const handleViewOutputs = () => {
-    setPageValue("ViewOutputsPage");
+    activateDashboardSheet();
   };
 
   const handleForecastSettings = () => {
@@ -82,6 +82,34 @@ const ScenarioManager = ({ setPageValue }) => {
 
     setPageValue("savescenario");
   };
+
+
+async function activateDashboardSheet() {
+    try {
+        await Excel.run(async (context) => {
+            // Define the name of the sheet you want to activate
+            const sheetName = "Dashboard";
+            
+            // Get the workbook and the specific worksheet
+            const workbook = context.workbook;
+            const dashboardSheet = workbook.worksheets.getItem(sheetName);
+
+            // Load the sheet properties to ensure it exists
+            dashboardSheet.load('name');
+            await context.sync();
+
+            // Activate the sheet
+            dashboardSheet.activate();
+
+            // Synchronize the context to apply changes
+            await context.sync();
+
+            console.log(`The sheet '${sheetName}' has been activated.`);
+        });
+    } catch (error) {
+        console.error("Error activating sheet:", error);
+    }
+}
 
   return (
     <Container>
