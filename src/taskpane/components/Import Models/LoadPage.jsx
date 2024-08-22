@@ -20,7 +20,6 @@ import * as excelfunctions from "../ExcelMidleware/excelFucntions";
 const dropdownToColumnMap = {
   Geography: "geography",
   Indication: "indication",
-  "Team ID": "team_name",
   "Sub Indication": "sub_indication",
   Asset: "asset",
   "Model Name": "model_name",
@@ -36,6 +35,7 @@ const initialSelectedItems = Object.keys(dropdownToColumnMap).reduce((acc, key) 
 const LoadPage = ({ setPageValue }) => {
   const [dropdownItems, setDropdownItems] = useState({});
   const [selectedItems, setSelectedItems] = useState(initialSelectedItems);
+  const [step, setStep] = useState(1); // Manage steps
   const storedUsername = useMemo(() => sessionStorage.getItem("username"), []);
   const [dataFrame, setDataFrame] = useState(null);
 
@@ -72,11 +72,11 @@ const LoadPage = ({ setPageValue }) => {
           .map((row) => row[0])
           .filter((value) => {
             const isValid = value !== null && value !== undefined && value.trim() !== "";
-            if (!isValid) console.log(`Filtered out: ${value}`); // Debugging statement
+            if (!isValid) console.log(`Filtered out: ${value}`);
             return isValid;
           });
 
-        console.log(`Dropdown values for ${label}:`, items); // Debugging statement
+        console.log(`Dropdown values for ${label}:`, items);
         acc[label] = items;
         return acc;
       }, {});
@@ -119,11 +119,11 @@ const LoadPage = ({ setPageValue }) => {
         .map((row) => row[0])
         .filter((value) => {
           const isValid = value !== null && value !== undefined && value.trim() !== "";
-          if (!isValid) console.log(`Filtered out: ${value}`); // Debugging statement
+          if (!isValid) console.log(`Filtered out: ${value}`);
           return isValid;
         });
 
-      console.log(`Filtered Dropdown values for ${key}:`, items); // Debugging statement
+      console.log(`Filtered Dropdown values for ${key}:`, items);
       acc[key] = items;
       return acc;
     }, {});
@@ -146,7 +146,6 @@ const LoadPage = ({ setPageValue }) => {
 
     const result = { output_id: modelMappingIds };
     console.log(result);
-    //result.output_id[0]
     let resultseetname = await AWSConnections.downloadAndInsertDataFromExcelxlsx(
       result.output_id[0] + ".xlsx",
       "https://upload-docket.s3.amazonaws.com/",
@@ -154,7 +153,6 @@ const LoadPage = ({ setPageValue }) => {
     );
     let updatedsheetnameACE = await AWSConnections.modifySheet(resultseetname.newSheetName);
     console.log(updatedsheetnameACE);
-    // await excelfunctions.aceSheetformat();
     await excelfunctions.aceSheetformat(updatedsheetnameACE);
   };
 
@@ -182,34 +180,71 @@ const LoadPage = ({ setPageValue }) => {
 
   return (
     <Container>
-      <Heading>Load Scenario</Heading>
+      <Heading>Load Forecast</Heading>
       <DropdownContainer>
-        {Object.keys(dropdownToColumnMap).map((label, index) => (
-          <StyledFormControl key={index}>
-            <StyledInputLabel id={`multiple-checkbox-label-${index}`}>{label}</StyledInputLabel>
-            <StyledSelect
-              labelId={`multiple-checkbox-label-${index}`}
-              id={`multiple-checkbox-${index}`}
-              multiple
-              value={selectedItems[label] || []}
-              onChange={(event) => handleMultiSelectChange(event, label)}
-              input={<StyledOutlinedInput label={label} />}
-              renderValue={(selected) => selected.join(", ")}
-              MenuProps={MenuProps}
-            >
-              {dropdownItems[label]?.map((item) => (
-                <StyledMenuItem key={item} value={item}>
-                  <StyledCheckbox checked={selectedItems[label]?.indexOf(item) > -1} />
-                  <StyledListItemText primary={item} />
-                </StyledMenuItem>
-              ))}
-            </StyledSelect>
-          </StyledFormControl>
-        ))}
+        {step === 1 && (
+          <>
+            {["Geography", "Indication", "Sub Indication", "Asset", "Model Name"].map((label, index) => (
+              <StyledFormControl key={index}>
+                <StyledInputLabel id={`multiple-checkbox-label-${index}`}>{label}</StyledInputLabel>
+                <StyledSelect
+                  labelId={`multiple-checkbox-label-${index}`}
+                  id={`multiple-checkbox-${index}`}
+                  multiple
+                  value={selectedItems[label] || []}
+                  onChange={(event) => handleMultiSelectChange(event, label)}
+                  input={<StyledOutlinedInput label={label} />}
+                  renderValue={(selected) => selected.join(", ")}
+                  MenuProps={MenuProps}
+                >
+                  {dropdownItems[label]?.map((item) => (
+                    <StyledMenuItem key={item} value={item}>
+                      <StyledCheckbox checked={selectedItems[label]?.indexOf(item) > -1} />
+                      <StyledListItemText primary={item} />
+                    </StyledMenuItem>
+                  ))}
+                </StyledSelect>
+              </StyledFormControl>
+            ))}
+          </>
+        )}
+        {step === 2 && (
+          <>
+            {["Cycle", "Scenario"].map((label, index) => (
+              <StyledFormControl key={index}>
+                <StyledInputLabel id={`multiple-checkbox-label-${index}`}>{label}</StyledInputLabel>
+                <StyledSelect
+                  labelId={`multiple-checkbox-label-${index}`}
+                  id={`multiple-checkbox-${index}`}
+                  multiple
+                  value={selectedItems[label] || []}
+                  onChange={(event) => handleMultiSelectChange(event, label)}
+                  input={<StyledOutlinedInput label={label} />}
+                  renderValue={(selected) => selected.join(", ")}
+                  MenuProps={MenuProps}
+                >
+                  {dropdownItems[label]?.map((item) => (
+                    <StyledMenuItem key={item} value={item}>
+                      <StyledCheckbox checked={selectedItems[label]?.indexOf(item) > -1} />
+                      <StyledListItemText primary={item} />
+                    </StyledMenuItem>
+                  ))}
+                </StyledSelect>
+              </StyledFormControl>
+            ))}
+          </>
+        )}
       </DropdownContainer>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", width: "100%" }}>
-        <ImportButton onClick={handleImportACESheetClick}>Import ACE Sheet →</ImportButton>
-        <ImportButton onClick={handleImportOutputsClick}>Import Outputs →</ImportButton>
+        {step === 1 ? (
+          <ImportButton onClick={() => setStep(2)}>Next →</ImportButton>
+        ) : (
+          <>
+            <ImportButton onClick={() => setStep(1)}>← Back</ImportButton>
+            <ImportButton onClick={handleImportACESheetClick}>Import Model→</ImportButton>
+            <ImportButton onClick={handleImportACESheetClick}>Import ACE →</ImportButton>
+          </>
+        )}
       </div>
     </Container>
   );

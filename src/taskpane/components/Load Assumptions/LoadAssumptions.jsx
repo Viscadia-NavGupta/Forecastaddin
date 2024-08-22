@@ -75,7 +75,7 @@ const LoadAssumptions = ({ setPageValue }) => {
 
   return (
     <Container>
-      <Heading>Load Assumptions</Heading>
+      <Heading>Assumptions Catalogue</Heading>
       <DropdownContainer>
         <Select
           options={cycleOptions}

@@ -68,7 +68,7 @@ export const Heading = styled("h2")({
   fontWeight: 500,
   fontSize: "22px",
   lineHeight: "160%",
-  color: "#000000",
+  color: "#808080", // Updated to grey color
   marginBottom: "20px",
 });
 
@@ -209,7 +209,7 @@ export const ForgotPasswordLink = styled("a")({
 });
 
 export const ContactUsLink = styled(ForgotPasswordLink)({
-  marginTop: "5px", // Ensure the Contact Us link is on the next line
+  marginTop: "5px", 
   display: "block",
   textAlign: "center",
 });

@@ -4,7 +4,7 @@ import ModelManagementPage1 from "./Model Managment/Model Desinger";
 import LoadPage from "./Import Models/LoadPage";
 import UserRegistrationForm from "./Userregistration/UserRegistrationform";
 import Submitpage from "./Submitpage/SubmitPage";
-import MainLayout from "./MainLayout";
+import MainLayout from "./MainLayout/MainLayout";
 import MMSheetManagment from "./ModelEditor";
 import ScenarioManagement from "./ScenarioManagment";
 import * as AWSConnections from "./AWS Midleware/AWSConnections"; // import AWSConnections to use in App.js
@@ -20,6 +20,7 @@ import Riskmanager from "./RiskManager";
 import LoadAssumptions from "./Load Assumptions/LoadAssumptions";
 import ReportGinnie from "./ReportGinnie/ReportGinnie";
 import SaveForecastPage from "./MsgPage/SaveForcastPage";
+import ImportReportGenie from "./Import Report Genie/ImportReport";
 
 function App() {
   const [page, setPage] = useState("UserLogin");
@@ -104,11 +105,13 @@ function App() {
         return <ReportGinnie setPageValue={setPageValue} />; // Pass the UUID prop
       case "SaveForecastPage":
         return <SaveForecastPage setPageValue={setPageValue} />; // Pass the UUID prop
+      case "ImportReportGenie":
+        return <ImportReportGenie setPageValue={setPageValue} />; // Pass the UUID prop
       default:
         return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
     }
   };
-
+  
   return (
     <>
       {isLoggedIn ? (

@@ -20,7 +20,7 @@ const ModelManagementPage1 = ({ setPageValue }) => {
   function unhideActivateSheetAndSelectA1() {
     Excel.run(async (context) => {
       const workbook = context.workbook;
-      const sheetName = "Model Management";
+      const sheetName = "Model Management | Demo";
 
       // Try to get the worksheet with the specified name
       const sheet = workbook.worksheets.getItemOrNullObject(sheetName);

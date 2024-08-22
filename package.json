@@ -36,6 +36,7 @@
     "@mui/icons-material": "^5.15.21",
     "@mui/material": "^5.15.21",
     "@mui/system": "^5.16.0",
+    "aws-sdk": "^2.1676.0",
     "boxicons": "^2.1.4",
     "core-js": "^3.37.1",
     "dataframe-js": "^1.4.4",

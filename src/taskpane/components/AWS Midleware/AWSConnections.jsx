@@ -68,6 +68,8 @@ export async function orchestrationfucntion(
     if (serviceranflag.result === true) {
       if (buttonname === "GENERATE ACE SHEET") {
         UUIDGenrated = UUIDGenrated + ".csv";
+        verified.urls.DownloadS3 = verified.urls.DownloadS3 + "GENERATE ACE SHEET/";
+        //s3://download-docket/GENERATE ACE SHEET/
       } else if (buttonname === "RUN COMPUTATION") {
         verified.urls.DownloadS3 = verified.urls.DownloadS3 + "RUN COMPUTATION/horizontal_data_dump/";
         //"RUN COMPUTATION/horizontal_data_dump/"
@@ -825,7 +827,7 @@ export async function modifySheet(sheetName) {
             let cleanSheetName = newSheetName
               .substring(0, 31)
               .replace(/[:\/\\\?\*\[\]]/g, "")
-              .replace(/\s+/g, " ")  // Replace multiple spaces with a single space
+              .replace(/\s+/g, " ") // Replace multiple spaces with a single space
               .trim();
 
             console.log(`New sheet name after cleanup: "${cleanSheetName}"`);
@@ -871,17 +873,14 @@ export async function modifySheet(sheetName) {
   }
 }
 
-
-
-
 export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceName) {
   const filenamedownload = fileName;
   const downloadURL = s3Url + filenamedownload;
-  const BATCH_SIZE = 90000; // Number of rows per batch
-  const NORMALIZE_BATCH_SIZE = 20000; // Number of rows to normalize at once
+  const BATCH_SIZE = 90000;
+  const NORMALIZE_BATCH_SIZE = 20000;
   const TEMP_SHEET_NAME = "tempAWSdata";
+  const OUTPUTS_SHEET_NAME = "outputs";
 
-  // Fetch the data from S3
   async function fetchData() {
     console.log("Starting to fetch the file from S3...");
     const response = await fetch(downloadURL);
@@ -892,23 +891,22 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     return response.body;
   }
 
-  // Process the streamed data
-  async function processStream(stream) {
+  async function processStream(stream, sheetName) {
     console.log("Starting to process stream...");
     const reader = stream.getReader();
     let rows = [];
-    let rowIndex = 1; // Initialize row index for insertion
-    let buffer = ""; // Buffer for incomplete lines
+    let rowIndex = 1;
+    let buffer = "";
 
     return new Promise((resolve, reject) => {
       const processChunk = async ({ done, value }) => {
         if (done) {
           if (buffer) {
-            processBuffer(buffer); // Process any remaining buffer
+            processBuffer(buffer);
           }
           if (rows.length > 0) {
             await normalizeRows(rows);
-            await insertParsedData(rows, rowIndex);
+            await insertParsedData(rows, rowIndex, sheetName);
             rowIndex += rows.length;
           }
           console.log("Stream processing completed.");
@@ -918,7 +916,7 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
 
         const text = new TextDecoder("utf-8").decode(value);
         const lines = (buffer + text).split("\n");
-        buffer = lines.pop(); // Save last line in buffer in case it's incomplete
+        buffer = lines.pop();
 
         for (let line of lines) {
           processBuffer(line);
@@ -926,7 +924,7 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
 
         if (rows.length >= BATCH_SIZE) {
           await normalizeRows(rows);
-          await insertParsedData(rows.slice(0, BATCH_SIZE), rowIndex);
+          await insertParsedData(rows.slice(0, BATCH_SIZE), rowIndex, sheetName);
           rowIndex += BATCH_SIZE;
           rows = rows.slice(BATCH_SIZE);
         }
@@ -937,7 +935,6 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
       reader.read().then(processChunk).catch(reject);
     });
 
-    // Parse each line and add to rows
     function processBuffer(line) {
       const parsedLine = Papa.parse(line, {
         header: false,
@@ -958,7 +955,6 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     }
   }
 
-  // Normalize the rows to ensure they all have the same number of columns
   async function normalizeRows(rows) {
     return new Promise((resolve) => {
       const maxCols = Math.max(...rows.map((row) => row.length));
@@ -984,7 +980,6 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     });
   }
 
-  // Get Excel column letter from index
   function getColumnLetter(index) {
     let letter = "";
     while (index >= 0) {
@@ -994,51 +989,64 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     return letter;
   }
 
-  // Insert parsed data into the temp sheet
-  async function insertParsedData(rows, startRow) {
+  async function insertParsedData(rows, startRow, sheetName) {
     await Excel.run(async (context) => {
-      const sheet = context.workbook.worksheets.getItem(TEMP_SHEET_NAME);
+      const sheet = context.workbook.worksheets.getItemOrNullObject(sheetName);
+      await context.sync();
+
+      if (sheet.isNullObject) {
+        throw new Error(`Sheet "${sheetName}" does not exist.`);
+      }
+
       const endRow = startRow + rows.length - 1;
       const columnCount = rows[0].length;
       const rangeAddress = `A${startRow}:${getColumnLetter(columnCount - 1)}${endRow}`;
 
       console.log(`Range Address: ${rangeAddress}`);
-      console.log("Rows to insert:", rows);
 
-      const range = sheet.getRange(rangeAddress);
-      range.values = rows;
-      await sheet.context.sync();
-      console.log(`Inserted rows ${startRow} to ${endRow}`);
-    }).catch((error) => {
-      console.error("Error during Excel run:", error);
+      try {
+        const range = sheet.getRange(rangeAddress);
+        range.load("address");
+        await context.sync();
+
+        range.values = rows;
+        await context.sync();
+        console.log(`Inserted rows ${startRow} to ${endRow} in sheet "${sheetName}"`);
+      } catch (error) {
+        console.error("Error during Excel run:", error);
+        throw new Error("Invalid range or sheet. Please check the range and sheet name.");
+      }
     });
   }
 
-  // Create a temp sheet
-  async function createTempSheet(sheetName) {
+  async function createOrClearSheet(sheetName) {
     await Excel.run(async (context) => {
-      // Check if the sheet exists and delete it if it does
-      try {
-        const tempSheet = context.workbook.worksheets.getItem(sheetName);
-        tempSheet.delete();
-        await context.sync();
-      } catch (error) {
-        console.log(`${sheetName} sheet does not exist. Proceeding to create it.`);
-      }
-
-      // Create a new sheet
-      const tempSheet = context.workbook.worksheets.add(sheetName);
+      let sheet = context.workbook.worksheets.getItemOrNullObject(sheetName);
       await context.sync();
+
+      if (!sheet.isNullObject) {
+        sheet.getUsedRange().clear();
+        console.log(`Cleared the "${sheetName}" sheet.`);
+      } else {
+        console.log(`${sheetName} sheet does not exist. Creating it.`);
+        sheet = context.workbook.worksheets.add(sheetName);
+        await context.sync();
+      }
     }).catch((error) => {
       console.error("Error: " + error);
     });
   }
 
-  // Rename the sheet based on the service name
   async function renameSheet(serviceName) {
     return Excel.run(async (context) => {
-      const TEMP_SHEET_NAME = "tempAWSdata"; // Ensure this is correctly defined
-      const tempSheet = context.workbook.worksheets.getItem(TEMP_SHEET_NAME);
+      const tempSheet = context.workbook.worksheets.getItemOrNullObject(TEMP_SHEET_NAME);
+      await context.sync();
+
+      if (tempSheet.isNullObject) {
+        console.error(`Sheet "${TEMP_SHEET_NAME}" does not exist.`);
+        return { success: false, newSheetName: null };
+      }
+
       let newSheetName;
 
       if (serviceName === "GENERATE ACE SHEET") {
@@ -1052,39 +1060,38 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
           return { success: false, newSheetName: null };
         }
 
-        // Truncate to 31 characters and remove invalid characters
         newSheetName = newSheetName.substring(0, 31).replace(/[:\/\\\?\*\[\]]/g, "");
-        newSheetName = newSheetName.trim(); // Remove leading/trailing spaces
+        newSheetName = newSheetName.trim();
       } else if (serviceName === "RUN COMPUTATION") {
         newSheetName = "outputs";
+        const existingSheet = context.workbook.worksheets.getItemOrNullObject(newSheetName);
+        await context.sync();
+
+        if (!existingSheet.isNullObject) {
+          console.log("Outputs sheet already exists. Skipping rename.");
+          return { success: true, newSheetName: null };
+        }
       } else {
         console.error("Unknown service name.");
         return { success: false, newSheetName: null };
       }
 
-      // Check if a sheet with the new name already exists
-      let sheetExists = false;
-      try {
-        const existingSheet = context.workbook.worksheets.getItem(newSheetName);
-        existingSheet.load("name");
+      if (newSheetName !== "outputs") {
+        const existingSheet = context.workbook.worksheets.getItemOrNullObject(newSheetName);
         await context.sync();
-        sheetExists = true;
-      } catch (error) {
-        sheetExists = false;
+
+        if (!existingSheet.isNullObject) {
+          existingSheet.delete();
+          await context.sync();
+        }
       }
 
-      // If the sheet with the name already exists, delete it
-      if (sheetExists) {
-        const sheetToDelete = context.workbook.worksheets.getItem(newSheetName);
-        sheetToDelete.delete();
+      if (newSheetName) {
+        tempSheet.name = newSheetName;
         await context.sync();
+        console.log(`Sheet renamed to ${newSheetName}`);
       }
 
-      // Rename the temporary sheet to the new name
-      tempSheet.name = newSheetName;
-      await context.sync();
-
-      console.log(`Sheet renamed to ${newSheetName}`);
       return { success: true, newSheetName: newSheetName };
     }).catch((error) => {
       console.error("Error: " + error);
@@ -1092,24 +1099,136 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     });
   }
 
-  // Main function logic
   try {
     console.log("Starting the download and insertion process...");
     const stream = await fetchData();
 
-    // Create the temp sheet
-    await createTempSheet(TEMP_SHEET_NAME);
+    if (serviceName === "RUN COMPUTATION") {
+      await createOrClearSheet(OUTPUTS_SHEET_NAME);
+      await processStream(stream, OUTPUTS_SHEET_NAME);
+      console.log("Data has been successfully inserted into the outputs sheet.");
+      return { success: true, newSheetName: OUTPUTS_SHEET_NAME };
+    } else {
+      await createOrClearSheet(TEMP_SHEET_NAME);
+      await processStream(stream, TEMP_SHEET_NAME);
+      console.log("Data has been successfully inserted into the temp sheet.");
 
-    // Insert data into the temp sheet
-    await processStream(stream);
-    console.log("Data has been successfully inserted into the temp sheet.");
-
-    // Rename the temp sheet based on the service name
-    const result = await renameSheet(serviceName);
-    return result;
+      const result = await renameSheet(serviceName);
+      return result;
+    }
   } catch (error) {
     console.error("Error:", error);
     console.log("Failed to fetch data. Please try again.");
     return { success: false, newSheetName: null };
   }
 }
+// Define and export the function to update the existing PivotTable
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.ts
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// pivotTableUtils.js
+
+// Function to update PivotTable
+// pivotTableUtils.js
+
+export  async function updatePivotTable() {
+  try {
+      await Excel.run(async (context) => {
+          const dashboardSheetName = "dashboard";
+          const outputsSheetName = "outputs";
+          const pivotTableName = "PivotTable1";
+
+          // Get the dashboard sheet and the PivotTable
+          const dashboardSheet = context.workbook.worksheets.getItem(dashboardSheetName);
+          const pivotTable = dashboardSheet.pivotTables.getItem(pivotTableName);
+
+          // Get the outputs sheet and its used range
+          const outputsSheet = context.workbook.worksheets.getItem(outputsSheetName);
+          const outputsRange = outputsSheet.getRange("A1:KL10"); // Specify the range directly
+          outputsRange.load('address');
+          await context.sync();
+
+          // Update PivotTable data source
+          pivotTable.dataSource = outputsRange.address;
+          await context.sync();
+
+          console.log("PivotTable data source updated to:", outputsRange.address);
+
+          // Clear row hierarchies
+          if (pivotTable.rowHierarchies) {
+              pivotTable.rowHierarchies.items.forEach(hierarchy => {
+                  if (hierarchy.items) {
+                      hierarchy.items.forEach(item => item.delete());
+                  }
+              });
+          }
+
+          // Clear column hierarchies
+          if (pivotTable.columnHierarchies) {
+              pivotTable.columnHierarchies.items.forEach(hierarchy => {
+                  if (hierarchy.items) {
+                      hierarchy.items.forEach(item => item.delete());
+                  }
+              });
+          }
+
+          // Clear value hierarchies if they exist
+          if (pivotTable.valueHierarchies) {
+              pivotTable.valueHierarchies.items.forEach(hierarchy => {
+                  if (hierarchy.items) {
+                      hierarchy.items.forEach(item => item.delete());
+                  }
+              });
+          }
+
+          // Synchronize changes
+          await context.sync();
+
+          console.log("Hierarchies cleared and data source updated.");
+      });
+  } catch (error) {
+      console.error("Error updating PivotTable:", error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

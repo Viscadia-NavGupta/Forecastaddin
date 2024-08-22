@@ -5,30 +5,24 @@ import Tooltip from "./tooltip";
 const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
   const [tooltipText, setTooltipText] = useState("");
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [activeItem, setActiveItem] = useState("Home"); // Track the active menu item
   const tooltipRef = useRef(null);
 
   const menuItems = [
-    { icon: "/assets/home.svg", text: "Home", onClick: () => onMenuItemClick("Home") },
-    { icon: "/assets/Modeldesign.svg", text: "Model Desinger", onClick: () => onMenuItemClick("ModelManagementPage1") },
-    {
-      icon: "/assets/ForecastManagement.svg",
-      text: "Forecast Management",
-      onClick: () => onMenuItemClick("ScenarioManager"),
-    },
-    { icon: "/assets/catelouge.svg", text: "Assumption Catalogue", onClick: () => onMenuItemClick("LoadAssumptions") },
-    { icon: "/assets/analytics.svg", text: "Risk & Analytics", onClick: () => onMenuItemClick("RiskManager") },
-    {
-      icon: "/assets/loadassumptions.svg",
-      text: "Assumptions Catalogue",
-      onClick: () => onMenuItemClick("LoadAssumptions"),
-    },
-    { icon: "/assets/reportgenie.svg", text: "Report Genie", onClick: () => onMenuItemClick("ReportGinnie") },
-    {
-      icon: "/assets/acenavigation.svg",
-      text: "ACE Navigation",
-      onClick: () => onMenuItemClick("DynamicButtonComponent"),
-    },
+    { icon: "/assets/home.svg", text: "Home", key: "Home" },
+    { icon: "/assets/Modeldesign.svg", text: "Model Designer", key: "ModelManagementPage1" },
+    { icon: "/assets/ForecastManagement.svg", text: "Forecast Management", key: "ScenarioManager" },
+    { icon: "/assets/catelouge.svg", text: "Assumption Catalogue", key: "LoadAssumptions" },
+    { icon: "/assets/analytics.svg", text: "Risk & Analytics", key: "RiskManager" },
+    { icon: "/assets/loadassumptions.svg", text: "Load Forecast", key: "LoadPage" },
+    { icon: "/assets/reportgenie.svg", text: "Report Genie", key: "ImportReportGenie" },
+    { icon: "/assets/acenavigation.svg", text: "ACE Navigation", key: "DynamicButtonComponent" },
   ];
+
+  const handleMenuItemClick = (key) => {
+    setActiveItem(key); // Set the active menu item based on key
+    onMenuItemClick(key);
+  };
 
   const handleMouseEnter = (text, ref) => {
     setTooltipText(text);
@@ -48,11 +42,12 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
           {menuItems.map((item, index) => (
             <MenuItem
               key={index}
-              onClick={item.onClick}
+              onClick={() => handleMenuItemClick(item.key)}
               onMouseEnter={(e) => handleMouseEnter(item.text, e.currentTarget)}
               onMouseLeave={handleMouseLeave}
+              isActive={activeItem === item.key} // Highlight active item
             >
-              <img src={item.icon} alt={item.text} style={{ width: "24px", height: "24px" }} />
+              <img src={item.icon} alt={item.text} />
             </MenuItem>
           ))}
         </MenuSection>
@@ -62,7 +57,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
             onMouseEnter={(e) => handleMouseEnter("Logout", e.currentTarget)}
             onMouseLeave={handleMouseLeave}
           >
-            <img src="/assets/logout.svg" alt="Logout" style={{ width: "24px", height: "24px" }} />
+            <img src="/assets/logout.svg" alt="Logout" />
           </MenuItem>
         </BottomSection>
       </Sidebar>

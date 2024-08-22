@@ -6,19 +6,22 @@ import {
   MainContent,
   SidebarContainer,
   ContentContainer,
-  TopSection,
+  LogoContainer,
+  TextContainer,
   ProfileImage,
 } from "./mainLayoutNew";
-import Sidebartest2 from "./Side Bar/sidebartest2";
+import Sidebartest2 from "../Side Bar/sidebartest2";
 
 const MainLayout = ({ children, onMenuItemClick, handleLogout }) => {
   return (
     <Layout>
       <TopRightSection>
-        <TopSection>
-          <ProfileImage src="/../assets/Viscadia_V_Logo.png" alt="Profile" />
-        </TopSection>
-        <TopRightText>Viscadia Forecast Solution</TopRightText>
+        <LogoContainer>
+          <ProfileImage src="/../assets/Viscadia_Logo_white.png" alt="Profile" />
+        </LogoContainer>
+        <TextContainer>
+          <TopRightText>Viscadia Forecast Solution</TopRightText>
+        </TextContainer>
       </TopRightSection>
       <MainContent>
         <SidebarContainer>

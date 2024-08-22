@@ -16,21 +16,19 @@ export const Container = styled("div")({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "flex-start",
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
-  fontWeight: 300,  // Light font weight for consistency
 });
 
 export const Heading = styled("h2")({
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
-  fontWeight: 300,  // Light font weight for Roboto Light
-  color: "#808080",  // Updated to a deep grayish-blue color for consistency
-  fontSize: "18px",  // Increased font size for better emphasis
+  fontFamily: "Roboto",
+  fontStyle: "normal",
+  color: "#6D6E71",  // Grey color
+  fontSize: "16px",  // Font size set to 14px
+  fontWeight: "normal",  // Normal font weight
   backgroundColor: "transparent",  // Remove the background color
   border: "none",  // No border
   padding: "0",  // Remove padding
   cursor: "default",  // Remove pointer cursor
-  textDecoration: "underline",  // Underline the heading
-  textAlign: "center",  // Center-align the heading
+  textDecoration: "underline",
 });
 
 export const DropdownContainer = styled("div")({
@@ -50,14 +48,10 @@ export const StyledFormControl = styled(FormControl)({
 
 export const StyledInputLabel = styled(InputLabel)({
   fontSize: "0.7rem",  // Smaller font size
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
-  fontWeight: 300,  // Light font weight
 });
 
 export const StyledSelect = styled(Select)({
   fontSize: "0.7rem",  // Smaller font size
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
-  fontWeight: 300,  // Light font weight
 });
 
 export const StyledCheckbox = styled(Checkbox)({
@@ -67,21 +61,15 @@ export const StyledCheckbox = styled(Checkbox)({
 export const StyledListItemText = styled(ListItemText)({
   fontSize: "8px",  // Font size set to 8px for list item text
   padding: "0px",  // Reduce padding around text
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
-  fontWeight: 300,  // Light font weight
 });
 
 export const StyledOutlinedInput = styled(OutlinedInput)({
   fontSize: "0.7rem",  // Smaller font size
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
-  fontWeight: 300,  // Light font weight
 });
 
 export const StyledMenuItem = styled(MenuItem)({
   fontSize: "8px",  // Font size set to 8px when dropdown is open
   padding: "4px 8px",  // Reduce padding within menu items
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
-  fontWeight: 300,  // Light font weight
 });
 
 export const MenuProps = {
@@ -96,7 +84,7 @@ export const MenuProps = {
 export const ImportButton = styled("button")({
   padding: "8px 11px",
   marginLeft: "6px",
-  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontFamily: "Roboto",
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "9px",

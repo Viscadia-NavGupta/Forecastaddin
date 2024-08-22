@@ -46,10 +46,12 @@ const ScenarioManager = ({ setPageValue }) => {
     setPageValue("ForecastSettingsPage");
   };
 
-  const handleNewFeature = () => {
+  const handleNewFeature = async () => {
     // Add this function
-    setPageValue("NewFeaturePage");
+    // setPageValue("NewFeaturePage");
+    await AWSConnections.updatePivotTable();
   };
+
   const RunScenario = async () => {
     console.log("RunScenario function called");
 
@@ -59,7 +61,7 @@ const ScenarioManager = ({ setPageValue }) => {
       setPageValue("LoadingCircle");
       const result = await AWSConnections.orchestrationfucntion("RUN COMPUTATION");
       console.log("Outputs fetched");
-      setPageValue("Scenario management");
+      setPageValue("ScenarioManager");
 
       if (isFirstRun) {
         setMessage("Please select any button");
@@ -74,19 +76,13 @@ const ScenarioManager = ({ setPageValue }) => {
       setIsFirstRun(true);
     }
   };
+
   const SaveScenario = async () => {
     console.log("Save Scenario function called");
 
-    let servicename = await Excelfunctions.getActiveSheetName();
-
-    if (servicename == "outputs") {
-      setPageValue("savescenario");
-    } else {
-      console.log("Activate Outputs sheet");
-      setMessage("Activate Outputs sheet");
-      setIsFirstRun(true);
-    }
+    setPageValue("savescenario");
   };
+
   return (
     <Container>
       <Title>Forecast Management</Title>
@@ -112,6 +108,15 @@ const ScenarioManager = ({ setPageValue }) => {
           <NewFeatureLabel>Lock Forecast</NewFeatureLabel>
         </Button>
       </ButtonsContainer>
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        <a href="#" onClick={() => setPageValue("DynamicButtonComponent")}>
+          ACE
+          <span style={{ fontSize: "60%" }}>
+            <sup>TM</sup>
+          </span>{" "}
+          Navigation
+        </a>
+      </div>
     </Container>
   );
 };

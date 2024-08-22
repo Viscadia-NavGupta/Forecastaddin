@@ -12,10 +12,10 @@ import {
   AssumptionsLabel,
   NewFeatureLabel, // New label for the fifth button
 } from "./HomeStyles";
+import * as AWSconnections from "../AWS Midleware/AWSConnections";
 
 const Home = ({ setPageValue }) => {
-  const username = sessionStorage.getItem("username");
-  console.log(username);
+  const username = "Craig Leonardi"; // Use a fixed name for demo purposes
 
   const handleCreateNewModel = async () => {
     setPageValue("ModelManagementPage1");
@@ -43,7 +43,10 @@ const Home = ({ setPageValue }) => {
 
   return (
     <Container>
-      <Title>Welcome, Craig Leonardi</Title>
+      <Title>
+        Welcome,
+        <span>{username}</span>
+      </Title>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/ModelManaegment.svg" alt="Fresh Icon" />
@@ -54,15 +57,15 @@ const Home = ({ setPageValue }) => {
           <LoadLabel>Forecast Management</LoadLabel>
         </Button>
         <Button onClick={handleAssumptionsCatalogue}>
-          <Icon src="/../assets/simulations.svg" alt="Another Icon 2" />
+          <Icon src="/../assets/Homecatelouge.svg" alt="Another Icon 2" />
           <AssumptionsLabel>Assumptions Catalogue</AssumptionsLabel>
         </Button>
         <Button onClick={handleAnotherAction2}>
-          <Icon src="/../assets/simulations.svg" alt="Another Icon 2" />
+          <Icon src="/../assets/Homeanalytics.svg" alt="Another Icon 2" />
           <AnotherLabel2>Risk & Analytics</AnotherLabel2>
         </Button>
         <Button onClick={handleNewFeature}> {/* New button */}
-          <Icon src="/../assets/simulations.svg" alt="New Feature Icon" />
+          <Icon src="/../assets/Homereportgenie.svg" alt="New Feature Icon" />
           <NewFeatureLabel>Report Genie</NewFeatureLabel>
         </Button>
       </ButtonsContainer>

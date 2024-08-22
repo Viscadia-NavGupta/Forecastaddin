@@ -9,27 +9,25 @@ export const Container = styled("div")({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "flex-start",
+  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontWeight: 300,  // Light font weight for consistency
 });
 
 export const Heading = styled("h2")({
-  fontFamily: "Roboto",
-  fontStyle: "normal",
-  backgroundColor: "#00a19B",
-  color: "#fff",
-  border: "none",
-  borderRadius: "20px",
-  padding: "10px 40px",
-  fontSize: "16px",
-  fontWeight: "bold",
-  cursor: "pointer",
+  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontWeight: 300,  // Light font weight for Roboto Light
+  color: "#808080",  // Simple and modern deep grayish-blue color
+  fontSize: "18px",  // Match the size with the second page
+  margin: "20px 0",  // Similar spacing around the title
+  textAlign: "center",  // Center-align the heading
+  textDecoration: "underline",  // Underline to match the second page's title style
 });
 
 export const MessageBox = styled("div")({
-  fontFamily: "Roboto",
-  fontStyle: "normal",
-  fontWeight: 400,
-  fontSize: "14px",
-  color: "#FF0000",
+  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontWeight: 400,  // Normal font weight
+  fontSize: "14px",  // Font size
+  color: "#FF0000",  // Red color for the text
   padding: "20px",
   borderRadius: "8px",
   backgroundColor: "#FFE0E0",
@@ -52,10 +50,9 @@ export const ComboBoxContainer = styled("div")({
 export const ComboBoxInput = styled("input")({
   width: "100%",
   padding: "10px",
-  fontFamily: "Roboto",
-  fontStyle: "normal",
-  fontWeight: 400,
-  fontSize: "12px",
+  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontWeight: 400,  // Normal font weight
+  fontSize: "12px",  // Font size
   lineHeight: "160%",
   color: "#000000",
   border: "1px solid #E0E0E0",
@@ -77,10 +74,9 @@ export const ComboBoxList = styled("div")({
 
 export const ComboBoxItem = styled("div")({
   padding: "10px",
-  fontFamily: "Roboto",
-  fontStyle: "normal",
-  fontWeight: 400,
-  fontSize: "12px",
+  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontWeight: 400,  // Normal font weight
+  fontSize: "12px",  // Font size
   lineHeight: "160%",
   color: "#63666A",
   cursor: "pointer",
@@ -93,9 +89,8 @@ export const Input = styled("input")({
   width: "100%",
   padding: "10px",
   marginTop: "10px",
-  fontFamily: "Roboto",
-  fontStyle: "normal",
-  fontWeight: 400,
+  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontWeight: 400,  // Normal font weight
   fontSize: "12px",
   lineHeight: "160%",
   color: "#000000",
@@ -107,9 +102,8 @@ export const Input = styled("input")({
 export const SaveButton = styled("button")({
   padding: "10px 20px",
   marginTop: "20px",
-  fontFamily: "Roboto",
-  fontStyle: "normal",
-  fontWeight: 400,
+  fontFamily: "Roboto, sans-serif",  // Applied Roboto font
+  fontWeight: 400,  // Normal font weight
   fontSize: "12px",
   color: "#FFFFFF",
   backgroundColor: "#0081C5",

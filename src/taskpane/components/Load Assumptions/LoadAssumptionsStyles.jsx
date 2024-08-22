@@ -15,7 +15,7 @@ export const Heading = styled("h2")({
   fontFamily: "Roboto",
   fontStyle: "normal",
   color: "#808080",  // Grey color
-  fontSize: "14px",  // Font size set to 14px
+  fontSize: "18px",  // Font size set to 14px
   fontWeight: "normal",  // Normal font weight
   backgroundColor: "transparent",  // Remove the background color
   border: "none",  // No border
