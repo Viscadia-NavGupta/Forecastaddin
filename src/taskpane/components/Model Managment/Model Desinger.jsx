@@ -66,7 +66,7 @@ const ModelManagementPage1 = ({ setPageValue }) => {
 
   return (
     <Container>
-      <ModelManagementTitle>Model Desinger</ModelManagementTitle>
+      <ModelManagementTitle>Model Designer</ModelManagementTitle>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/model.svg" alt="Fresh Icon" />

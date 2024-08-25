@@ -21,7 +21,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
     { icon: <HomeIcon />, text: "Home", key: "Home" },
     { icon: <ModelDesignIcon />, text: "Model Designer", key: "ModelManagementPage1" },
     { icon: <ForecastManagementIcon />, text: "Forecast Management", key: "ScenarioManager" },
-    { icon: <CatalogueIcon />, text: "Assumption Catalogue", key: "LoadAssumptions" },
+    { icon: <CatalogueIcon />, text: "Assumptions Catalogue", key: "LoadAssumptions" },
     { icon: <PowerBiIcon />, text: "PowerBi Report", key: "PowerBI" },
     { icon: <ReportGenieIcon />, text: "Report Genie", key: "ImportReportGenie" },
     { icon: <ACENavigationIcon />, text: "ACE Navigation", key: "DynamicButtonComponent" },
