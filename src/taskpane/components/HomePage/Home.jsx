@@ -7,10 +7,10 @@ import {
   Icon,
   FreshLabel,
   LoadLabel,
-  AnotherLabel1,
   AnotherLabel2,
   AssumptionsLabel,
-  NewFeatureLabel, // New label for the fifth button
+  NewFeatureLabel,
+  OpenGoogleLabel, // New label for the Google button
 } from "./HomeStyles";
 import * as AWSconnections from "../AWS Midleware/AWSConnections";
 
@@ -25,10 +25,6 @@ const Home = ({ setPageValue }) => {
     setPageValue("ScenarioManager");
   };
 
-  const handleAnotherAction1 = async () => {
-    setPageValue("OutputManager");
-  };
-
   const handleAnotherAction2 = async () => {
     setPageValue("RiskManager");
   };
@@ -38,7 +34,14 @@ const Home = ({ setPageValue }) => {
   };
 
   const handleNewFeature = async () => {
-    setPageValue("ReportGinnie"); // Define the action for the fifth button
+    setPageValue("ImportReportGenie"); // Define the action for the fifth button
+  };
+
+  const handleOpenGoogle = () => {
+    window.open(
+      "https://app.powerbi.com/links/Z_tEFHu8vr?ctid=c05372cf-28bd-4caf-83dd-e8b65c066ce9&pbi_source=linkShare",
+      "_blank"
+    );
   };
 
   return (
@@ -64,7 +67,13 @@ const Home = ({ setPageValue }) => {
           <Icon src="/../assets/Homeanalytics.svg" alt="Another Icon 2" />
           <AnotherLabel2>Risk & Analytics</AnotherLabel2>
         </Button>
-        <Button onClick={handleNewFeature}> {/* New button */}
+        <Button onClick={handleOpenGoogle}>
+          {" "}
+          {/* New button */}
+          <Icon src="/../assets/powerbi.svg" alt="Power Bi" /> {/* Add a relevant icon */}
+          <OpenGoogleLabel>Powerbi Report</OpenGoogleLabel>
+        </Button>
+        <Button onClick={handleNewFeature}>
           <Icon src="/../assets/Homereportgenie.svg" alt="New Feature Icon" />
           <NewFeatureLabel>Report Genie</NewFeatureLabel>
         </Button>

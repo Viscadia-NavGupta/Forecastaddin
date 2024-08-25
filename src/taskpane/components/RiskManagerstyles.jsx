@@ -34,7 +34,7 @@ export const Button = styled("div")({
   justifyContent: "center",
   width: "85px",  // Match width to home page
   height: "85px",  // Match height to home page
-  backgroundColor: "#ededed",
+  backgroundColor: "#747474",
   borderRadius: "5px",
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   cursor: "pointer",
@@ -56,7 +56,7 @@ export const Icon = styled("img")({
 export const Label = styled("span")({
   fontSize: "10px",  // Match label text size to home page
   fontWeight: "bold",
-  color: "#333",
+  color: "#FFF",
   marginBottom: "5px",
   lineHeight: "10px",  // Reduce space between words
   textAlign: "center",

@@ -21,6 +21,7 @@ import LoadAssumptions from "./Load Assumptions/LoadAssumptions";
 import ReportGinnie from "./ReportGinnie/ReportGinnie";
 import SaveForecastPage from "./MsgPage/SaveForcastPage";
 import ImportReportGenie from "./Import Report Genie/ImportReport";
+import LockScenario from "./Lock Scenario/LockScenario";
 
 function App() {
   const [page, setPage] = useState("UserLogin");
@@ -91,8 +92,8 @@ function App() {
         return <Overirdeconfirmation setPageValue={setPageValue} UUID={uuid} />; // Pass the UUID prop
       case "savescenario":
         return <Savesscenario setPageValue={setPageValue} />; // Pass the UUID prop
-      case "LockScenario":
-        return <Lockscenario setPageValue={setPageValue} />; // Pass the UUID prop
+      // case "LockScenario":
+      //   return <Lockscenario setPageValue={setPageValue} />; // Pass the UUID prop
       case "ScenarioManager":
         return <ScenarioManeger setPageValue={setPageValue} />; // Pass the UUID prop
       case "OutputManager":
@@ -107,11 +108,13 @@ function App() {
         return <SaveForecastPage setPageValue={setPageValue} />; // Pass the UUID prop
       case "ImportReportGenie":
         return <ImportReportGenie setPageValue={setPageValue} />; // Pass the UUID prop
+      case "LockScenario":
+        return <LockScenario setPageValue={setPageValue} />; // Pass the UUID prop
       default:
         return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
     }
   };
-  
+
   return (
     <>
       {isLoggedIn ? (

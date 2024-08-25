@@ -22,7 +22,7 @@ const MMSheetManagment = ({ setPageValue }) => {
   };
 
   const menuItems = [
-    { icon: "/../assets/Createmodel.svg", text: "Create Model", action: () => handleCreateNewModel() },
+    { icon: "/../assets/Createmodel.svg", text: "Genrate ACE", action: () => handleCreateNewModel() },
     { icon: "/../assets/AddAssumptions.svg", text: "Add Assumption", action: () => MMfunctions.addAssumption() },
     {
       icon: "/../assets/deleteAssumption.svg",

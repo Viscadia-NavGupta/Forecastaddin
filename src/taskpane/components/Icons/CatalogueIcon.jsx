@@ -1,9 +1,40 @@
-import React from 'react';
+import React from "react";
 
-const CatalogueIcon = ({ fill = "black", ...props }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill={fill} {...props}>
-    <!-- Paste the content of your catelouge.svg here -->
-  </svg>
-);
+function Icon({ width = "24px", height = "24px", fill = "#4d72d8" }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={width}
+      height={height}
+      viewBox="0 0 60 60"
+    >
+      <path
+        fill={fill}
+        d="M44.96 14.53a1.771 1.771 0 00-.81-1.15L23.91 1.25a1.8 1.8 0 00-1.82 0L1.85 13.38a1.771 1.771 0 00-.81 1.15 1.472 1.472 0 00-.04.36v23.22a1.758 1.758 0 00.85 1.51l20.24 12.13a1.781 1.781 0 001.82 0l4.32-2.59L45 27.13V14.89a1.472 1.472 0 00-.04-.36z"
+      ></path>
+      <path
+        fill={fill === "#4d72d8" ? "#3b5faf" : fill} // Use a darker shade if the default color is used
+        d="M23 27.38V52a1.734 1.734 0 01-.91-.25L1.85 39.62A1.758 1.758 0 011 38.11V14.89a1.472 1.472 0 01.04-.36l20.99 12.58a1.87 1.87 0 00.97.27z"
+      ></path>
+      <path
+        fill={fill === "#4d72d8" ? "#2a4b87" : fill} // Use a darker shade if the default color is used
+        d="M45 14.89v12.24L28.23 49.16l-4.32 2.59A1.734 1.734 0 0123 52V27.38a1.87 1.87 0 00.97-.27l20.99-12.58a1.472 1.472 0 01.04.36z"
+      ></path>
+      <circle cx="43" cy="43" r="16" fill="#f7d858"></circle>
+      <path
+        fill="#fff"
+        d="M52 42v2a1 1 0 01-1 1h-6v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6h-6a1 1 0 01-1-1v-2a1 1 0 011-1h6v-6a1 1 0 011-1h2a1 1 0 011 1v6h6a1 1 0 011 1z"
+      ></path>
+      <path
+        fill="#373737"
+        d="M43 26a16.952 16.952 0 00-15.987 22.724L24 50.531V28.175a2.9 2.9 0 00.482-.2L44 16.27V23a1 1 0 002 0v-8.111a2.744 2.744 0 00-1.336-2.368L24.416.385a2.8 2.8 0 00-2.84.005L1.332 12.522A2.746 2.746 0 000 14.889v23.22a2.746 2.746 0 001.336 2.369l20.246 12.134a2.8 2.8 0 002.843 0l3.381-2.027A16.992 16.992 0 1043 26zM22.6 2.109a.8.8 0 01.8 0L43.57 14.2 23.46 26.253a.9.9 0 01-.913 0L2.429 14.2zM2.367 38.765A.762.762 0 012 38.109V16.27l19.524 11.706a3 3 0 00.476.2v22.356zM43 58a15 15 0 1115-15 15.017 15.017 0 01-15 15z"
+      ></path>
+      <path
+        fill="#373737"
+        d="M51 40h-5v-5a2 2 0 00-2-2h-2a2 2 0 00-2 2v5h-5a2 2 0 00-2 2v2a2 2 0 002 2h5v5a2 2 0 002 2h2a2 2 0 002-2v-5h5a2 2 0 002-2v-2a2 2 0 00-2-2zm0 4h-6a1 1 0 00-1 1v6h-2v-6a1 1 0 00-1-1h-6v-2h6a1 1 0 001-1v-6h2v6a1 1 0 001 1h6z"
+      ></path>
+    </svg>
+  );
+}
 
-export default CatalogueIcon;
+export default Icon;

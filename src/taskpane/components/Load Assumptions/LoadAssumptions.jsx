@@ -1,31 +1,35 @@
 import React, { useState, useEffect, useMemo } from "react";
-import Select from "react-select";
 import {
   Container,
   Heading,
   DropdownContainer,
   ImportButton,
+  StyledFormControl,
+  StyledInputLabel,
+  StyledSelect,
+  StyledCheckbox,
+  StyledListItemText,
+  StyledOutlinedInput,
+  StyledMenuItem,
 } from "./LoadAssumptionsStyles";
 import { DataFrame } from "dataframe-js";
-import * as AWSConnections from "../AWS Midleware/AWSConnections";
+import * as testing from "../AWS Midleware/AssumptionsCatelougeAWS"; // Ensure correct import path
 
 const LoadAssumptions = ({ setPageValue }) => {
-  const [cycleOptions, setCycleOptions] = useState([]);
-  const [combinedOptions, setCombinedOptions] = useState([]);
-  const [selectedCycles, setSelectedCycles] = useState([]);
-  const [selectedCombined, setSelectedCombined] = useState([]);
+  const [dropdownItems, setDropdownItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
+  const [selectedItems, setSelectedItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
+  const [dataFrame, setDataFrame] = useState(new DataFrame([]));
   const storedUsername = useMemo(() => sessionStorage.getItem("username"), []);
-  const [dataFrame, setDataFrame] = useState(null);
 
   useEffect(() => {
     fetchDataFromLambda();
   }, []);
 
   const fetchDataFromLambda = async () => {
-    try {
-      const url = "https://k06jq91m02.execute-api.ap-south-1.amazonaws.com/ViscadiaTest/SQLdbQueryTest/user-login";
-      const jsonPayload = JSON.stringify({ email_id: storedUsername, action: "Fetch Metadata" });
+    const url = "https://k06jq91m02.execute-api.ap-south-1.amazonaws.com/ViscadiaTest/SQLdbQueryTest/user-login";
+    const jsonPayload = JSON.stringify({ email_id: storedUsername, action: "Fetch Metadata" });
 
+    try {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,64 +37,118 @@ const LoadAssumptions = ({ setPageValue }) => {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok.");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const responseBody = await response.json();
-      const combinedResults = [...responseBody.results1, ...responseBody.results2];
-      const df = new DataFrame(combinedResults);
-
-      const cycleOptions = df.distinct('cycle_name').toArray().map(row => ({ value: row[0], label: row[0] }));
-      setCycleOptions(cycleOptions);
-
-      setDataFrame(df); // Set dataFrame state
+      const df = new DataFrame(responseBody.results1);
+      setDataFrame(df);
+      updateDropdowns(df);
     } catch (error) {
-      alert("Error fetching data from Lambda: " + error.message);
+      console.error("Error fetching data:", error.message);
     }
   };
 
-  const handleCycleChange = (selected) => {
-    setSelectedCycles(selected);
-    filterDropdownItems(selected.map(item => item.value));
+  const updateDropdowns = (df) => {
+    const lockedDF = df.filter(row => row.get("save_status") === "Locked");
+
+    const cycleItems = lockedDF.distinct("cycle_name")
+      .toArray()
+      .map(row => row[0])
+      .filter(value => value && value.trim() !== "");
+
+    const assetItems = lockedDF.select("asset", "indication", "scenario_name").dropDuplicates()
+      .toCollection()
+      .map(row => {
+        const parts = [row.asset, row.indication, row.scenario_name].filter(part => part && part.trim() !== "");
+        return parts.join(" | ");
+      }).filter(value => value !== "");
+
+    setDropdownItems({ Cycle: cycleItems, "Asset | Indication | Scenario": assetItems });
   };
 
-  const filterDropdownItems = (selectedCycles) => {
-    let filteredDF = dataFrame;
-    if (selectedCycles.length > 0) {
-      filteredDF = filteredDF.filter(row => selectedCycles.includes(row.get('cycle_name')));
+  const handleDropdownChange = (event, label) => {
+    const selectedValues = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
+    setSelectedItems(prevState => ({ ...prevState, [label]: selectedValues }));
+  };
+
+  const handleNewFeature = async () => {
+    console.log("handleNewFeature triggered");
+    
+    try {
+      const selectedCycles = selectedItems["Cycle"];
+      const filteredDF = dataFrame.filter((row) => selectedCycles.includes(row.get("cycle_name")));
+
+      const fileNames = filteredDF.select("output_id").toArray().map((row) => row[0]);
+      const cycle_names = filteredDF.select("cycle_name").toArray().map((row) => row[0]);
+      const scenario_names = filteredDF.select("scenario_name").toArray().map((row) => row[0]);
+
+      console.log("Filtered fileNames:", fileNames);
+      console.log("Cycle Names:", cycle_names);
+      console.log("Scenario Names:", scenario_names);
+
+      const s3Url = "https://download-docket.s3.amazonaws.com/RUN COMPUTATION/horizontal_data_dump/";
+      const serviceName = "RUN COMPUTATION";
+
+      for (let i = 0; i < fileNames.length; i++) {
+        try {
+          const result = await testing.downloadAndInsertDataFromExcel(
+            fileNames[i],
+            s3Url,
+            serviceName,
+            cycle_names[i] || "",
+            scenario_names[i] || ""
+          );
+          if (result.success) {
+            console.log("File processed successfully:", fileNames[i]);
+          } else {
+            console.error("Error processing file:", fileNames[i], result.error);
+          }
+        } catch (error) {
+          console.error(`An error occurred while processing ${fileNames[i]}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error("Error in handleNewFeature:", error);
     }
-
-    const combinedOptions = filteredDF.toArray().map(row => ({
-      value: `${row.asset} | ${row.indication} | ${row.scenario_name}`,
-      label: `${row.asset} | ${row.indication} | ${row.scenario_name}`
-    }));
-
-    setCombinedOptions(combinedOptions);
-  };
-
-  const handleImportClick = () => {
-    console.log("Selected Cycles:", selectedCycles);
-    console.log("Selected Combined Options:", selectedCombined);
   };
 
   return (
     <Container>
       <Heading>Assumptions Catalogue</Heading>
       <DropdownContainer>
-        <Select
-          options={cycleOptions}
-          isMulti
-          placeholder="Select Cycle"
-          onChange={handleCycleChange}
-        />
-        <Select
-          options={combinedOptions}
-          isMulti
-          placeholder="Select Asset | Indication | Scenario"
-          onChange={setSelectedCombined}
-        />
+        {["Cycle", "Asset | Indication | Scenario"].map(label => (
+          <StyledFormControl key={label}>
+            <StyledInputLabel>{label}</StyledInputLabel>
+            <StyledSelect
+              multiple
+              value={selectedItems[label]}
+              onChange={(event) => handleDropdownChange(event, label)}
+              input={<StyledOutlinedInput label={label} />}
+              renderValue={(selected) => selected.join(", ")}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250,
+                    overflowX: 'hidden',
+                  }
+                }
+              }}
+            >
+              {dropdownItems[label].map((item, index) => (
+                <StyledMenuItem key={index} value={item}>
+                  <StyledCheckbox checked={selectedItems[label].indexOf(item) > -1} />
+                  <StyledListItemText primary={item} />
+                </StyledMenuItem>
+              ))}
+            </StyledSelect>
+          </StyledFormControl>
+        ))}
       </DropdownContainer>
-      <ImportButton onClick={handleImportClick}>Import Data →</ImportButton>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "100%" }}>
+        <ImportButton onClick={handleNewFeature}>Import Data→</ImportButton>
+      </div>
     </Container>
   );
 };

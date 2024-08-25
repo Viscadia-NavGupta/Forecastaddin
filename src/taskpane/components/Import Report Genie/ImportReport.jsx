@@ -11,32 +11,25 @@ import {
   StyledListItemText,
   StyledOutlinedInput,
   StyledMenuItem,
-  MenuProps,
 } from "./ImportReportStyles";
 import { DataFrame } from "dataframe-js";
-import * as AWSConnections from "../AWS Midleware/AWSConnections";
-import * as excelfunctions from "../ExcelMidleware/excelFucntions";
+import * as testing from "../AWS Midleware/AssumptionsCatelougeAWS"; // Ensure this import is correct
 
-const dropdownToColumnMap = {
-  Cycle: "cycle_name",
-  "Asset | Indication | Scenario": ["asset", "indication", "scenario_name"],
-};
-
-const ImportReportGenie = ({ setPageValue }) => {
-  const [dropdownItems, setDropdownItems] = useState({});
+const LoadAssumptions = ({ setPageValue }) => {
+  const [dropdownItems, setDropdownItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
   const [selectedItems, setSelectedItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
+  const [dataFrame, setDataFrame] = useState(new DataFrame([]));
   const storedUsername = useMemo(() => sessionStorage.getItem("username"), []);
-  const [dataFrame, setDataFrame] = useState(null);
 
   useEffect(() => {
     fetchDataFromLambda();
   }, []);
 
   const fetchDataFromLambda = async () => {
-    try {
-      const url = "https://k06jq91m02.execute-api.ap-south-1.amazonaws.com/ViscadiaTest/SQLdbQueryTest/user-login";
-      const jsonPayload = JSON.stringify({ email_id: storedUsername, action: "Fetch Metadata" });
+    const url = "https://k06jq91m02.execute-api.ap-south-1.amazonaws.com/ViscadiaTest/SQLdbQueryTest/user-login";
+    const jsonPayload = JSON.stringify({ email_id: storedUsername, action: "Fetch Metadata" });
 
+    try {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,128 +37,130 @@ const ImportReportGenie = ({ setPageValue }) => {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok.");
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const responseBody = await response.json();
-      const combinedResults = [...responseBody.results1, ...responseBody.results2];
-
-      const df = new DataFrame(combinedResults);
+      const df = new DataFrame(responseBody.results1);
       setDataFrame(df);
-
-      // Populate the cycle dropdown initially
-      const cycleItems = df.distinct("cycle_name")
-        .toArray()
-        .map(row => row[0])
-        .filter(value => value && value.trim() !== "");
-
-      setDropdownItems(prevItems => ({ ...prevItems, Cycle: cycleItems }));
+      updateDropdowns(df);
     } catch (error) {
-      alert("Error fetching data from Lambda: " + error.message);
+      console.error("Error fetching data:", error.message);
     }
   };
 
-  const handleCycleChange = (event) => {
-    const selectedCycle = event.target.value;
-    setSelectedItems(prevItems => ({ ...prevItems, Cycle: [selectedCycle] }));
+  const updateDropdowns = (df) => {
+    const lockedDF = df.filter(row => row.get("save_status") === "Locked");
 
-    // Filter the DataFrame based on the selected cycle
-    const filteredDF = dataFrame.filter(row => row.get("cycle_name") === selectedCycle);
+    const cycleItems = lockedDF.distinct("cycle_name")
+      .toArray()
+      .map(row => row[0])
+      .filter(value => value && value.trim() !== "");
 
-    // Combine Asset | Indication | Scenario values
-    const combinedItems = filteredDF.toCollection().map(row => {
-      const asset = row.asset || "";
-      const indication = row.indication || "";
-      const scenario = row.scenario_name || "";
-      return `${asset} | ${indication} | ${scenario}`.trim();
-    }).filter(value => value && value !== " |  | "); // Ensure no empty strings are added
+    const assetItems = lockedDF.select("asset", "indication", "scenario_name").dropDuplicates()
+      .toCollection()
+      .map(row => {
+        const parts = [row.asset, row.indication, row.scenario_name].filter(part => part && part.trim() !== "");
+        return parts.join(" | ");
+      }).filter(value => value !== "");
 
-    // Update the dropdown items
-    setDropdownItems(prevItems => ({ ...prevItems, "Asset | Indication | Scenario": combinedItems }));
+    setDropdownItems({ Cycle: cycleItems, "Asset | Indication | Scenario": assetItems });
   };
 
-  const handleMultiSelectChange = (event, label) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedItems(prevState => ({
-      ...prevState,
-      [label]: Array.isArray(value) ? value : [value],
-    }));
+  const handleDropdownChange = (event, label) => {
+    const selectedValues = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
+    setSelectedItems(prevState => ({ ...prevState, [label]: selectedValues }));
   };
 
-  const handleImportACESheetClick = async () => {
-    let filteredDF = dataFrame;
+  const handleNewFeature = async () => {
+    // Filter the DataFrame based on the selected filters
+    const selectedCycles = selectedItems["Cycle"];
+    const filteredDF = dataFrame.filter((row) => selectedCycles.includes(row.get("cycle_name")));
 
-    Object.keys(selectedItems).forEach((dropdown) => {
-      const value = selectedItems[dropdown];
-      if (value.length > 0) {
-        const columnName = dropdownToColumnMap[dropdown];
-        filteredDF = filteredDF.filter((row) => value.includes(row.get(columnName)));
+    // Extract the fileNames, cycle_name, and Scenario_Name from the filtered DataFrame
+    const fileNames = filteredDF
+      .select("output_id")
+      .toArray()
+      .map((row) => row[0])
+      .filter((id) => id && id.trim() !== "");
+
+    const cycle_names = filteredDF
+      .select("cycle_name")
+      .toArray()
+      .map((row) => row[0])
+      .filter((name) => name && name.trim() !== "");
+
+    const scenario_names = filteredDF
+      .select("scenario_name")
+      .toArray()
+      .map((row) => row[0])
+      .filter((name) => name && name.trim() !== "");
+
+    console.log("Filtered fileNames:", fileNames);
+    console.log("Cycle Names:", cycle_names);
+    console.log("Scenario Names:", scenario_names);
+
+    const s3Url = "https://download-docket.s3.amazonaws.com/RUN COMPUTATION/horizontal_data_dump/";
+    const serviceName = "RUN COMPUTATION";
+
+    for (let i = 0; i < fileNames.length; i++) {
+      try {
+        const result = await testing.downloadAndInsertDataFromExcel(
+          fileNames[i],
+          s3Url,
+          serviceName,
+          cycle_names[i] || "",
+          scenario_names[i] || ""
+        );
+        if (result.success) {
+          console.log("File processed successfully:", fileNames[i]);
+        } else {
+          console.error("Error processing file:", fileNames[i], result.error);
+        }
+      } catch (error) {
+        console.error(`An error occurred while processing ${fileNames[i]}:`, error);
       }
-    });
-
-    const modelMappingIds = filteredDF.toCollection().map((row) => row.output_id);
-
-    const result = { output_id: modelMappingIds };
-    console.log(result);
-    let resultseetname = await AWSConnections.downloadAndInsertDataFromExcelxlsx(
-      result.output_id[0] + ".xlsx",
-      "https://upload-docket.s3.amazonaws.com/",
-      "Import GENERATE ACE SHEET"
-    );
-    let updatedsheetnameACE = await AWSConnections.modifySheet(resultseetname.newSheetName);
-    console.log(updatedsheetnameACE);
-    await excelfunctions.aceSheetformat(updatedsheetnameACE);
+    }
   };
 
   return (
     <Container>
-      <Heading>Report Genie</Heading>
+      <Heading>Assumptions Catalogue</Heading>
       <DropdownContainer>
-        <StyledFormControl>
-          <StyledInputLabel>Cycle</StyledInputLabel>
-          <StyledSelect
-            value={selectedItems.Cycle}
-            onChange={handleCycleChange}
-            input={<StyledOutlinedInput label="Cycle" />}
-            renderValue={(selected) => Array.isArray(selected) ? selected.join(", ") : selected}
-            MenuProps={MenuProps}
-          >
-            {dropdownItems.Cycle?.map((item, index) => (
-              <StyledMenuItem key={index} value={item}>
-                <StyledCheckbox checked={selectedItems.Cycle.indexOf(item) > -1} />
-                <StyledListItemText primary={item} />
-              </StyledMenuItem>
-            ))}
-          </StyledSelect>
-        </StyledFormControl>
-
-        <StyledFormControl>
-          <StyledInputLabel>Asset | Indication | Scenario</StyledInputLabel>
-          <StyledSelect
-            value={selectedItems["Asset | Indication | Scenario"]}
-            onChange={(event) => handleMultiSelectChange(event, "Asset | Indication | Scenario")}
-            input={<StyledOutlinedInput label="Asset | Indication | Scenario" />}
-            renderValue={(selected) => Array.isArray(selected) ? selected.join(", ") : selected}
-            MenuProps={MenuProps}
-          >
-            {dropdownItems["Asset | Indication | Scenario"]?.map((item, index) => (
-              <StyledMenuItem key={index} value={item}>
-                <StyledCheckbox checked={selectedItems["Asset | Indication | Scenario"].indexOf(item) > -1} />
-                <StyledListItemText primary={item} />
-              </StyledMenuItem>
-            ))}
-          </StyledSelect>
-        </StyledFormControl>
+        {["Cycle", "Asset | Indication | Scenario"].map(label => (
+          <StyledFormControl key={label}>
+            <StyledInputLabel>{label}</StyledInputLabel>
+            <StyledSelect
+              multiple
+              value={selectedItems[label]}
+              onChange={(event) => handleDropdownChange(event, label)}
+              input={<StyledOutlinedInput label={label} />}
+              renderValue={(selected) => selected.join(", ")}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250,
+                    overflowX: 'hidden',
+                  }
+                }
+              }}
+            >
+              {dropdownItems[label].map((item, index) => (
+                <StyledMenuItem key={index} value={item}>
+                  <StyledCheckbox checked={selectedItems[label].indexOf(item) > -1} />
+                  <StyledListItemText primary={item} />
+                </StyledMenuItem>
+              ))}
+            </StyledSelect>
+          </StyledFormControl>
+        ))}
       </DropdownContainer>
-
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", width: "100%" }}>
-        <ImportButton onClick={handleImportACESheetClick}>Import Outputs→</ImportButton>
-        <ImportButton onClick={handleImportACESheetClick}>Filter Report→</ImportButton>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "100%" }}>
+        <ImportButton onClick={handleNewFeature}>Import Data→</ImportButton>
       </div>
     </Container>
   );
 };
 
-export default ImportReportGenie;
+export default LoadAssumptions;

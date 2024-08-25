@@ -23,6 +23,8 @@ const ReportGinnie = () => {
   const [selectedItems, setSelectedItems] = useState({});
   const [dataFrame, setDataFrame] = useState(null);
   const [dropdownLabels, setDropdownLabels] = useState([]);
+  const [columnMapping, setColumnMapping] = useState({});
+  const [originalHeaders, setOriginalHeaders] = useState([]);
 
   useEffect(() => {
     fetchDropdownData();
@@ -31,23 +33,34 @@ const ReportGinnie = () => {
   const fetchDropdownData = async () => {
     try {
       await Excel.run(async (context) => {
-        const sheet = context.workbook.worksheets.getItem("Report Genie");
+        const sheet = context.workbook.worksheets.getItem("Report Genie Backend");
         const usedRange = sheet.getUsedRange();
         usedRange.load("values");
         await context.sync();
 
         const allHeaders = usedRange.values[0];  // Get all column headers
-        const dropdownHeaders = allHeaders.slice(0, 9);  // Only the first 9 columns for dropdowns
+        setOriginalHeaders(allHeaders);  // Store the original headers separately
+        const dropdownHeaders = allHeaders.slice(0, 12);  // Only the first 12 columns for dropdowns
         setDropdownLabels(dropdownHeaders);
 
-        // Create DataFrame with all columns
-        const data = usedRange.values.slice(1); // Skip the first row (header)
-        const df = new DataFrame(data, allHeaders);  // Include all headers for DataFrame
+        // Map headers to generic column names like "column1", "column2", etc.
+        const columnMap = {};
+        const mappedHeaders = allHeaders.map((header, index) => {
+          const mappedHeader = `column${index + 1}`;
+          columnMap[header] = mappedHeader; // Map original header to generic header
+          return mappedHeader;
+        });
+        setColumnMapping(columnMap);
+
+        // Create DataFrame with mapped headers
+        const data = usedRange.values.slice(1); // Skip the first row (headers)
+        const df = new DataFrame(data, mappedHeaders);  // Use mapped headers
         setDataFrame(df);
 
-        // Populate dropdowns with unique values from the first 9 columns
-        const updatedDropdownItems = dropdownHeaders.reduce((acc, label) => {
-          acc[label] = df.distinct(label).toArray().map(item => item[0]);
+        // Populate dropdowns with unique values from the first 12 columns
+        const updatedDropdownItems = dropdownHeaders.reduce((acc, label, index) => {
+          const mappedHeader = `column${index + 1}`;
+          acc[label] = df.distinct(mappedHeader).toArray().map(item => item[0]);
           return acc;
         }, {});
 
@@ -86,23 +99,34 @@ const ReportGinnie = () => {
 
       // Filter the DataFrame based on selected items
       let filteredDF = dataFrame;
-      Object.keys(selectedItems).forEach((key) => {
+      Object.keys(selectedItems).forEach((key, index) => {
+        const genericColumn = columnMapping[key]; // Use generic column names for filtering
+        console.log(`Filtering on: ${genericColumn} with values: ${selectedItems[key]}`);
         if (selectedItems[key]?.length > 0) {
-          filteredDF = filteredDF.filter(row => selectedItems[key].includes(row.get(key)));
+          filteredDF = filteredDF.filter(row => selectedItems[key].includes(row.get(genericColumn)));
         }
       });
 
-      // Create a new worksheet and paste the filtered DataFrame
+      console.log("Filtered DataFrame (before conversion to array):", filteredDF.toArray());
+
+      // Get the filtered data as an array
+      const filteredData = filteredDF.toArray();
+
+      // Ensure there's data to paste
+      if (filteredData.length === 0) {
+        console.error("No data to paste after filtering.");
+        return;
+      }
+
+      // Combine original headers with filtered data
+      const finalData = [originalHeaders, ...filteredData];
+
+      // Create a new worksheet and paste the filtered data
       const newSheet = workbook.worksheets.add(sheetName);
       newSheet.activate();
 
-      const values = [
-        dataFrame.listColumns(), // Include all original headers
-        ...filteredDF.toArray(),
-      ];
-
-      const range = newSheet.getRangeByIndexes(0, 0, values.length, values[0].length);
-      range.values = values;
+      const range = newSheet.getRangeByIndexes(0, 0, finalData.length, finalData[0].length);
+      range.values = finalData;
 
       await context.sync();
     });

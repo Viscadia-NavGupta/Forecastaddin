@@ -15,6 +15,7 @@ import * as AWSConnections from "../AWS Midleware/AWSConnections";
 import * as Excelfunctions from "../ExcelMidleware/excelFucntions";
 import * as MMfunctions from "../ExcelMidleware/ModelManagmentFunctions";
 import * as testfucntions from "../ExcelMidleware/testfile";
+import * as testing from "../AWS Midleware/test";
 
 const ScenarioManager = ({ setPageValue }) => {
   const username = sessionStorage.getItem("username");
@@ -47,11 +48,23 @@ const ScenarioManager = ({ setPageValue }) => {
   };
 
   const handleNewFeature = async () => {
-    // Add this function
-    // setPageValue("NewFeaturePage");
-    await AWSConnections.updatePivotTable();
+    setPageValue("LockScenario")
   };
 
+  async function processFiles(fileNames, s3Url, serviceName) {
+    for (const fileName of fileNames) {
+      try {
+        const result = await testing.downloadAndInsertDataFromExcel(fileName, s3Url, serviceName);
+        if (result.success) {
+          console.log("File processed successfully:", fileName);
+        } else {
+          console.error("Error processing file:", fileName, result.error);
+        }
+      } catch (error) {
+        console.error(`An error occurred while processing ${fileName}:`, error);
+      }
+    }
+  }
   const RunScenario = async () => {
     console.log("RunScenario function called");
 
@@ -83,33 +96,32 @@ const ScenarioManager = ({ setPageValue }) => {
     setPageValue("savescenario");
   };
 
-
-async function activateDashboardSheet() {
+  async function activateDashboardSheet() {
     try {
-        await Excel.run(async (context) => {
-            // Define the name of the sheet you want to activate
-            const sheetName = "Dashboard";
-            
-            // Get the workbook and the specific worksheet
-            const workbook = context.workbook;
-            const dashboardSheet = workbook.worksheets.getItem(sheetName);
+      await Excel.run(async (context) => {
+        // Define the name of the sheet you want to activate
+        const sheetName = "Dashboard";
 
-            // Load the sheet properties to ensure it exists
-            dashboardSheet.load('name');
-            await context.sync();
+        // Get the workbook and the specific worksheet
+        const workbook = context.workbook;
+        const dashboardSheet = workbook.worksheets.getItem(sheetName);
 
-            // Activate the sheet
-            dashboardSheet.activate();
+        // Load the sheet properties to ensure it exists
+        dashboardSheet.load("name");
+        await context.sync();
 
-            // Synchronize the context to apply changes
-            await context.sync();
+        // Activate the sheet
+        dashboardSheet.activate();
 
-            console.log(`The sheet '${sheetName}' has been activated.`);
-        });
+        // Synchronize the context to apply changes
+        await context.sync();
+
+        console.log(`The sheet '${sheetName}' has been activated.`);
+      });
     } catch (error) {
-        console.error("Error activating sheet:", error);
+      console.error("Error activating sheet:", error);
     }
-}
+  }
 
   return (
     <Container>

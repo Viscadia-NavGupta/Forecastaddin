@@ -7,8 +7,6 @@ export const Container = styled("div")({
   justifyContent: "center",
   fontFamily: "Roboto, sans-serif",  // Applied Roboto font
   fontWeight: 300, // Light font weight
-  // paddingTop: "20px",
-  // paddingLeft: "20px",
 });
 
 export const Title = styled("div")({
@@ -95,5 +93,9 @@ export const AssumptionsLabel = styled(Label)({
 });
 
 export const NewFeatureLabel = styled(Label)({
+  color: "#595959",
+});
+
+export const OpenGoogleLabel = styled(Label)({
   color: "#595959",
 });

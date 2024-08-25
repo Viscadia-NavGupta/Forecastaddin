@@ -13,7 +13,7 @@ export const Sidebar = styled("div")({
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  overflowY: "hidden",
+  overflowY: "auto", // Enable vertical scrolling
   overflowX: "hidden",
   position: "relative",
   zIndex: 2,

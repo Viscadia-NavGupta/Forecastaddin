@@ -73,7 +73,7 @@ const Savesscenario = ({ setPageValue }) => {
 
         if (sheet.name.toLowerCase() === "outputs") {
           const cellA2 = sheet.getRange("A1");
-          const cellB2 = sheet.getRange("A2");
+          const cellB2 = sheet.getRange("B1");
           cellA2.load("values");
           cellB2.load("values");
           await context.sync();

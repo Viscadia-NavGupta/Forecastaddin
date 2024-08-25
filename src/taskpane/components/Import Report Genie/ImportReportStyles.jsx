@@ -22,7 +22,7 @@ export const Heading = styled("h2")({
   fontFamily: "Roboto",
   fontStyle: "normal",
   color: "#6D6E71",  // Grey color
-  fontSize: "16px",  // Font size set to 14px
+  fontSize: "16px",  // Font size set to 16px
   fontWeight: "normal",  // Normal font weight
   backgroundColor: "transparent",  // Remove the background color
   border: "none",  // No border
@@ -77,13 +77,13 @@ export const MenuProps = {
     style: {
       maxHeight: 30 * 4.5 + 6,  // Smaller item height and padding
       width: 180,  // Smaller dropdown width
+      overflowX: "hidden",  // Turn off horizontal overflow
     },
   },
 };
 
 export const ImportButton = styled("button")({
   padding: "8px 11px",
-  marginLeft: "6px",
   fontFamily: "Roboto",
   fontStyle: "normal",
   fontWeight: 400,
@@ -95,5 +95,13 @@ export const ImportButton = styled("button")({
   cursor: "pointer",
   "&:hover": {
     backgroundColor: "#005f99",
+  },
+});
+
+export const FilterButton = styled(ImportButton)({
+  marginTop: "10px",
+  backgroundColor: "#5A9",
+  "&:hover": {
+    backgroundColor: "#478",
   },
 });
