@@ -6,14 +6,15 @@ export const Layout = styled("div")({
   height: "100vh",
   width: "100%",
   overflow: "hidden", // Prevents scrolling on the main layout
+  backgroundColor: "#F2F2F2", // Neutral background color
 });
 
 export const TopRightSection = styled("div")({
-  height: "50px", // Adjusted height to match the design
-  background: "#BD302B", // Red background color
+  height: "50px",
+  background: "#BD302B",
   display: "flex",
   alignItems: "center",
-  padding: "0", // Remove padding so that containers align correctly
+  padding: "0",
   position: "fixed",
   width: "100%",
   top: 0,
@@ -21,42 +22,42 @@ export const TopRightSection = styled("div")({
 });
 
 export const LogoContainer = styled("div")({
-  width: "45px", // Width matches the sidebar
+  width: "60px", // Make sure this matches the width of the SidebarContainer
   display: "flex",
   alignItems: "center",
-  justifyContent: "center", // Center the logo in the container
-  backgroundColor: "#BD302B", // Match the background color
+  justifyContent: "center",
+  backgroundColor: "#BD302B", // This part remains with the red background to match the top bar
 });
 
 export const TextContainer = styled("div")({
-  flex: 1, // Take up the remaining space
+  flex: 1,
   display: "flex",
   alignItems: "center",
-  justifyContent: "center", // Center the text horizontally
+  justifyContent: "center",
 });
 
 export const ProfileImage = styled("img")({
-  width: "30px", // Logo size
+  width: "30px",
   height: "30px",
 });
 
 export const TopRightText = styled("span")({
-  fontSize: "20px", // Font size for the title
+  fontSize: "20px",
   fontWeight: "bold",
-  color: "#FFFFFF", // White text color
+  color: "#FFFFFF",
 });
 
 export const MainContent = styled("div")({
   display: "flex",
   flexDirection: "row",
-  height: "92vh", // Adjust height to account for the fixed header
-  marginTop: "50px", // Ensure content starts after the fixed header
-  overflowY: "auto", // Enables scrolling only for the main content area
+  height: "calc(100vh - 50px)", // Ensure it takes up the space under the fixed header
+  marginTop: "50px",
+  overflowY: "auto",
 });
 
 export const SidebarContainer = styled("div")({
-  width: "45px", // Adjust the width to be consistent with the sidebar component
-  background: "#3E4B5B", // The grey color as shown in the updated layout
+  width: "60px", // Match this width with the sidebar itself
+  background: "#FFFFFF", // Set the background to white
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
@@ -65,12 +66,14 @@ export const SidebarContainer = styled("div")({
   bottom: 0,
   zIndex: 999,
   borderRadius: "0 20px 20px 0",
-  overflowX: "visible", // Allow horizontal overflow for tooltips
+  overflowX: "visible",
+  boxShadow: "none", // Remove the shadow if not needed
 });
 
 export const ContentContainer = styled("div")({
   flex: 1,
   padding: "20px",
-  marginLeft: "60px", // Offset the content by the width of the sidebar
-  overflowY: "auto", // Enables scrolling for the content container
+  marginLeft: "60px", // Make sure this matches the SidebarContainer width
+  overflowY: "auto",
+  backgroundColor: "#FFFFFF", // Ensure the content background is distinct and clear
 });
