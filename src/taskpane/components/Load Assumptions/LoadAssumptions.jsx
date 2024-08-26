@@ -44,37 +44,62 @@ const LoadAssumptions = ({ setPageValue }) => {
       const responseBody = await response.json();
       const df = new DataFrame(responseBody.results1);
       setDataFrame(df);
-      updateDropdowns(df);
+
+      // Populate Cycle dropdown items
+      const cycleItems = df
+        .distinct("cycle_name")
+        .toArray()
+        .map((row) => row[0])
+        .filter((value) => value && value.trim() !== "");
+
+      setDropdownItems((prevState) => ({
+        ...prevState,
+        Cycle: cycleItems,
+      }));
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
   };
 
-  const updateDropdowns = (df) => {
-    const lockedDF = df.filter((row) => row.get("save_status") === "Locked");
+  const updateAssetIndicationScenarioDropdown = (df, selectedCycle) => {
+    if (selectedCycle.length > 0) {
+      const filteredDF = df.filter((row) => selectedCycle.includes(row.get("cycle_name")));
 
-    const cycleItems = lockedDF
-      .distinct("cycle_name")
-      .toArray()
-      .map((row) => row[0])
-      .filter((value) => value && value.trim() !== "");
+      const assetItems = filteredDF
+        .select("asset", "indication", "scenario_name")
+        .dropDuplicates()
+        .toCollection()
+        .map((row) => {
+          const parts = [row.asset, row.indication, row.scenario_name].filter((part) => part && part.trim() !== "");
+          return parts.join(" | ");
+        })
+        .filter((value) => value !== "");
 
-    const assetItems = lockedDF
-      .select("asset", "indication", "scenario_name")
-      .dropDuplicates()
-      .toCollection()
-      .map((row) => {
-        const parts = [row.asset, row.indication, row.scenario_name].filter((part) => part && part.trim() !== "");
-        return parts.join(" | ");
-      })
-      .filter((value) => value !== "");
-
-    setDropdownItems({ Cycle: cycleItems, "Asset | Indication | Scenario": assetItems });
+      setDropdownItems((prevState) => ({
+        ...prevState,
+        "Asset | Indication | Scenario": assetItems,
+      }));
+    } else {
+      // Clear Asset | Indication | Scenario dropdown items if no cycle is selected
+      setDropdownItems((prevState) => ({
+        ...prevState,
+        "Asset | Indication | Scenario": [],
+      }));
+    }
   };
 
   const handleDropdownChange = (event, label) => {
     const selectedValues = typeof event.target.value === "string" ? event.target.value.split(",") : event.target.value;
-    setSelectedItems((prevState) => ({ ...prevState, [label]: selectedValues }));
+    setSelectedItems((prevState) => {
+      const updatedItems = { ...prevState, [label]: selectedValues };
+
+      if (label === "Cycle") {
+        // Update the Asset | Indication | Scenario dropdown based on the selected Cycle
+        updateAssetIndicationScenarioDropdown(dataFrame, selectedValues);
+      }
+
+      return updatedItems;
+    });
   };
 
   const handleNewFeature = async () => {

@@ -8,7 +8,7 @@ export const Container = styled("div")({
 });
 
 export const Sidebar = styled("div")({
-  width: "60px", // Sidebar width
+  width: "45px", // Sidebar width
   background: "#707477", // Sidebar background color
   display: "flex",
   flexDirection: "column",
