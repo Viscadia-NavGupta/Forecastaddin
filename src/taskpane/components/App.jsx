@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UserLogin from "./userlogin/UserLogin";
 import ModelManagementPage1 from "./Model Managment/Model Desinger";
-import LoadPage from "./Import Models/LoadPage";
+import ImportACE from "./Import Models/ImportAce";
 import UserRegistrationForm from "./Userregistration/UserRegistrationform";
 import Submitpage from "./Submitpage/SubmitPage";
 import MainLayout from "./MainLayout/MainLayout";
@@ -22,11 +22,13 @@ import ReportGinnie from "./ReportGinnie/ReportGinnie";
 import SaveForecastPage from "./MsgPage/SaveForcastPage";
 import ImportReportGenie from "./Import Report Genie/ImportReport";
 import LockScenario from "./Lock Scenario/LockScenario";
+import Importfunnel from "./Import Models/ImportFunnel";
 
 function App() {
   const [page, setPage] = useState("UserLogin");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [uuid, setUuid] = useState(""); // New state to hold the UUID
+  const [loadingMessage, setLoadingMessage] = useState(""); // State to hold the loading message
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -50,9 +52,10 @@ function App() {
     checkUserSession();
   }, []);
 
-  const setPageValue = (value, uuid = "") => {
+  const setPageValue = (value, uuid = "", message = "") => {
     setPage(value);
     setUuid(uuid); // Set the UUID when the page is changed
+    setLoadingMessage(message); // Set the loading message when the page is changed
   };
 
   const handleLogin = () => {
@@ -79,7 +82,9 @@ function App() {
       case "Scenario management":
         return <ScenarioManagement setPageValue={setPageValue} />;
       case "LoadPage":
-        return <LoadPage setPageValue={setPageValue} />;
+        return <ImportACE setPageValue={setPageValue} />;
+      case "Importfunnel":
+        return <Importfunnel setPageValue={setPageValue} />;
       case "Submitpage":
         return <Submitpage setPageValue={setPageValue} />;
       case "ContactUs":
@@ -87,29 +92,27 @@ function App() {
       case "DynamicButtonComponent":
         return <DynamicButtonComponent setPageValue={setPageValue} />;
       case "LoadingCircle":
-        return <LoadingCircle />;
+        return <LoadingCircle message={loadingMessage} />; // Pass the dynamic loading message here
       case "Overirdeconfirmation":
-        return <Overirdeconfirmation setPageValue={setPageValue} UUID={uuid} />; // Pass the UUID prop
+        return <Overirdeconfirmation setPageValue={setPageValue} UUID={uuid} />;
       case "savescenario":
-        return <Savesscenario setPageValue={setPageValue} />; // Pass the UUID prop
-      // case "LockScenario":
-      //   return <Lockscenario setPageValue={setPageValue} />; // Pass the UUID prop
+        return <Savesscenario setPageValue={setPageValue} />;
       case "ScenarioManager":
-        return <ScenarioManeger setPageValue={setPageValue} />; // Pass the UUID prop
+        return <ScenarioManeger setPageValue={setPageValue} />;
       case "OutputManager":
-        return <Outputsmaneger setPageValue={setPageValue} />; // Pass the UUID prop
+        return <Outputsmaneger setPageValue={setPageValue} />;
       case "RiskManager":
-        return <Riskmanager setPageValue={setPageValue} />; // Pass the UUID prop
+        return <Riskmanager setPageValue={setPageValue} />;
       case "LoadAssumptions":
-        return <LoadAssumptions setPageValue={setPageValue} />; // Pass the UUID prop
+        return <LoadAssumptions setPageValue={setPageValue} />;
       case "ReportGinnie":
-        return <ReportGinnie setPageValue={setPageValue} />; // Pass the UUID prop
+        return <ReportGinnie setPageValue={setPageValue} />;
       case "SaveForecastPage":
-        return <SaveForecastPage setPageValue={setPageValue} />; // Pass the UUID prop
+        return <SaveForecastPage setPageValue={setPageValue} />;
       case "ImportReportGenie":
-        return <ImportReportGenie setPageValue={setPageValue} />; // Pass the UUID prop
+        return <ImportReportGenie setPageValue={setPageValue} />;
       case "LockScenario":
-        return <LockScenario setPageValue={setPageValue} />; // Pass the UUID prop
+        return <LockScenario setPageValue={setPageValue} />;
       default:
         return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
     }

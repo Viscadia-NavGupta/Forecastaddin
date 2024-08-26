@@ -18,13 +18,12 @@ import * as AWSConnections from "../AWS Midleware/AWSConnections";
 import * as excelfunctions from "../ExcelMidleware/excelFucntions";
 
 const dropdownToColumnMap = {
-  Geography: "geography",
+  Cycle: "cycle_name",
+  Asset: "asset",
   Indication: "indication",
   "Sub Indication": "sub_indication",
-  Asset: "asset",
   "Model Name": "model_name",
   Scenario: "scenario_name",
-  Cycle: "cycle_name",
 };
 
 const initialSelectedItems = Object.keys(dropdownToColumnMap).reduce((acc, key) => {
@@ -32,10 +31,9 @@ const initialSelectedItems = Object.keys(dropdownToColumnMap).reduce((acc, key) 
   return acc;
 }, {});
 
-const LoadPage = ({ setPageValue }) => {
+const ImportACE = ({ setPageValue }) => {
   const [dropdownItems, setDropdownItems] = useState({});
   const [selectedItems, setSelectedItems] = useState(initialSelectedItems);
-  const [step, setStep] = useState(1); // Manage steps
   const storedUsername = useMemo(() => sessionStorage.getItem("username"), []);
   const [dataFrame, setDataFrame] = useState(null);
 
@@ -145,6 +143,7 @@ const LoadPage = ({ setPageValue }) => {
     const modelMappingIds = filteredDF.toCollection().map((row) => row.output_id);
 
     const result = { output_id: modelMappingIds };
+    setPageValue("LoadingCircle", "", "Loading ACE, please wait...");
     console.log(result);
     let resultseetname = await AWSConnections.downloadAndInsertDataFromExcelxlsx(
       result.output_id[0] + ".xlsx",
@@ -154,100 +153,42 @@ const LoadPage = ({ setPageValue }) => {
     let updatedsheetnameACE = await AWSConnections.modifySheet(resultseetname.newSheetName);
     console.log(updatedsheetnameACE);
     await excelfunctions.aceSheetformat(updatedsheetnameACE);
-  };
-
-  const handleImportOutputsClick = async () => {
-    let filteredDF = dataFrame;
-
-    Object.keys(selectedItems).forEach((dropdown) => {
-      const value = selectedItems[dropdown];
-      if (value.length > 0) {
-        const columnName = dropdownToColumnMap[dropdown];
-        filteredDF = filteredDF.filter((row) => value.includes(row.get(columnName)));
-      }
-    });
-
-    const outputIds = filteredDF.toCollection().map((row) => row.output_id);
-
-    const result = { output_id: outputIds };
-    console.log(result);
-    await AWSConnections.downloadAndInsertDataFromExcel(
-      result.output_id[0],
-      "https://download-docket.s3.amazonaws.com/RUN COMPUTATION/horizontal_data_dump/",
-      "RUN COMPUTATION"
-    );
+    await excelfunctions.activateSheet(updatedsheetnameACE);
+    setPageValue("DynamicButtonComponent");
   };
 
   return (
     <Container>
       <Heading>Load Forecast</Heading>
       <DropdownContainer>
-        {step === 1 && (
-          <>
-            {["Geography", "Indication", "Sub Indication", "Asset", "Model Name"].map((label, index) => (
-              <StyledFormControl key={index}>
-                <StyledInputLabel id={`multiple-checkbox-label-${index}`}>{label}</StyledInputLabel>
-                <StyledSelect
-                  labelId={`multiple-checkbox-label-${index}`}
-                  id={`multiple-checkbox-${index}`}
-                  multiple
-                  value={selectedItems[label] || []}
-                  onChange={(event) => handleMultiSelectChange(event, label)}
-                  input={<StyledOutlinedInput label={label} />}
-                  renderValue={(selected) => selected.join(", ")}
-                  MenuProps={MenuProps}
-                >
-                  {dropdownItems[label]?.map((item) => (
-                    <StyledMenuItem key={item} value={item}>
-                      <StyledCheckbox checked={selectedItems[label]?.indexOf(item) > -1} />
-                      <StyledListItemText primary={item} />
-                    </StyledMenuItem>
-                  ))}
-                </StyledSelect>
-              </StyledFormControl>
-            ))}
-          </>
-        )}
-        {step === 2 && (
-          <>
-            {["Cycle", "Scenario"].map((label, index) => (
-              <StyledFormControl key={index}>
-                <StyledInputLabel id={`multiple-checkbox-label-${index}`}>{label}</StyledInputLabel>
-                <StyledSelect
-                  labelId={`multiple-checkbox-label-${index}`}
-                  id={`multiple-checkbox-${index}`}
-                  multiple
-                  value={selectedItems[label] || []}
-                  onChange={(event) => handleMultiSelectChange(event, label)}
-                  input={<StyledOutlinedInput label={label} />}
-                  renderValue={(selected) => selected.join(", ")}
-                  MenuProps={MenuProps}
-                >
-                  {dropdownItems[label]?.map((item) => (
-                    <StyledMenuItem key={item} value={item}>
-                      <StyledCheckbox checked={selectedItems[label]?.indexOf(item) > -1} />
-                      <StyledListItemText primary={item} />
-                    </StyledMenuItem>
-                  ))}
-                </StyledSelect>
-              </StyledFormControl>
-            ))}
-          </>
-        )}
+        {["Cycle", "Asset", "Indication", "Sub Indication", "Model Name", "Scenario"].map((label, index) => (
+          <StyledFormControl key={index}>
+            <StyledInputLabel id={`multiple-checkbox-label-${index}`}>{label}</StyledInputLabel>
+            <StyledSelect
+              labelId={`multiple-checkbox-label-${index}`}
+              id={`multiple-checkbox-${index}`}
+              multiple
+              value={selectedItems[label] || []}
+              onChange={(event) => handleMultiSelectChange(event, label)}
+              input={<StyledOutlinedInput label={label} />}
+              renderValue={(selected) => selected.join(", ")}
+              MenuProps={MenuProps}
+            >
+              {dropdownItems[label]?.map((item) => (
+                <StyledMenuItem key={item} value={item}>
+                  <StyledCheckbox checked={selectedItems[label]?.indexOf(item) > -1} />
+                  <StyledListItemText primary={item} />
+                </StyledMenuItem>
+              ))}
+            </StyledSelect>
+          </StyledFormControl>
+        ))}
       </DropdownContainer>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", width: "100%" }}>
-        {step === 1 ? (
-          <ImportButton onClick={() => setStep(2)}>Next →</ImportButton>
-        ) : (
-          <>
-            <ImportButton onClick={() => setStep(1)}>← Back</ImportButton>
-            <ImportButton onClick={handleImportACESheetClick}>Import Model→</ImportButton>
-            <ImportButton onClick={handleImportACESheetClick}>Import ACE →</ImportButton>
-          </>
-        )}
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "100%" }}>
+        <ImportButton onClick={handleImportACESheetClick}>Import ACE</ImportButton>
       </div>
     </Container>
   );
 };
 
-export default LoadPage;
+export default ImportACE;

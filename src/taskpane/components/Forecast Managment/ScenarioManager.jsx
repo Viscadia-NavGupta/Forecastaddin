@@ -71,7 +71,7 @@ const ScenarioManager = ({ setPageValue }) => {
     let servicename = await Excelfunctions.getActiveSheetName();
 
     if (servicename !== "Model Management" && servicename !== "outputs") {
-      setPageValue("LoadingCircle");
+      setPageValue("LoadingCircle", "", "Updating Assumptions, please wait...");
       const result = await AWSConnections.orchestrationfucntion("RUN COMPUTATION");
       console.log("Outputs fetched");
       setPageValue("ScenarioManager");

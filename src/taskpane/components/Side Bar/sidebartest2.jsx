@@ -1,15 +1,21 @@
 import React, { useState, useRef } from "react";
-import { Container, Sidebar, MenuSection, MenuItem, BottomSection } from "./sidebartest2styles";
+import {
+  Container,
+  Sidebar,
+  MenuSection,
+  MenuItem,
+  BottomSection,
+} from "./sidebartest2styles";
 import Tooltip from "./tooltip";
 
-// Importing all the icons
+// Importing all the icons as React components
 import HomeIcon from "../Icons/HomeIcon";
 import ModelDesignIcon from "../Icons/ModelDesignIcon";
 import ForecastManagementIcon from "../Icons/ForecastManagementIcon";
 import CatalogueIcon from "../Icons/CatalogueIcon";
-import PowerBiIcon from "../Icons/powerbiicon"; // Note the lowercase 'p' in the filename
+import PowerBiIcon from "../Icons/PowerBiIcon";
 import ReportGenieIcon from "../Icons/ReportGenieIcon";
-import ACENavigationIcon from "../Icons/ACENavigationIcon";
+import RiskIcon from "../Icons/Riskicons"; // Corrected component name
 
 const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
   const [tooltipText, setTooltipText] = useState("");
@@ -19,12 +25,12 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
 
   const menuItems = [
     { icon: <HomeIcon />, text: "Home", key: "Home" },
-    { icon: <ModelDesignIcon />, text: "Model Designer", key: "ModelManagementPage1" },
+    { icon: <ModelDesignIcon />, text: "Model Management", key: "ModelManagementPage1" },
     { icon: <ForecastManagementIcon />, text: "Forecast Management", key: "ScenarioManager" },
     { icon: <CatalogueIcon />, text: "Assumptions Catalogue", key: "LoadAssumptions" },
-    { icon: <PowerBiIcon />, text: "PowerBi Report", key: "PowerBI" },
+    { icon: <RiskIcon />, text: "Risk & Analytics", key: "RiskManager" }, // Corrected component name
+    { icon: <PowerBiIcon />, text: "Power Bi Report", key: "PowerBI" },
     { icon: <ReportGenieIcon />, text: "Report Genie", key: "ImportReportGenie" },
-    { icon: <ACENavigationIcon />, text: "ACE Navigation", key: "DynamicButtonComponent" },
   ];
 
   const handleMenuItemClick = (key, index) => {
@@ -67,11 +73,11 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
           {menuItems.map((item, index) => (
             <MenuItem
               key={index}
-              id={`menu-item-${index}`} // Add an ID to each menu item for scrolling
+              id={`menu-item-${index}`}
               onClick={() => handleMenuItemClick(item.key, index)}
               onMouseEnter={(e) => handleMouseEnter(item.text, e.currentTarget)}
               onMouseLeave={handleMouseLeave}
-              isActive={activeItem === item.key} // Highlight active item
+              isActive={activeItem === item.key}
             >
               {React.isValidElement(item.icon) ? (
                 React.cloneElement(item.icon, { fill: activeItem === item.key ? "#BD302B" : "#FFFFFF" })

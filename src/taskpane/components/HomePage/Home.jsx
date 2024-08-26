@@ -4,7 +4,6 @@ import {
   Title,
   ButtonsContainer,
   Button,
-  Icon,
   FreshLabel,
   LoadLabel,
   AnotherLabel2,
@@ -12,7 +11,14 @@ import {
   NewFeatureLabel,
   OpenGoogleLabel, // New label for the Google button
 } from "./HomeStyles";
-import * as AWSconnections from "../AWS Midleware/AWSConnections";
+
+// Importing all the icons as React components
+import ModelDesignIcon from "../Icons/ModelDesignIcon";
+import ForecastManagementIcon from "../Icons/ForecastManagementIcon";
+import CatalogueIcon from "../Icons/CatalogueIcon";
+import PowerBiIcon from "../Icons/PowerBiIcon";
+import ReportGenieIcon from "../Icons/ReportGenieIcon";
+import RiskIcon from "../Icons/Riskicons"; // Corrected component name
 
 const Home = ({ setPageValue }) => {
   const username = "Craig Leonardi"; // Use a fixed name for demo purposes
@@ -52,29 +58,27 @@ const Home = ({ setPageValue }) => {
       </Title>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
-          <Icon src="/../assets/ModelManaegment.svg" alt="Fresh Icon" />
+          <ModelDesignIcon width="30" height="30" color="#7F7F7F" />
           <FreshLabel>Model Management</FreshLabel>
         </Button>
         <Button onClick={handleLoadExistingModel}>
-          <Icon src="/../assets/scenariomanagement.svg" alt="Load Icon" />
+          <ForecastManagementIcon width="30" height="30" color="#7F7F7F" />
           <LoadLabel>Forecast Management</LoadLabel>
         </Button>
         <Button onClick={handleAssumptionsCatalogue}>
-          <Icon src="/../assets/Homecatelouge.svg" alt="Another Icon 2" />
+          <CatalogueIcon width="30" height="30" color="#7F7F7F" />
           <AssumptionsLabel>Assumptions Catalogue</AssumptionsLabel>
         </Button>
         <Button onClick={handleAnotherAction2}>
-          <Icon src="/../assets/Homeanalytics.svg" alt="Another Icon 2" />
+          <RiskIcon width="30" height="30" color="#7F7F7F" />
           <AnotherLabel2>Risk & Analytics</AnotherLabel2>
         </Button>
         <Button onClick={handleOpenGoogle}>
-          {" "}
-          {/* New button */}
-          <Icon src="/../assets/powerbi.svg" alt="Power Bi" /> {/* Add a relevant icon */}
-          <OpenGoogleLabel>Powerbi Report</OpenGoogleLabel>
+          <PowerBiIcon width="30" height="30" color="#7F7F7F" />
+          <OpenGoogleLabel>Power Bi Report</OpenGoogleLabel>
         </Button>
         <Button onClick={handleNewFeature}>
-          <Icon src="/../assets/Homereportgenie.svg" alt="New Feature Icon" />
+          <ReportGenieIcon width="30" height="30" color="#7F7F7F" />
           <NewFeatureLabel>Report Genie</NewFeatureLabel>
         </Button>
       </ButtonsContainer>

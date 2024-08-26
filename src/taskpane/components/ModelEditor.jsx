@@ -9,7 +9,7 @@ const MMSheetManagment = ({ setPageValue }) => {
     let servicename = await Excelfunctions.getActiveSheetName();
 
     if (servicename === "Model Management") {
-      setPageValue("LoadingCircle");
+      setPageValue("LoadingCircle", "", "Generating ACE, please wait...");
       let Service_flag = await AWSConnections.orchestrationfucntion("GENERATE ACE SHEET", "True");
       if (Service_flag.result === "Override") {
         setPageValue("Overirdeconfirmation", Service_flag.uuid); // Pass the UUID when navigating to the override confirmation page
@@ -22,7 +22,7 @@ const MMSheetManagment = ({ setPageValue }) => {
   };
 
   const menuItems = [
-    { icon: "/../assets/Createmodel.svg", text: "Genrate ACE", action: () => handleCreateNewModel() },
+    { icon: "/../assets/Createmodel.svg", text: "Generate ACE", action: () => handleCreateNewModel() },
     { icon: "/../assets/AddAssumptions.svg", text: "Add Assumption", action: () => MMfunctions.addAssumption() },
     {
       icon: "/../assets/deleteAssumption.svg",
@@ -45,7 +45,7 @@ const MMSheetManagment = ({ setPageValue }) => {
 
   return (
     <Container>
-      <ModelManagementButton>Model Editor</ModelManagementButton>
+      <ModelManagementButton>Design New Model</ModelManagementButton>
       <ButtonsContainer>
         {menuItems.map((item, index) => (
           <Button key={index} onClick={item.action}>

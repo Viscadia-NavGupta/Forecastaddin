@@ -9,7 +9,7 @@ export const Container = styled("div")({
 
 export const Sidebar = styled("div")({
   width: "60px", // Sidebar width
-  background: "#707477", // Red color
+  background: "#707477", // Sidebar background color
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
@@ -17,6 +17,13 @@ export const Sidebar = styled("div")({
   overflowX: "hidden",
   position: "relative",
   zIndex: 2,
+  "::-webkit-scrollbar": {
+    width: "8px",
+  },
+  "::-webkit-scrollbar-thumb": {
+    background: "#BD302B",
+    borderRadius: "4px",
+  },
 });
 
 export const MenuSection = styled("div")({
@@ -39,14 +46,19 @@ export const MenuItem = styled("button")(({ isActive }) => ({
   justifyContent: "center",
   width: "calc(100% - 5px)", // Adjust width to accommodate the increased margin
   height: "40px", // Height of the menu item
+  transition: "background 0.3s, color 0.3s", // Smooth hover transition
   "& img": {
     width: "24px",
     height: "24px",
+    transition: "fill 0.3s", // Smooth transition for icon color
   },
   "&:hover": {
     background: "#FFFFFF", // Hover effect for better visibility
     color: "#BD302B",
     borderRadius: "30px 0 0 30px", // Maintain the left curve on hover
+    "& svg": {
+      fill: "#BD302B", // Change icon color on hover
+    },
   },
 }));
 

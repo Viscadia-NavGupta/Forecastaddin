@@ -54,17 +54,11 @@ export const Button = styled("div")({
   },
 });
 
-export const Icon = styled("img")({
-  width: "30px",  // Reduced icon size
-  height: "30px",  // Reduced icon size
-  marginTop: "5px",
-  marginBottom: "10px",
-});
-
 export const Label = styled("span")({
   fontSize: "10px",  // Reduced label text size
   fontWeight: "bold",  // Maintain bold for label emphasis
   color: "#333",
+  paddingTop:"10px",
   marginBottom: "5px",
   lineHeight:"10px",
   textAlign: "center",
@@ -77,10 +71,6 @@ export const FreshLabel = styled(Label)({
 });
 
 export const LoadLabel = styled(Label)({
-  color: "#595959",
-});
-
-export const AnotherLabel1 = styled(Label)({
   color: "#595959",
 });
 

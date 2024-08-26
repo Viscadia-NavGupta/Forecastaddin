@@ -99,7 +99,6 @@ export const ImportButton = styled("button")({
 });
 
 export const FilterButton = styled(ImportButton)({
-  marginTop: "10px",
   backgroundColor: "#5A9",
   "&:hover": {
     backgroundColor: "#478",

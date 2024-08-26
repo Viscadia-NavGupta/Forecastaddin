@@ -1025,3 +1025,20 @@ export async function getColumnHtoK(sheetname) {
     return [];
   });
 }
+
+export async function activateSheet(sheetName) {
+  Excel.run(function (context) {
+    // Get the worksheet by name
+    const sheet = context.workbook.worksheets.getItem(sheetName);
+
+    // Activate the worksheet
+    sheet.activate();
+
+    // Sync to apply the changes
+    return context.sync().then(function () {
+      console.log(`Sheet "${sheetName}" is now active.`);
+    });
+  }).catch(function (error) {
+    console.log(`Error: ${error}`);
+  });
+}

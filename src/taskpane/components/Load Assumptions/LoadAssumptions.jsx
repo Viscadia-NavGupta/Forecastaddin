@@ -14,6 +14,7 @@ import {
 } from "./LoadAssumptionsStyles";
 import { DataFrame } from "dataframe-js";
 import * as testing from "../AWS Midleware/AssumptionsCatelougeAWS"; // Ensure correct import path
+import * as excelfucntions from "../ExcelMidleware/excelFucntions";
 
 const LoadAssumptions = ({ setPageValue }) => {
   const [dropdownItems, setDropdownItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
@@ -50,44 +51,82 @@ const LoadAssumptions = ({ setPageValue }) => {
   };
 
   const updateDropdowns = (df) => {
-    const lockedDF = df.filter(row => row.get("save_status") === "Locked");
+    const lockedDF = df.filter((row) => row.get("save_status") === "Locked");
 
-    const cycleItems = lockedDF.distinct("cycle_name")
+    const cycleItems = lockedDF
+      .distinct("cycle_name")
       .toArray()
-      .map(row => row[0])
-      .filter(value => value && value.trim() !== "");
+      .map((row) => row[0])
+      .filter((value) => value && value.trim() !== "");
 
-    const assetItems = lockedDF.select("asset", "indication", "scenario_name").dropDuplicates()
+    const assetItems = lockedDF
+      .select("asset", "indication", "scenario_name")
+      .dropDuplicates()
       .toCollection()
-      .map(row => {
-        const parts = [row.asset, row.indication, row.scenario_name].filter(part => part && part.trim() !== "");
+      .map((row) => {
+        const parts = [row.asset, row.indication, row.scenario_name].filter((part) => part && part.trim() !== "");
         return parts.join(" | ");
-      }).filter(value => value !== "");
+      })
+      .filter((value) => value !== "");
 
     setDropdownItems({ Cycle: cycleItems, "Asset | Indication | Scenario": assetItems });
   };
 
   const handleDropdownChange = (event, label) => {
-    const selectedValues = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-    setSelectedItems(prevState => ({ ...prevState, [label]: selectedValues }));
+    const selectedValues = typeof event.target.value === "string" ? event.target.value.split(",") : event.target.value;
+    setSelectedItems((prevState) => ({ ...prevState, [label]: selectedValues }));
   };
 
   const handleNewFeature = async () => {
     console.log("handleNewFeature triggered");
-    
+    setPageValue("LoadingCircle", "", "Updating Assumptions, please wait...");
+    await clearReportGenieBackendData();
+
     try {
       const selectedCycles = selectedItems["Cycle"];
-      const filteredDF = dataFrame.filter((row) => selectedCycles.includes(row.get("cycle_name")));
+      const selectedAssetIndicationScenario = selectedItems["Asset | Indication | Scenario"];
 
-      const fileNames = filteredDF.select("output_id").toArray().map((row) => row[0]);
-      const cycle_names = filteredDF.select("cycle_name").toArray().map((row) => row[0]);
-      const scenario_names = filteredDF.select("scenario_name").toArray().map((row) => row[0]);
+      // Filter based on selected cycles
+      let filteredDF = dataFrame.filter((row) => selectedCycles.includes(row.get("cycle_name")));
+
+      // Further filter based on selected "Asset | Indication | Scenario"
+      if (selectedAssetIndicationScenario.length > 0) {
+        const parsedSelections = selectedAssetIndicationScenario.map((selection) => {
+          const [asset, indication, scenario] = selection.split(" | ");
+          return { asset, indication, scenario };
+        });
+
+        filteredDF = filteredDF.filter((row) => {
+          return parsedSelections.some(
+            (selection) =>
+              row.get("asset") === selection.asset &&
+              row.get("indication") === selection.indication &&
+              row.get("scenario_name") === selection.scenario
+          );
+        });
+      }
+
+      let fileNames = filteredDF
+        .select("output_id")
+        .toArray()
+        .map((row) => row[0]);
+      const cycle_names = filteredDF
+        .select("cycle_name")
+        .toArray()
+        .map((row) => row[0]);
+      const scenario_names = filteredDF
+        .select("scenario_name")
+        .toArray()
+        .map((row) => row[0]);
+
+      // Append .xlsx to each file name
+      fileNames = fileNames.map((fileName) => `${fileName}.csv`);
 
       console.log("Filtered fileNames:", fileNames);
       console.log("Cycle Names:", cycle_names);
       console.log("Scenario Names:", scenario_names);
 
-      const s3Url = "https://download-docket.s3.amazonaws.com/RUN COMPUTATION/horizontal_data_dump/";
+      const s3Url = "https://download-docket.s3.amazonaws.com/Assumptions Backend Data/";
       const serviceName = "RUN COMPUTATION";
 
       for (let i = 0; i < fileNames.length; i++) {
@@ -111,13 +150,40 @@ const LoadAssumptions = ({ setPageValue }) => {
     } catch (error) {
       console.error("Error in handleNewFeature:", error);
     }
+    setPageValue("LoadAssumptions");
+    await excelfucntions.activateSheet("Assumptions Catalogue");
   };
+
+  async function clearReportGenieBackendData() {
+    try {
+      await Excel.run(async (context) => {
+        const sheet = context.workbook.worksheets.getItem("Assumptions Backend");
+
+        // Get the last used cell in the sheet
+        const lastCell = sheet.getUsedRange().getLastCell();
+        lastCell.load("address"); // Explicitly load the address property
+
+        await context.sync(); // Sync to load the last cell's address
+
+        // Define the range starting from A2 to the last used cell
+        const range = sheet.getRange(`A2:${lastCell.address}`);
+
+        // Clear the content starting from A2 in all columns and rows
+        range.clear(Excel.ClearApplyTo.contents);
+
+        await context.sync();
+        console.log("Data cleared successfully from 'Report Genie Backend' sheet starting from A2.");
+      });
+    } catch (error) {
+      console.error("Error clearing data from 'Report Genie Backend' sheet: ", error);
+    }
+  }
 
   return (
     <Container>
       <Heading>Assumptions Catalogue</Heading>
       <DropdownContainer>
-        {["Cycle", "Asset | Indication | Scenario"].map(label => (
+        {["Cycle", "Asset | Indication | Scenario"].map((label) => (
           <StyledFormControl key={label}>
             <StyledInputLabel>{label}</StyledInputLabel>
             <StyledSelect
@@ -131,9 +197,9 @@ const LoadAssumptions = ({ setPageValue }) => {
                   style: {
                     maxHeight: 224,
                     width: 250,
-                    overflowX: 'hidden',
-                  }
-                }
+                    overflowX: "hidden",
+                  },
+                },
               }}
             >
               {dropdownItems[label].map((item, index) => (

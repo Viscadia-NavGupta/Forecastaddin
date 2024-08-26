@@ -114,7 +114,7 @@ const Savesscenario = ({ setPageValue }) => {
   };
 
   const handleSaveClick = async () => {
-    setPageValue("LoadingCircle");
+    setPageValue("LoadingCircle", "", "Saving Scenario, please wait...");
     const result = { cycle_name: selectedCycle, scenario_name: scenarioName };
     console.log(result);
     console.log(cellA2Value);

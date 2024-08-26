@@ -61,12 +61,12 @@ const ModelManagementPage1 = ({ setPageValue }) => {
   };
 
   const handleLoadExistingModel = async () => {
-    setPageValue("LoadPage");
+    setPageValue("Importfunnel");
   };
 
   return (
     <Container>
-      <ModelManagementTitle>Model Designer</ModelManagementTitle>
+      <ModelManagementTitle>Model Management</ModelManagementTitle>
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/model.svg" alt="Fresh Icon" />

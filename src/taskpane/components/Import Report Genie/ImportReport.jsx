@@ -4,6 +4,7 @@ import {
   Heading,
   DropdownContainer,
   ImportButton,
+  FilterButton,
   StyledFormControl,
   StyledInputLabel,
   StyledSelect,
@@ -13,9 +14,10 @@ import {
   StyledMenuItem,
 } from "./ImportReportStyles";
 import { DataFrame } from "dataframe-js";
-import * as testing from "../AWS Midleware/AssumptionsCatelougeAWS"; // Ensure this import is correct
+import * as testing from "../AWS Midleware/test"; // Ensure this import is correct
+import * as excelfucntions from "../ExcelMidleware/excelFucntions";
 
-const LoadAssumptions = ({ setPageValue }) => {
+const ImportReport = ({ setPageValue }) => {
   const [dropdownItems, setDropdownItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
   const [selectedItems, setSelectedItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
   const [dataFrame, setDataFrame] = useState(new DataFrame([]));
@@ -50,32 +52,39 @@ const LoadAssumptions = ({ setPageValue }) => {
   };
 
   const updateDropdowns = (df) => {
-    const lockedDF = df.filter(row => row.get("save_status") === "Locked");
+    const lockedDF = df.filter((row) => row.get("save_status") === "Locked");
 
-    const cycleItems = lockedDF.distinct("cycle_name")
+    const cycleItems = lockedDF
+      .distinct("cycle_name")
       .toArray()
-      .map(row => row[0])
-      .filter(value => value && value.trim() !== "");
+      .map((row) => row[0])
+      .filter((value) => value && value.trim() !== "");
 
-    const assetItems = lockedDF.select("asset", "indication", "scenario_name").dropDuplicates()
+    const assetItems = lockedDF
+      .select("asset", "indication", "scenario_name")
+      .dropDuplicates()
       .toCollection()
-      .map(row => {
-        const parts = [row.asset, row.indication, row.scenario_name].filter(part => part && part.trim() !== "");
+      .map((row) => {
+        const parts = [row.asset, row.indication, row.scenario_name].filter((part) => part && part.trim() !== "");
         return parts.join(" | ");
-      }).filter(value => value !== "");
+      })
+      .filter((value) => value !== "");
 
     setDropdownItems({ Cycle: cycleItems, "Asset | Indication | Scenario": assetItems });
   };
 
   const handleDropdownChange = (event, label) => {
-    const selectedValues = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-    setSelectedItems(prevState => ({ ...prevState, [label]: selectedValues }));
+    const selectedValues = typeof event.target.value === "string" ? event.target.value.split(",") : event.target.value;
+    setSelectedItems((prevState) => ({ ...prevState, [label]: selectedValues }));
   };
 
   const handleNewFeature = async () => {
     // Filter the DataFrame based on the selected filters
     const selectedCycles = selectedItems["Cycle"];
     const filteredDF = dataFrame.filter((row) => selectedCycles.includes(row.get("cycle_name")));
+
+    await clearReportGenieBackendData();
+    setPageValue("LoadingCircle", "", "Updating Data, please wait...");
 
     // Extract the fileNames, cycle_name, and Scenario_Name from the filtered DataFrame
     const fileNames = filteredDF
@@ -121,13 +130,44 @@ const LoadAssumptions = ({ setPageValue }) => {
         console.error(`An error occurred while processing ${fileNames[i]}:`, error);
       }
     }
+    setPageValue("ImportReportGenie");
+    await excelfucntions.activateSheet("Report Genie Dashboard");
   };
+
+  const handleFilterReport = () => {
+    setPageValue("ReportGinnie"); // Activate the new page when the button is clicked
+  };
+
+  async function clearReportGenieBackendData() {
+    try {
+      await Excel.run(async (context) => {
+        const sheet = context.workbook.worksheets.getItem("Report Genie Backend");
+
+        // Get the last used cell in the sheet
+        const lastCell = sheet.getUsedRange().getLastCell();
+        lastCell.load("address"); // Explicitly load the address property
+
+        await context.sync(); // Sync to load the last cell's address
+
+        // Define the range starting from A2 to the last used cell
+        const range = sheet.getRange(`A2:${lastCell.address}`);
+
+        // Clear the content starting from A2 in all columns and rows
+        range.clear(Excel.ClearApplyTo.contents);
+
+        await context.sync();
+        console.log("Data cleared successfully from 'Report Genie Backend' sheet starting from A2.");
+      });
+    } catch (error) {
+      console.error("Error clearing data from 'Report Genie Backend' sheet: ", error);
+    }
+  }
 
   return (
     <Container>
-      <Heading>Assumptions Catalogue</Heading>
+      <Heading>Report Genie</Heading>
       <DropdownContainer>
-        {["Cycle", "Asset | Indication | Scenario"].map(label => (
+        {["Cycle", "Asset | Indication | Scenario"].map((label) => (
           <StyledFormControl key={label}>
             <StyledInputLabel>{label}</StyledInputLabel>
             <StyledSelect
@@ -141,9 +181,9 @@ const LoadAssumptions = ({ setPageValue }) => {
                   style: {
                     maxHeight: 224,
                     width: 250,
-                    overflowX: 'hidden',
-                  }
-                }
+                    overflowX: "hidden",
+                  },
+                },
               }}
             >
               {dropdownItems[label].map((item, index) => (
@@ -156,11 +196,12 @@ const LoadAssumptions = ({ setPageValue }) => {
           </StyledFormControl>
         ))}
       </DropdownContainer>
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "100%" }}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "100%", gap: "10px" }}>
         <ImportButton onClick={handleNewFeature}>Import Data→</ImportButton>
+        <FilterButton onClick={handleFilterReport}>Filter Report</FilterButton>
       </div>
     </Container>
   );
 };
 
-export default LoadAssumptions;
+export default ImportReport;
