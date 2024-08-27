@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   Sidebar,
@@ -17,10 +17,10 @@ import PowerBiIcon from "../Icons/PowerBiIcon";
 import ReportGenieIcon from "../Icons/ReportGenieIcon";
 import RiskIcon from "../Icons/Riskicons"; // Corrected component name
 
-const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
+const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
   const [tooltipText, setTooltipText] = useState("");
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [activeItem, setActiveItem] = useState("Home"); // Track the active menu item
+  const [activeItem, setActiveItem] = useState(""); // Track the active menu item
   const tooltipRef = useRef(null);
 
   const menuItems = [
@@ -29,15 +29,25 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
     { icon: <ForecastManagementIcon />, text: "Forecast Management", key: "ScenarioManager" },
     { icon: <CatalogueIcon />, text: "Assumptions Catalogue", key: "LoadAssumptions" },
     { icon: <RiskIcon />, text: "Risk & Analytics", key: "RiskManager" }, // Corrected component name
-    { icon: <PowerBiIcon />, text: "Power Bi Report", key: "PowerBI" },
+    { icon: <PowerBiIcon />, text: "Power BI Report", key: "PowerBI" },
     { icon: <ReportGenieIcon />, text: "Report Genie", key: "ImportReportGenie" },
   ];
+
+  // Effect to update activeItem when activePage changes
+  useEffect(() => {
+    if (activePage) {
+      const matchedItem = menuItems.find(item => item.key === activePage);
+      if (matchedItem) {
+        setActiveItem(activePage); // Update the active item
+      }
+    }
+  }, [activePage]);
 
   const handleMenuItemClick = (key, index) => {
     if (key === "PowerBI") {
       OpenPowerbi(); // Call OpenPowerbi function directly when PowerBI is clicked
     } else {
-      setActiveItem(key); // Set the active menu item based on key
+      setActiveItem(key); // Set the active menu item based on click
       onMenuItemClick(key);
 
       // Scroll the active item into view
@@ -77,7 +87,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout }) => {
               onClick={() => handleMenuItemClick(item.key, index)}
               onMouseEnter={(e) => handleMouseEnter(item.text, e.currentTarget)}
               onMouseLeave={handleMouseLeave}
-              isActive={activeItem === item.key}
+              isActive={activeItem === item.key} // Correctly highlight active item
             >
               {React.isValidElement(item.icon) ? (
                 React.cloneElement(item.icon, { fill: activeItem === item.key ? "#BD302B" : "#FFFFFF" })

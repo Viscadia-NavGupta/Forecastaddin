@@ -17,7 +17,7 @@ const Overirdeconfirmation = ({ setPageValue, UUID }) => {
   const handleyes = async () => {
 
     if (UUID != "") {
-      setPageValue("LoadingCircle");
+      setPageValue("LoadingCircle", "", "Generating ACE, please wait...");
       let Service_flag = await AWSConnections.orchestrationfucntion("GENERATE ACE SHEET", "False", UUID);
       if (Service_flag.result === true) {
         setPageValue("Model Editor"); // Pass the UUID when navigating to the override confirmation page

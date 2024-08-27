@@ -12,7 +12,7 @@ import {
 } from "./mainLayoutNew";
 import Sidebartest2 from "../Side Bar/sidebartest2";
 
-const MainLayout = ({ children, onMenuItemClick, handleLogout }) => {
+const MainLayout = ({ children, onMenuItemClick, handleLogout, activePage }) => {
   return (
     <Layout>
       <TopRightSection>
@@ -25,7 +25,11 @@ const MainLayout = ({ children, onMenuItemClick, handleLogout }) => {
       </TopRightSection>
       <MainContent>
         <SidebarContainer>
-          <Sidebartest2 onMenuItemClick={onMenuItemClick} handleLogout={handleLogout} />
+          <Sidebartest2
+            onMenuItemClick={onMenuItemClick}
+            handleLogout={handleLogout}
+            activePage={activePage} // Pass the activePage prop to Sidebartest2
+          />
         </SidebarContainer>
         <ContentContainer>{children}</ContentContainer>
       </MainContent>

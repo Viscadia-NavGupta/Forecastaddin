@@ -27,7 +27,7 @@ const Savesscenario = ({ setPageValue }) => {
   const [cellB2Value, setCellB2Value] = useState("");
 
   useEffect(() => {
-    setActiveSheetName();
+    checkForOutputSheet();
     fetchDataFromLambda();
   }, []);
 
@@ -64,14 +64,17 @@ const Savesscenario = ({ setPageValue }) => {
     }
   };
 
-  const setActiveSheetName = async () => {
+  const checkForOutputSheet = async () => {
     try {
       await Excel.run(async (context) => {
-        const sheet = context.workbook.worksheets.getActiveWorksheet();
-        sheet.load("name");
+        const sheets = context.workbook.worksheets;
+        sheets.load("items/name");
         await context.sync();
 
-        if (sheet.name.toLowerCase() === "outputs") {
+        const outputSheet = sheets.items.find(sheet => sheet.name.toLowerCase() === "outputs");
+
+        if (outputSheet) {
+          const sheet = outputSheet;
           const cellA2 = sheet.getRange("A1");
           const cellB2 = sheet.getRange("B1");
           cellA2.load("values");
@@ -86,12 +89,12 @@ const Savesscenario = ({ setPageValue }) => {
           setHeading(`Save Scenario for: ${cellA2Value}`);
           setIsOutputSheet(true);
         } else {
-          setHeading(sheet.name);
           setIsOutputSheet(false);
         }
       });
     } catch (error) {
-      console.error("Error fetching active sheet name or cell B2 value: ", error);
+      console.error("Error checking for Outputs sheet: ", error);
+      setIsOutputSheet(false);
     }
   };
 
@@ -163,7 +166,7 @@ const Savesscenario = ({ setPageValue }) => {
           <SaveButton onClick={handleSaveClick}>Save</SaveButton>
         </>
       ) : (
-        <MessageBox>Please select the "Outputs" sheet to proceed.</MessageBox>
+        <MessageBox>No outputs present in this workbook, please run a computation to view outputs.</MessageBox>
       )}
     </Container>
   );

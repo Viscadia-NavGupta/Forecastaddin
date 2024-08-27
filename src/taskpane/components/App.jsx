@@ -121,7 +121,7 @@ function App() {
   return (
     <>
       {isLoggedIn ? (
-        <MainLayout onMenuItemClick={setPageValue} handleLogout={handleLogout}>
+        <MainLayout onMenuItemClick={setPageValue} handleLogout={handleLogout} activePage={page}>
           {routesPages(page)}
         </MainLayout>
       ) : (

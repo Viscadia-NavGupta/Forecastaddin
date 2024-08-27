@@ -1054,14 +1054,18 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
         cellI5.load("values");
         await context.sync();
 
-        newSheetName = cellI5.values[0][0];
-        if (newSheetName === "") {
-          console.error("Cell I5 is empty");
+        let cellValue = cellI5.values[0][0];
+        if (cellValue === "") {
+          console.error("Cell J5 is empty");
           return { success: false, newSheetName: null };
         }
 
-        newSheetName = newSheetName.substring(0, 31).replace(/[:\/\\\?\*\[\]]/g, "");
-        newSheetName = newSheetName.trim();
+        // Split the string by underscores and take the last part
+        const parts = cellValue.split("_");
+        newSheetName = parts[parts.length - 1];
+
+        // Trim and sanitize the sheet name
+        newSheetName = newSheetName.substring(0, 31).replace(/[:\/\\\?\*\[\]]/g, "").trim();
       } else if (serviceName === "RUN COMPUTATION") {
         newSheetName = "outputs";
         const existingSheet = context.workbook.worksheets.getItemOrNullObject(newSheetName);
@@ -1122,4 +1126,5 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     return { success: false, newSheetName: null };
   }
 }
+
 

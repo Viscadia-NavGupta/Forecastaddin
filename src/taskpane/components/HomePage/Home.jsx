@@ -75,7 +75,7 @@ const Home = ({ setPageValue }) => {
         </Button>
         <Button onClick={handleOpenGoogle}>
           <PowerBiIcon width="30" height="30" color="#7F7F7F" />
-          <OpenGoogleLabel>Power Bi Report</OpenGoogleLabel>
+          <OpenGoogleLabel>Power BI Report</OpenGoogleLabel>
         </Button>
         <Button onClick={handleNewFeature}>
           <ReportGenieIcon width="30" height="30" color="#7F7F7F" />
