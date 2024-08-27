@@ -13,7 +13,7 @@ import HomeIcon from "../Icons/HomeIcon";
 import ModelDesignIcon from "../Icons/ModelDesignIcon";
 import ForecastManagementIcon from "../Icons/ForecastManagementIcon";
 import CatalogueIcon from "../Icons/CatalogueIcon";
-import PowerBiIcon from "../Icons/PowerBiIcon";
+import PowerBiIcon from "../Icons/powerbiicon";
 import ReportGenieIcon from "../Icons/ReportGenieIcon";
 import RiskIcon from "../Icons/Riskicons"; // Corrected component name
 
