@@ -76,6 +76,8 @@ const ScenarioManager = ({ setPageValue }) => {
       const result = await AWSConnections.orchestrationfucntion("RUN COMPUTATION");
       console.log("Outputs fetched");
       setPageValue("ScenarioManager");
+      await Excelfunctions.activateSheet("Output Dashboard");
+      await refreshPivotTable("Output Dashboard", "PivotTable1");
 
       if (isFirstRun) {
         setMessage("Please select any button");
@@ -121,6 +123,26 @@ const ScenarioManager = ({ setPageValue }) => {
       });
     } catch (error) {
       console.error("Error activating sheet:", error);
+    }
+  }
+
+  async function refreshPivotTable(sheetName, pivotTableName) {
+    try {
+      await Excel.run(async (context) => {
+        // Get the specific worksheet
+        const sheet = context.workbook.worksheets.getItem(sheetName);
+
+        // Get the PivotTable
+        const pivotTable = sheet.pivotTables.getItem(pivotTableName);
+
+        // Refresh the PivotTable
+        pivotTable.refresh();
+
+        await context.sync();
+        console.log(`PivotTable '${pivotTableName}' in sheet '${sheetName}' refreshed successfully.`);
+      });
+    } catch (error) {
+      console.error(`Error refreshing PivotTable: ${error}`);
     }
   }
 
