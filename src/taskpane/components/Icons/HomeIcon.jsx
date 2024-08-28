@@ -1,6 +1,6 @@
 import React from "react";
 
-function HomeIcon({ fill = "#FFFFFF", width = "24px", height = "24px" }) {
+function HomeIcon({ fill = "#BD302B", width = "24px", height = "24px" }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 1149 1098" overflow="hidden">
       <defs>

@@ -177,6 +177,7 @@ const LoadAssumptions = ({ setPageValue }) => {
     }
     setPageValue("LoadAssumptions");
     await excelfucntions.activateSheet("Assumptions Catalogue");
+    await refreshPivotTable("Assumptions Catalogue", "PivotTable1");
   };
 
   async function clearReportGenieBackendData() {
@@ -201,6 +202,26 @@ const LoadAssumptions = ({ setPageValue }) => {
       });
     } catch (error) {
       console.error("Error clearing data from 'Report Genie Backend' sheet: ", error);
+    }
+  }
+
+  async function refreshPivotTable(sheetName, pivotTableName) {
+    try {
+      await Excel.run(async (context) => {
+        // Get the specific worksheet
+        const sheet = context.workbook.worksheets.getItem(sheetName);
+
+        // Get the PivotTable
+        const pivotTable = sheet.pivotTables.getItem(pivotTableName);
+
+        // Refresh the PivotTable
+        pivotTable.refresh();
+
+        await context.sync();
+        console.log(`PivotTable '${pivotTableName}' in sheet '${sheetName}' refreshed successfully.`);
+      });
+    } catch (error) {
+      console.error(`Error refreshing PivotTable: ${error}`);
     }
   }
 

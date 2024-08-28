@@ -431,11 +431,10 @@ export async function runService(
   }
 }
 
-// NEW CODE
 export async function downloadAndInsertDataFromExcelxlsx(fileName, s3Url, serviceName) {
   const downloadURL = s3Url + fileName;
-  const BATCH_SIZE = 20000; // Number of rows per batch
-  const NORMALIZE_BATCH_SIZE = 1000; // Number of rows to normalize at once
+  const BATCH_SIZE = 10000; // Reduced batch size for better performance
+  const NORMALIZE_BATCH_SIZE = 10000; // Number of rows to normalize at once
   const TEMP_SHEET_NAME = "tempAWSdata";
 
   // Fetch the data from S3
@@ -527,16 +526,27 @@ export async function downloadAndInsertDataFromExcelxlsx(fileName, s3Url, servic
   // Insert parsed data into the temp sheet
   async function insertParsedData(rows, startRow) {
     await Excel.run(async (context) => {
-      const sheet = context.workbook.worksheets.getItem(TEMP_SHEET_NAME);
-      const endRow = startRow + rows.length - 1;
-      const columnCount = rows[0].length;
-      const rangeAddress = `A${startRow}:${getColumnLetter(columnCount - 1)}${endRow}`;
+      context.application.suspendApiCalculationUntilNextSync(); // Suspend recalculations
+      context.application.suspendScreenUpdatingUntilNextSync(); // Suspend screen updates
 
-      console.log(`Inserting range: ${rangeAddress}`);
-      const range = sheet.getRange(rangeAddress);
-      range.values = rows;
-      await sheet.context.sync();
-      console.log(`Inserted rows ${startRow} to ${endRow}`);
+      const sheet = context.workbook.worksheets.getItem(TEMP_SHEET_NAME);
+      const columnCount = rows[0].length;
+
+      let batchStart = 0;
+      while (batchStart < rows.length) {
+        const batchEnd = Math.min(batchStart + BATCH_SIZE, rows.length);
+        const batchRows = rows.slice(batchStart, batchEnd);
+        const endRow = startRow + batchRows.length - 1;
+        const rangeAddress = `A${startRow}:${getColumnLetter(columnCount - 1)}${endRow}`;
+
+        console.log(`Inserting range: ${rangeAddress}`);
+        const range = sheet.getRange(rangeAddress);
+        range.values = batchRows;
+        await context.sync(); // Sync after each batch to reduce overhead
+
+        batchStart = batchEnd;
+        startRow += BATCH_SIZE;
+      }
     }).catch((error) => {
       console.error("Error during Excel run:", error);
     });
@@ -1065,7 +1075,10 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
         newSheetName = parts[parts.length - 1];
 
         // Trim and sanitize the sheet name
-        newSheetName = newSheetName.substring(0, 31).replace(/[:\/\\\?\*\[\]]/g, "").trim();
+        newSheetName = newSheetName
+          .substring(0, 31)
+          .replace(/[:\/\\\?\*\[\]]/g, "")
+          .trim();
       } else if (serviceName === "RUN COMPUTATION") {
         newSheetName = "outputs";
         const existingSheet = context.workbook.worksheets.getItemOrNullObject(newSheetName);
@@ -1126,5 +1139,3 @@ export async function downloadAndInsertDataFromExcel(fileName, s3Url, serviceNam
     return { success: false, newSheetName: null };
   }
 }
-
-

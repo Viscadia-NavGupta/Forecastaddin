@@ -12,7 +12,6 @@ import LoadingCircle from "./loadingcircle";
 import DynamicButtonComponent from "./ACENavigation";
 import Overirdeconfirmation from "./OverideConfirmationpage";
 import Savesscenario from "./savescenario";
-import Lockscenario from "./LockSceanrio";
 import Home from "./HomePage/Home";
 import ScenarioManeger from "./Forecast Managment/ScenarioManager";
 import Outputsmaneger from "./OutputsManager";
@@ -21,8 +20,9 @@ import LoadAssumptions from "./Load Assumptions/LoadAssumptions";
 import ReportGinnie from "./ReportGinnie/ReportGinnie";
 import SaveForecastPage from "./MsgPage/SaveForcastPage";
 import ImportReportGenie from "./Import Report Genie/ImportReport";
-import LockScenario from "./Lock Scenario/LockScenario";
 import Importfunnel from "./Import Models/ImportFunnel";
+import LockScenario from "./Lock Scenario/LockScenario";
+import Lockedforecast from "./MsgPage/LockForecast";
 
 function App() {
   const [page, setPage] = useState("UserLogin");
@@ -113,6 +113,8 @@ function App() {
         return <ImportReportGenie setPageValue={setPageValue} />;
       case "LockScenario":
         return <LockScenario setPageValue={setPageValue} />;
+        case "Lockedforecast":
+          return <Lockedforecast setPageValue={setPageValue} />;
       default:
         return <UserLogin setPageValue={setPageValue} handleLogin={handleLogin} />;
     }

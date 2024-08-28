@@ -136,6 +136,8 @@ const LockScenario = ({ setPageValue }) => {
     console.log(cellA2Value);
     console.log(cellB2Value);
 
+    setPageValue("LoadingCircle", "", "Locking Forecast, please wait...");
+
     let saveflag = await awsconnection.orchestrationfucntion(
       "LOCK FORECAST",
       "",
@@ -148,13 +150,13 @@ const LockScenario = ({ setPageValue }) => {
 
     if (saveflag.result === true) {
       console.log("Forecast Saved");
-      setPageValue("SaveForecastPage");
+      setPageValue("Lockedforecast");
     }
   };
 
   return (
     <Container>
-      <Heading>Report Genie</Heading>
+      <Heading>Lock Forecast</Heading>
       <DropdownContainer>
         {["Cycle", "Asset | Indication | Scenario"].map(label => (
           <StyledFormControl key={label}>
@@ -183,7 +185,7 @@ const LockScenario = ({ setPageValue }) => {
         ))}
       </DropdownContainer>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "20px", width: "100%" }}>
-        <ImportButton onClick={handleNewFeature}>Import Outputs→</ImportButton>
+        <ImportButton onClick={handleNewFeature}>Lock Forecast→</ImportButton>
       </div>
     </Container>
   );

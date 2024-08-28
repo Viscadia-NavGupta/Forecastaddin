@@ -156,7 +156,9 @@ const ImportReport = ({ setPageValue }) => {
       }
     }
     setPageValue("ImportReportGenie");
-    await excelfucntions.activateSheet("Report Genie Dashboard");
+    await excelfucntions.activateSheet("Report Genie");
+
+    await refreshPivotTable("Report Genie", "PivotTable1");
   };
 
   const handleFilterReport = () => {
@@ -185,6 +187,26 @@ const ImportReport = ({ setPageValue }) => {
       });
     } catch (error) {
       console.error("Error clearing data from 'Report Genie Backend' sheet: ", error);
+    }
+  }
+
+  async function refreshPivotTable(sheetName, pivotTableName) {
+    try {
+      await Excel.run(async (context) => {
+        // Get the specific worksheet
+        const sheet = context.workbook.worksheets.getItem(sheetName);
+
+        // Get the PivotTable
+        const pivotTable = sheet.pivotTables.getItem(pivotTableName);
+
+        // Refresh the PivotTable
+        pivotTable.refresh();
+
+        await context.sync();
+        console.log(`PivotTable '${pivotTableName}' in sheet '${sheetName}' refreshed successfully.`);
+      });
+    } catch (error) {
+      console.error(`Error refreshing PivotTable: ${error}`);
     }
   }
 

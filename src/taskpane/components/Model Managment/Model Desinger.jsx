@@ -17,10 +17,14 @@ const ModelManagementPage1 = ({ setPageValue }) => {
   const username = sessionStorage.getItem("username");
   console.log(username);
 
+  Excelfunctions.unhideSheet("Model Management");
+  Excelfunctions.unhideSheet("Demo ACE");
+
   function unhideActivateSheetAndSelectA1() {
     Excel.run(async (context) => {
       const workbook = context.workbook;
       const sheetName = "Model Management | Demo";
+
 
       // Try to get the worksheet with the specified name
       const sheet = workbook.worksheets.getItemOrNullObject(sheetName);

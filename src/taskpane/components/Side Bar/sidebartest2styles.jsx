@@ -39,7 +39,7 @@ export const MenuItem = styled("button")(({ isActive }) => ({
   borderRadius: isActive ? "30px 0 0 30px" : "0", // Curve on the left side
   border: "none",
   color: isActive ? "#BD302B" : "#FFFFFF", // Red text for active item
-  margin: "10px 0 10px 5px", // Increase the left margin to create the gap
+  margin: "5px 0 5px 5px", // Reduce the space between menu items (top and bottom margins reduced)
   cursor: "pointer",
   display: "flex",
   alignItems: "center",

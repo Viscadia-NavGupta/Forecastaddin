@@ -32,9 +32,9 @@ export const Button = styled("div")({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  width: "85px",  // Match width to home page
-  height: "85px",  // Match height to home page
-  backgroundColor: "#747474",
+  width: "85px",  // Reduced width
+  height: "85px",  // Reduced height
+  backgroundColor: "#ededed",
   borderRadius: "5px",
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   cursor: "pointer",

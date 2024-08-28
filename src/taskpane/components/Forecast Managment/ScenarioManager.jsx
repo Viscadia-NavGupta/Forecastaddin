@@ -48,7 +48,8 @@ const ScenarioManager = ({ setPageValue }) => {
   };
 
   const handleNewFeature = async () => {
-    setPageValue("LockScenario")
+    console.log("Navigating to LockScenario page"); // Debugging log
+    setPageValue("LockScenario");
   };
 
   async function processFiles(fileNames, s3Url, serviceName) {
@@ -71,7 +72,7 @@ const ScenarioManager = ({ setPageValue }) => {
     let servicename = await Excelfunctions.getActiveSheetName();
 
     if (servicename !== "Model Management" && servicename !== "outputs") {
-      setPageValue("LoadingCircle", "", "Updating Assumptions, please wait...");
+      setPageValue("LoadingCircle", "", "Running Computation, please wait...");
       const result = await AWSConnections.orchestrationfucntion("RUN COMPUTATION");
       console.log("Outputs fetched");
       setPageValue("ScenarioManager");

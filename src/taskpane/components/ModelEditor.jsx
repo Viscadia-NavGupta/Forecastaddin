@@ -11,10 +11,14 @@ const MMSheetManagment = ({ setPageValue }) => {
     if (servicename === "Model Management") {
       setPageValue("LoadingCircle", "", "Generating ACE, please wait...");
       let Service_flag = await AWSConnections.orchestrationfucntion("GENERATE ACE SHEET", "True");
+      console.log(Service_flag.result);
       if (Service_flag.result === "Override") {
         setPageValue("Overirdeconfirmation", Service_flag.uuid); // Pass the UUID when navigating to the override confirmation page
+        console.log(Service_flag.result);
       } else {
-        setPageValue("Model Editor");
+        setPageValue("DynamicButtonComponent");
+        console.log(Service_flag.result);
+
       }
     } else {
       console.log("Activate MM Sheet");
@@ -31,16 +35,16 @@ const MMSheetManagment = ({ setPageValue }) => {
     },
     { icon: "/../assets/addflow.svg", text: "Add Flow", action: () => MMfunctions.addFlow() },
     { icon: "/../assets/deleteflow.svg", text: "Delete Flow", action: () => MMfunctions.deleteflow() },
-    { icon: "/../assets/adddimension.svg", text: "Add Dimension", action: () => MMfunctions.addDimension1() },
+    { icon: "/../assets/adddimension.svg", text: "Add Node", action: () => MMfunctions.addDimension1() },
     {
       icon: "/../assets/deletedimension.svg",
-      text: "Delete Dimension",
+      text: "Delete Node",
       action: () => MMfunctions.deletediemnsions(),
     },
-    { icon: "/../assets/create_flow.svg", text: "Add SKU", action: () => MMfunctions.addSku() },
-    { icon: "/../assets/create_flow.svg", text: "Delete SKU", action: () => MMfunctions.DeleteSku() },
-    { icon: "/../assets/create_flow.svg", text: "Add Product", action: () => MMfunctions.addProduct() },
-    { icon: "/../assets/create_flow.svg", text: "Delete Product", action: () => MMfunctions.deleteProduct() },
+    { icon: "/../assets/addproduct.svg", text: "Add SKU", action: () => MMfunctions.addSku() },
+    { icon: "/../assets/addproduct.svg", text: "Delete SKU", action: () => MMfunctions.DeleteSku() },
+    { icon: "/../assets/Addsku.svg", text: "Add Product", action: () => MMfunctions.addProduct() },
+    { icon: "/../assets/Addsku.svg", text: "Delete Product", action: () => MMfunctions.deleteProduct() },
   ];
 
   return (
