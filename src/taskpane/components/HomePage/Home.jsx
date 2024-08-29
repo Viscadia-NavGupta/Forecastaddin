@@ -13,12 +13,12 @@ import {
 } from "./HomeStyles";
 
 // Importing all the icons as React components
-import ModelDesignIcon from "../Icons/ModelDesignIcon";
-import ForecastManagementIcon from "../Icons/ForecastManagementIcon";
-import CatalogueIcon from "../Icons/CatalogueIcon";
-import PowerBiIcon from "../Icons/powerbiicon";
-import ReportGenieIcon from "../Icons/ReportGenieIcon";
-import RiskIcon from "../Icons/Riskicons"; // Corrected component name
+import ModelDesignIcon from "../Import Models/Icons/ModelDesignIcon";
+import ForecastManagementIcon from "../Import Models/Icons/ForecastManagementIcon";
+import CatalogueIcon from "../Import Models/Icons/CatalogueIcon";
+import PowerBiIcon from "../Import Models/Icons/powerbiicon";
+import ReportGenieIcon from "../Import Models/Icons/ReportGenieIcon";
+import RiskIcon from "../Import Models/Icons/Riskicons"; // Corrected component name
 
 const Home = ({ setPageValue }) => {
   const username = "Craig Leonardi"; // Use a fixed name for demo purposes
@@ -45,7 +45,7 @@ const Home = ({ setPageValue }) => {
 
   const handleOpenGoogle = () => {
     window.open(
-      "https://app.powerbi.com/links/Z_tEFHu8vr?ctid=c05372cf-28bd-4caf-83dd-e8b65c066ce9&pbi_source=linkShare",
+      "https://app.powerbi.com/links/Umg-8JIt0M?ctid=c05372cf-28bd-4caf-83dd-e8b65c066ce9&pbi_source=linkShare",
       "_blank"
     );
   };

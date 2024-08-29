@@ -1,21 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Container,
-  Sidebar,
-  MenuSection,
-  MenuItem,
-  BottomSection,
-} from "./sidebartest2styles";
+import { Container, Sidebar, MenuSection, MenuItem, BottomSection } from "./sidebartest2styles";
 import Tooltip from "./tooltip";
 
 // Importing all the icons as React components
-import HomeIcon from "../Icons/HomeIcon";
-import ModelDesignIcon from "../Icons/ModelDesignIcon";
-import ForecastManagementIcon from "../Icons/ForecastManagementIcon";
-import CatalogueIcon from "../Icons/CatalogueIcon";
-import PowerBiIcon from "../Icons/powerbiicon";
-import ReportGenieIcon from "../Icons/ReportGenieIcon";
-import RiskIcon from "../Icons/Riskicons"; // Corrected component name
+import HomeIcon from "../Import Models/Icons/HomeIcon";
+import ModelDesignIcon from "../Import Models/Icons/ModelDesignIcon";
+import ForecastManagementIcon from "../Import Models/Icons/ForecastManagementIcon";
+import CatalogueIcon from "../Import Models/Icons/CatalogueIcon";
+import PowerBiIcon from "../Import Models/Icons/powerbiicon";
+import ReportGenieIcon from "../Import Models/Icons/ReportGenieIcon";
+import RiskIcon from "../Import Models/Icons/Riskicons"; // Corrected component name
 
 const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
   const [tooltipText, setTooltipText] = useState("");
@@ -36,7 +30,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
   // Effect to update activeItem when activePage changes
   useEffect(() => {
     if (activePage) {
-      const matchedItem = menuItems.find(item => item.key === activePage);
+      const matchedItem = menuItems.find((item) => item.key === activePage);
       if (matchedItem) {
         setActiveItem(activePage); // Update the active item
       }
@@ -71,7 +65,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
 
   const OpenPowerbi = () => {
     window.open(
-      "https://app.powerbi.com/links/Z_tEFHu8vr?ctid=c05372cf-28bd-4caf-83dd-e8b65c066ce9&pbi_source=linkShare",
+      "https://app.powerbi.com/links/Umg-8JIt0M?ctid=c05372cf-28bd-4caf-83dd-e8b65c066ce9&pbi_source=linkShare",
       "_blank"
     );
   };
