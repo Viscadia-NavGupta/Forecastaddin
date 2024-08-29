@@ -104,14 +104,27 @@ const ImportReport = ({ setPageValue }) => {
   };
 
   const handleNewFeature = async () => {
-    // Filter the DataFrame based on the selected filters
+    // Get selected values
     const selectedCycles = selectedItems["Cycle"];
-    const filteredDF = dataFrame.filter((row) => selectedCycles.includes(row.get("cycle_name")));
+    const selectedAssetIndicationScenario = selectedItems["Asset | Indication | Scenario"];
+
+    // Split the selected Asset | Indication | Scenario into individual components
+    const selectedAISParts = selectedAssetIndicationScenario.map((item) => item.split(" | "));
+
+    // Filter the DataFrame based on selected Cycles, Asset, Indication, and Scenario
+    const filteredDF = dataFrame.filter((row) => {
+      const cycleMatch = selectedCycles.includes(row.get("cycle_name"));
+      const aisMatch = selectedAISParts.some(
+        ([asset, indication, scenario]) =>
+          row.get("asset") === asset && row.get("indication") === indication && row.get("scenario_name") === scenario
+      );
+      return cycleMatch && aisMatch;
+    });
 
     await clearReportGenieBackendData();
     setPageValue("LoadingCircle", "", "Updating Data, please wait...");
 
-    // Extract the fileNames, cycle_name, and Scenario_Name from the filtered DataFrame
+    // Extract the fileNames, cycle_name, scenario_name, asset, and indication from the filtered DataFrame
     const fileNames = filteredDF
       .select("output_id")
       .toArray()
@@ -130,9 +143,23 @@ const ImportReport = ({ setPageValue }) => {
       .map((row) => row[0])
       .filter((name) => name && name.trim() !== "");
 
+    const assets = filteredDF
+      .select("asset")
+      .toArray()
+      .map((row) => row[0])
+      .filter((name) => name && name.trim() !== "");
+
+    const indications = filteredDF
+      .select("indication")
+      .toArray()
+      .map((row) => row[0])
+      .filter((name) => name && name.trim() !== "");
+
     console.log("Filtered fileNames:", fileNames);
     console.log("Cycle Names:", cycle_names);
     console.log("Scenario Names:", scenario_names);
+    console.log("Assets:", assets);
+    console.log("Indications:", indications);
 
     const s3Url = "https://download-docket.s3.amazonaws.com/RUN COMPUTATION/horizontal_data_dump/";
     const serviceName = "RUN COMPUTATION";
@@ -144,7 +171,9 @@ const ImportReport = ({ setPageValue }) => {
           s3Url,
           serviceName,
           cycle_names[i] || "",
-          scenario_names[i] || ""
+          scenario_names[i] || "",
+          assets[i] || "",
+          indications[i] || ""
         );
         if (result.success) {
           console.log("File processed successfully:", fileNames[i]);
