@@ -3,13 +3,13 @@ import { Container, Sidebar, MenuSection, MenuItem, BottomSection } from "./side
 import Tooltip from "./tooltip";
 
 // Importing all the icons as React components
-import HomeIcon from "../Import Models/Icons/HomeIcon";
-import ModelDesignIcon from "../Import Models/Icons/ModelDesignIcon";
-import ForecastManagementIcon from "../Import Models/Icons/ForecastManagementIcon";
-import CatalogueIcon from "../Import Models/Icons/CatalogueIcon";
-import PowerBiIcon from "../Import Models/Icons/powerbiicon";
-import ReportGenieIcon from "../Import Models/Icons/ReportGenieIcon";
-import RiskIcon from "../Import Models/Icons/Riskicons"; // Corrected component name
+import HomeIcon from "../Icons/HomeIcon";
+import ModelDesignIcon from "../Icons/ModelDesignIcon";
+import ForecastManagementIcon from "../Icons/ForecastManagementIcon";
+import CatalogueIcon from "../Icons/CatalogueIcon";
+import PowerBiIcon from "../Icons/powerbiicon";
+import ReportGenieIcon from "../Icons/ReportGenieIcon";
+import RiskIcon from "../Icons/Riskicons"; // Corrected component name
 
 const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
   const [tooltipText, setTooltipText] = useState("");
