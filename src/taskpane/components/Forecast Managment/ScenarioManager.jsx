@@ -76,8 +76,8 @@ const ScenarioManager = ({ setPageValue }) => {
       const result = await AWSConnections.orchestrationfucntion("RUN COMPUTATION");
       console.log("Outputs fetched");
       setPageValue("ScenarioManager");
-      await Excelfunctions.activateSheet("Output Dashboard");
-      await refreshPivotTable("Output Dashboard", "PivotTable1");
+      await Excelfunctions.activateSheet("Forecast Summary");
+      await refreshPivotTable("Forecast Summary", "PivotTable1");
 
       if (isFirstRun) {
         setMessage("Please select any button");
@@ -152,23 +152,23 @@ const ScenarioManager = ({ setPageValue }) => {
       <ButtonsContainer>
         <Button onClick={handleLoadforecast}>
           <Icon src="/../assets/computation.svg" alt="Fresh Icon" />
-          <FreshLabel>Load Forecast</FreshLabel>
+          <FreshLabel>Load</FreshLabel>
         </Button>
         <Button onClick={RunScenario}>
           <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
-          <LoadLabel>Run Computation</LoadLabel>
+          <LoadLabel>Compute</LoadLabel>
         </Button>
         <Button onClick={handleViewOutputs}>
           <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
-          <OutputsLabel>View Outputs</OutputsLabel>
+          <OutputsLabel>Outputs</OutputsLabel>
         </Button>
         <Button onClick={SaveScenario}>
           <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
-          <SettingsLabel>Save Forecast</SettingsLabel>
+          <SettingsLabel>Save</SettingsLabel>
         </Button>
         <Button onClick={handleNewFeature}>
           <Icon src="/../assets/loadmodel.svg" alt="New Feature Icon" />
-          <NewFeatureLabel>Lock Forecast</NewFeatureLabel>
+          <NewFeatureLabel>Lock</NewFeatureLabel>
         </Button>
       </ButtonsContainer>
       <div style={{ marginTop: "20px", textAlign: "center" }}>

@@ -22,7 +22,7 @@ export const TopRightSection = styled("div")({
 });
 
 export const LogoContainer = styled("div")({
-  width: "60px", // Make sure this matches the width of the SidebarContainer
+  width: "40px", // Make sure this matches the width of the SidebarContainer
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -37,8 +37,8 @@ export const TextContainer = styled("div")({
 });
 
 export const ProfileImage = styled("img")({
-  width: "30px",
-  height: "30px",
+  width: "28px",
+  height: "32px",
 });
 
 export const TopRightText = styled("span")({
