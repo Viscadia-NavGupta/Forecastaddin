@@ -66,7 +66,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
 
   const OpenPowerbi = () => {
     window.open(
-      "https://app.powerbi.com/links/Umg-8JIt0M?ctid=c05372cf-28bd-4caf-83dd-e8b65c066ce9&pbi_source=linkShare",
+      "https://app.powerbi.com/links/CAlvSbAUNo?ctid=c05372cf-28bd-4caf-83dd-e8b65c066ce9&pbi_source=linkShare",
       "_blank"
     );
   };
