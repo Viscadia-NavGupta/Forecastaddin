@@ -74,11 +74,11 @@ const ModelManagementPage1 = ({ setPageValue }) => {
       <ButtonsContainer>
         <Button onClick={handleCreateNewModel}>
           <Icon src="/../assets/model.svg" alt="Fresh Icon" />
-          <FreshLabel>Design New Model</FreshLabel>
+          <FreshLabel>Design New</FreshLabel>
         </Button>
         <Button onClick={handleLoadExistingModel}>
           <Icon src="/../assets/loadmodel.svg" alt="Load Icon" />
-          <LoadLabel>Load Existing Model</LoadLabel>
+          <LoadLabel>Load Existing</LoadLabel>
         </Button>
       </ButtonsContainer>
     </Container>
