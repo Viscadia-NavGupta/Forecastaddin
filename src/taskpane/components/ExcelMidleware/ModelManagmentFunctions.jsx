@@ -824,7 +824,7 @@ export async function addDimension1(context) {
 
     // Adjust column widths
     const columnsRange = sheet.getRangeByIndexes(0, colModelDim - 1, 1, 5);
-    columnsRange.format.autofitColumns();
+    // columnsRange.format.autofitColumns();
     console.log("Column widths adjusted");
 
     await context.sync();
@@ -949,7 +949,7 @@ export async function addProduct(context) {
 
     // Adjust column widths
     const columnsRange = sheet.getRangeByIndexes(0, colModelDim - 1, 1, 5);
-    columnsRange.format.autofitColumns();
+    // columnsRange.format.autofitColumns();
     console.log("Column widths adjusted");
 
     // Copy data validation for each cell in the range
@@ -1280,7 +1280,7 @@ export async function deletediemnsions(context) {
 
     // Adjust column widths
     const columnsRange = sheet.getRangeByIndexes(0, colModelDim - 1, 1, 5);
-    columnsRange.format.autofitColumns();
+    // columnsRange.format.autofitColumns();
     console.log("Column widths adjusted");
 
     await context.sync();
@@ -1389,7 +1389,7 @@ export async function deleteProduct(context) {
 
     // Adjust column widths
     const columnsRange = sheet.getRangeByIndexes(0, colModelDim - 1, 1, 5);
-    columnsRange.format.autofitColumns();
+    // columnsRange.format.autofitColumns();
     console.log("Column widths adjusted");
 
     await context.sync();

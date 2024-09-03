@@ -10,6 +10,7 @@ import CatalogueIcon from "../Icons/CatalogueIcon";
 import PowerBiIcon from "../Icons/powerbiicon";
 import ReportGenieIcon from "../Icons/ReportGenieIcon";
 import RiskIcon from "../Icons/Riskicons"; // Corrected component name
+import LogoutIcon from "../Icons/Logout";
 
 const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
   const [tooltipText, setTooltipText] = useState("");
@@ -97,7 +98,7 @@ const Sidebartest2 = ({ onMenuItemClick, handleLogout, activePage }) => {
             onMouseEnter={(e) => handleMouseEnter("Logout", e.currentTarget)}
             onMouseLeave={handleMouseLeave}
           >
-            <img src="/assets/logout.svg" alt="Logout" />
+            <LogoutIcon fill="#FFFFFF" width="24px" height="24px" />
           </MenuItem>
         </BottomSection>
       </Sidebar>
