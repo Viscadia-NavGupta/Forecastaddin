@@ -21,7 +21,7 @@ import ReportGenieIcon from "../Icons/ReportGenieIcon";
 import RiskIcon from "../Icons/Riskicons"; // Corrected component name
 
 const Home = ({ setPageValue }) => {
-  const username = "Craig Leonardi"; // Use a fixed name for demo purposes
+  const username = "Demo User"; // Use a fixed name for demo purposes
 
   const handleCreateNewModel = async () => {
     setPageValue("ModelManagementPage1");

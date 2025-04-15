@@ -14,12 +14,12 @@ import {
   StyledMenuItem,
 } from "./ImportReportStyles";
 import { DataFrame } from "dataframe-js";
-import * as testing from "../AWS Midleware/test"; // Ensure this import is correct
+import * as testing from "../AWS Midleware/test";
 import * as excelfucntions from "../ExcelMidleware/excelFucntions";
 
 const ImportReport = ({ setPageValue }) => {
-  const [dropdownItems, setDropdownItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
-  const [selectedItems, setSelectedItems] = useState({ Cycle: [], "Asset | Indication | Scenario": [] });
+  const [dropdownItems, setDropdownItems] = useState({ Cycle: [], "Geography | Asset | Indication | Scenario": [] });
+  const [selectedItems, setSelectedItems] = useState({ Cycle: [], "Geography | Asset | Indication | Scenario": [] });
   const [dataFrame, setDataFrame] = useState(new DataFrame([]));
   const storedUsername = useMemo(() => sessionStorage.getItem("username"), []);
 
@@ -46,7 +46,6 @@ const ImportReport = ({ setPageValue }) => {
       const df = new DataFrame(responseBody.results1);
       setDataFrame(df);
 
-      // Populate Cycle dropdown items
       const cycleItems = df
         .distinct("cycle_name")
         .toArray()
@@ -62,29 +61,29 @@ const ImportReport = ({ setPageValue }) => {
     }
   };
 
-  const updateAssetIndicationScenarioDropdown = (df, selectedCycle) => {
+  const updateGeoAssetIndicationScenarioDropdown = (df, selectedCycle) => {
     if (selectedCycle.length > 0) {
       const filteredDF = df.filter((row) => selectedCycle.includes(row.get("cycle_name")));
 
-      const assetItems = filteredDF
-        .select("asset", "indication", "scenario_name")
+      const gaisItems = filteredDF
+        .select("geography", "asset", "indication", "scenario_name")
         .dropDuplicates()
         .toCollection()
         .map((row) => {
-          const parts = [row.asset, row.indication, row.scenario_name].filter((part) => part && part.trim() !== "");
+          const parts = [row.geography, row.asset, row.indication, row.scenario_name]
+            .filter((part) => part && part.trim() !== "");
           return parts.join(" | ");
         })
         .filter((value) => value !== "");
 
       setDropdownItems((prevState) => ({
         ...prevState,
-        "Asset | Indication | Scenario": assetItems,
+        "Geography | Asset | Indication | Scenario": gaisItems,
       }));
     } else {
-      // Clear Asset | Indication | Scenario dropdown items if no cycle is selected
       setDropdownItems((prevState) => ({
         ...prevState,
-        "Asset | Indication | Scenario": [],
+        "Geography | Asset | Indication | Scenario": [],
       }));
     }
   };
@@ -95,8 +94,7 @@ const ImportReport = ({ setPageValue }) => {
       const updatedItems = { ...prevState, [label]: selectedValues };
 
       if (label === "Cycle") {
-        // Update the Asset | Indication | Scenario dropdown based on the selected Cycle
-        updateAssetIndicationScenarioDropdown(dataFrame, selectedValues);
+        updateGeoAssetIndicationScenarioDropdown(dataFrame, selectedValues);
       }
 
       return updatedItems;
@@ -104,27 +102,25 @@ const ImportReport = ({ setPageValue }) => {
   };
 
   const handleNewFeature = async () => {
-    // Get selected values
     const selectedCycles = selectedItems["Cycle"];
-    const selectedAssetIndicationScenario = selectedItems["Asset | Indication | Scenario"];
+    const selectedGAIS = selectedItems["Geography | Asset | Indication | Scenario"];
+    const selectedGAISParts = selectedGAIS.map((item) => item.split(" | "));
 
-    // Split the selected Asset | Indication | Scenario into individual components
-    const selectedAISParts = selectedAssetIndicationScenario.map((item) => item.split(" | "));
-
-    // Filter the DataFrame based on selected Cycles, Asset, Indication, and Scenario
     const filteredDF = dataFrame.filter((row) => {
       const cycleMatch = selectedCycles.includes(row.get("cycle_name"));
-      const aisMatch = selectedAISParts.some(
-        ([asset, indication, scenario]) =>
-          row.get("asset") === asset && row.get("indication") === indication && row.get("scenario_name") === scenario
+      const gaisMatch = selectedGAISParts.some(
+        ([geography, asset, indication, scenario]) =>
+          row.get("geography") === geography &&
+          row.get("asset") === asset &&
+          row.get("indication") === indication &&
+          row.get("scenario_name") === scenario
       );
-      return cycleMatch && aisMatch;
+      return cycleMatch && gaisMatch;
     });
 
     await clearReportGenieBackendData();
     setPageValue("LoadingCircle", "", "Updating Data, please wait...");
 
-    // Extract the fileNames, cycle_name, scenario_name, asset, and indication from the filtered DataFrame
     const fileNames = filteredDF
       .select("output_id")
       .toArray()
@@ -155,19 +151,14 @@ const ImportReport = ({ setPageValue }) => {
       .map((row) => row[0])
       .filter((name) => name && name.trim() !== "");
 
-    console.log("Filtered fileNames:", fileNames);
-    console.log("Cycle Names:", cycle_names);
-    console.log("Scenario Names:", scenario_names);
-    console.log("Assets:", assets);
-    console.log("Indications:", indications);
-
     const s3Url = "https://download-docket.s3.amazonaws.com/RUN COMPUTATION/horizontal_data_dump/";
     const serviceName = "RUN COMPUTATION";
 
     for (let i = 0; i < fileNames.length; i++) {
+      const fileNameWithExtension = `${fileNames[i]}.csv`;
       try {
         const result = await testing.downloadAndInsertDataFromExcel(
-          fileNames[i],
+          fileNameWithExtension,
           s3Url,
           serviceName,
           cycle_names[i] || "",
@@ -184,33 +175,26 @@ const ImportReport = ({ setPageValue }) => {
         console.error(`An error occurred while processing ${fileNames[i]}:`, error);
       }
     }
+
     setPageValue("ImportReportGenie");
     await excelfucntions.activateSheet("Report Genie");
-
     await refreshPivotTable("Report Genie", "PivotTable1");
   };
 
   const handleFilterReport = () => {
-    setPageValue("ReportGinnie"); // Activate the new page when the button is clicked
+    setPageValue("ReportGinnie");
   };
 
   async function clearReportGenieBackendData() {
     try {
       await Excel.run(async (context) => {
         const sheet = context.workbook.worksheets.getItem("Report Genie Backend");
-
-        // Get the last used cell in the sheet
         const lastCell = sheet.getUsedRange().getLastCell();
-        lastCell.load("address"); // Explicitly load the address property
+        lastCell.load("address");
+        await context.sync();
 
-        await context.sync(); // Sync to load the last cell's address
-
-        // Define the range starting from A2 to the last used cell
         const range = sheet.getRange(`A2:${lastCell.address}`);
-
-        // Clear the content starting from A2 in all columns and rows
         range.clear(Excel.ClearApplyTo.contents);
-
         await context.sync();
         console.log("Data cleared successfully from 'Report Genie Backend' sheet starting from A2.");
       });
@@ -222,15 +206,9 @@ const ImportReport = ({ setPageValue }) => {
   async function refreshPivotTable(sheetName, pivotTableName) {
     try {
       await Excel.run(async (context) => {
-        // Get the specific worksheet
         const sheet = context.workbook.worksheets.getItem(sheetName);
-
-        // Get the PivotTable
         const pivotTable = sheet.pivotTables.getItem(pivotTableName);
-
-        // Refresh the PivotTable
         pivotTable.refresh();
-
         await context.sync();
         console.log(`PivotTable '${pivotTableName}' in sheet '${sheetName}' refreshed successfully.`);
       });
@@ -243,7 +221,7 @@ const ImportReport = ({ setPageValue }) => {
     <Container>
       <Heading>Report Genie</Heading>
       <DropdownContainer>
-        {["Cycle", "Asset | Indication | Scenario"].map((label) => (
+        {["Cycle", "Geography | Asset | Indication | Scenario"].map((label) => (
           <StyledFormControl key={label}>
             <StyledInputLabel>{label}</StyledInputLabel>
             <StyledSelect
