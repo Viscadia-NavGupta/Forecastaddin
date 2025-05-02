@@ -9,10 +9,11 @@ import {
   LoadLabel,
   OutputsLabel,
   SettingsLabel,
-  NewFeatureLabel, // Add this line
+  NewFeatureLabel,
+  EnableCalculationsLabel, // Added this line
 } from "./ScenarioManagerStyles";
 import * as AWSConnections from "../AWS Midleware/AWSConnections";
-import * as Excelfunctions from "../ExcelMidleware/excelFucntions";
+// import * as Excelfunctions from "../ExcelMidleware/excelFucntions";
 import * as MMfunctions from "../ExcelMidleware/ModelManagmentFunctions";
 import * as testfucntions from "../ExcelMidleware/testfile";
 import * as testing from "../AWS Midleware/test";
@@ -48,8 +49,13 @@ const ScenarioManager = ({ setPageValue }) => {
   };
 
   const handleNewFeature = async () => {
-    console.log("Navigating to LockScenario page"); // Debugging log
+    console.log("Navigating to LockScenario page");
     setPageValue("LockScenario");
+  };
+
+
+  const handleEnableCalculations = async () => {
+    await activateSheet("ACE- Calcs");
   };
 
   async function processFiles(fileNames, s3Url, serviceName) {
@@ -66,6 +72,7 @@ const ScenarioManager = ({ setPageValue }) => {
       }
     }
   }
+
   const RunScenario = async () => {
     console.log("RunScenario function called");
 
@@ -81,7 +88,7 @@ const ScenarioManager = ({ setPageValue }) => {
 
       if (isFirstRun) {
         setMessage("Please select any button");
-        setIsFirstRun(false); // Mark that the first run has occurred
+        setIsFirstRun(false);
       } else {
         setMessage("Scenario run successfully.");
         setIsFirstRun(true);
@@ -95,30 +102,19 @@ const ScenarioManager = ({ setPageValue }) => {
 
   const SaveScenario = async () => {
     console.log("Save Scenario function called");
-
     setPageValue("savescenario");
   };
 
   async function activateDashboardSheet() {
     try {
       await Excel.run(async (context) => {
-        // Define the name of the sheet you want to activate
         const sheetName = "Dashboard";
-
-        // Get the workbook and the specific worksheet
         const workbook = context.workbook;
         const dashboardSheet = workbook.worksheets.getItem(sheetName);
-
-        // Load the sheet properties to ensure it exists
         dashboardSheet.load("name");
         await context.sync();
-
-        // Activate the sheet
         dashboardSheet.activate();
-
-        // Synchronize the context to apply changes
         await context.sync();
-
         console.log(`The sheet '${sheetName}' has been activated.`);
       });
     } catch (error) {
@@ -129,15 +125,9 @@ const ScenarioManager = ({ setPageValue }) => {
   async function refreshPivotTable(sheetName, pivotTableName) {
     try {
       await Excel.run(async (context) => {
-        // Get the specific worksheet
         const sheet = context.workbook.worksheets.getItem(sheetName);
-
-        // Get the PivotTable
         const pivotTable = sheet.pivotTables.getItem(pivotTableName);
-
-        // Refresh the PivotTable
         pivotTable.refresh();
-
         await context.sync();
         console.log(`PivotTable '${pivotTableName}' in sheet '${sheetName}' refreshed successfully.`);
       });
@@ -145,6 +135,21 @@ const ScenarioManager = ({ setPageValue }) => {
       console.error(`Error refreshing PivotTable: ${error}`);
     }
   }
+
+  async function activateSheet(sheetName) {
+    try {
+      await Excel.run(async (context) => {
+        const sheet = context.workbook.worksheets.getItem(sheetName);
+        sheet.activate();
+        await context.sync();
+        console.log(`Sheet '${sheetName}' activated.`);
+      });
+    } catch (error) {
+      console.error(`Error activating sheet: ${error}`);
+    }
+  }
+
+
 
   return (
     <Container>
@@ -170,7 +175,13 @@ const ScenarioManager = ({ setPageValue }) => {
           <Icon src="/../assets/loadmodel.svg" alt="New Feature Icon" />
           <NewFeatureLabel>Lock</NewFeatureLabel>
         </Button>
+        {/* New Enable Calculations Button */}
+        <Button onClick={handleEnableCalculations}>
+          <Icon src="/../assets/loadmodel.svg" alt="Enable Calculations Icon" />
+          <EnableCalculationsLabel>Enable Calculations</EnableCalculationsLabel>
+        </Button>
       </ButtonsContainer>
+
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <a href="#" onClick={() => setPageValue("DynamicButtonComponent")}>
           ACE

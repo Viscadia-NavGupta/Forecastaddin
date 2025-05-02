@@ -25,8 +25,23 @@ const MMSheetManagment = ({ setPageValue }) => {
     }
   };
 
+
+  async function activateSheet(sheetName) {
+    try {
+      await Excel.run(async (context) => {
+        const sheet = context.workbook.worksheets.getItem(sheetName);
+        sheet.activate();
+        await context.sync();
+        console.log(`Sheet '${sheetName}' activated.`);
+      });
+    } catch (error) {
+      console.error(`Error activating sheet: ${error}`);
+    }
+  }
+  
+
   const menuItems = [
-    { icon: "/../assets/Createmodel.svg", text: "Generate ACE", action: () => handleCreateNewModel() },
+    { icon: "/../assets/Createmodel.svg", text: "Generate ACE", action: () => activateSheet("ACE-Demo-1") },
     { icon: "/../assets/AddAssumptions.svg", text: "Add Assumption", action: () => MMfunctions.addAssumption() },
     {
       icon: "/../assets/deleteAssumption.svg",

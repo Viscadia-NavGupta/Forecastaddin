@@ -81,3 +81,6 @@ export const SettingsLabel = styled(Label)({
 export const NewFeatureLabel = styled(Label)({
   color: "#595959",
 });
+export const EnableCalculationsLabel = styled(Label)({
+  color: "#595959",
+});
